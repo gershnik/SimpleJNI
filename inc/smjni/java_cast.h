@@ -22,48 +22,35 @@
 
 namespace smjni
 {
-    template<typename Dest, typename Source>
-    inline
-    std::enable_if_t<std::is_convertible_v<typename std::remove_pointer_t<Source>, 
-                                           typename std::remove_pointer_t<jobject>> 
-                     &&
-                     std::is_convertible_v<typename std::remove_pointer_t<Source>, 
-                                           typename std::remove_pointer_t<Dest>>,
-    Dest> jstatic_cast(Source src) noexcept
-    {
-        return src;
-    }
-
-    template<typename Dest>
-    inline
-    std::enable_if_t<std::is_convertible_v<typename std::remove_pointer_t<Dest>, 
-                                           typename std::remove_pointer_t<jobject>>,
-    Dest> jstatic_cast(jobject src) noexcept
-    {
-        return static_cast<Dest>(src);
-    }
-
-    template<class From, class To, class Enable = void>
-    struct is_java_castable: std::false_type {};
-
     template<class From, class To>
-    struct is_java_castable<From, To, std::void_t<decltype(jstatic_cast<To>((From)nullptr))>> : std::true_type {};
+    struct is_java_castable: std::integral_constant<bool,
+         std::is_convertible_v<std::remove_pointer_t<From>, std::remove_pointer_t<jobject>> &&
+         std::is_convertible_v<std::remove_pointer_t<From>, std::remove_pointer_t<To>>
+    > {};
+
+    template<class To>
+    struct is_java_castable<jobject, To>: std::integral_constant<bool,
+         std::is_convertible_v<std::remove_pointer_t<To>, std::remove_pointer_t<jobject>>
+    > {};
 
     template<class From, class To>
     constexpr bool is_java_castable_v = is_java_castable<From, To>::value;
+
+    template<typename Dest, typename Source>
+    inline
+    std::enable_if_t<is_java_castable_v<Source, Dest>,
+    Dest> jstatic_cast(Source src) noexcept
+    {
+        return static_cast<Dest>(static_cast<jobject>(src));
+    }
+    
 }
 
 #define DEFINE_JAVA_CONVERSION(T1, T2) \
     namespace smjni\
     {\
-        inline T1 jstatic_cast(T2 src)\
-        {\
-            return static_cast<T1>(static_cast<jobject>(src));\
-        }\
-        inline T2 jstatic_cast(T1 src)\
-        {\
-            return static_cast<T2>(static_cast<jobject>(src));\
-        }\
+        template<> struct is_java_castable<T1, T2> : std::true_type {};\
+        template<> struct is_java_castable<T2, T1> : std::true_type {};\
     }
 
 
