@@ -17,91 +17,51 @@
 
 package smjni.jnigen
 
-internal class UniqueName(original: String, index: Int) {
-
-    private val value: String = original + if (index > 0) "$index" else ""
+internal class UniqueName(val original: String, private val value: String) {
 
     override fun toString(): String {
         return value
     }
-
-
 }
 
 internal class NameTable {
 
-    private val nameCounts: MutableMap<String, Int> = HashMap()
+    private val nameCounts = mutableMapOf<String, Int>()
 
-    init {
-        //C++ keywords that are not keywords in Java
-        arrayOf("alignas",
-        "alignof",
-        "and",
-        "and_eq",
-        "asm",
-        "atomic_cancel",
-        "atomic_commit",
-        "atomic_noexcept",
-        "auto",
-        "bitand",
-        "bitor",
-        "bool",
-        "char16_t",
-        "char32_t",
-        "compl",
-        "concept",
-        "constexpr",
-        "const_cast",
-        "co_await",
-        "co_return",
-        "co_yield",
-        "decltype",
-        "delete",
-        "dynamic_cast",
-        "explicit",
-        "export",
-        "extern",
-        "float",
-        "friend",
-        "inline",
-        "module",
-        "mutable",
-        "namespace",
-        "noexcept",
-        "not",
-        "not_eq",
-        "nullptr",
-        "operator",
-        "or",
-        "or_eq",
-        "register",
-        "reinterpret_cast",
-        "requires",
-        "signed",
-        "sizeof",
-        "static_assert",
-        "static_cast",
-        "struct",
-        "switch",
-        "template",
-        "thread_local",
-        "typedef",
-        "typeid",
-        "typename",
-        "union",
-        "unsigned",
-        "using",
-        "virtual",
-        "wchar_t",
-        "xor",
-        "xor_eq").forEach { nameCounts[it] = 1 }
+    companion object {
+
+        val reservedNames =
+            setOf("alignas", "alignof", "and", "and_eq", "asm", "atomic_cancel", "atomic_commit", "atomic_noexcept",
+            "auto", "bitand", "bitor", "bool", "break", "case", "catch", "char", "char8_t", "char16_t", "char32_t",
+            "class", "compl", "concept", "const", "consteval", "constexpr", "constinit", "const_cast", "continue",
+            "co_await", "co_return", "co_yield", "decltype", "default", "delete", "do", "double", "dynamic_cast",
+            "else", "enum", "explicit", "export", "extern", "false", "final", "float", "for", "friend", "goto", "if",
+            "import", "inline", "int", "long", "module", "mutable", "namespace", "new", "noexcept", "not", "not_eq",
+            "nullptr", "operator", "or", "or_eq", "override", "private", "protected", "public", "reflexpr", "register",
+            "reinterpret_cast", "requires", "return", "short", "signed", "sizeof", "static", "static_assert",
+            "static_cast", "struct", "switch", "synchronized", "template", "this", "thread_local", "throw",
+            "transaction_safe", "transaction_safe_dynamic", "true", "try", "typedef", "typeid", "typename", "union",
+            "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while", "xor", "xor_eq")
+
+        val validNamePattern = Regex("[_a-zA-Z][_a-zA-Z0-9]*")
+        val invalidFirstLetterPattern = Regex("[^_a-zA-Z]")
+        val invalidSubsequentLetterPattern = Regex("[^_a-zA-Z0-9]")
     }
 
     internal fun allocateName(name: String): UniqueName {
+        val sanitized = if (reservedNames.contains(name))
+            name.replaceFirstChar { it + "_" }
+        else if (name.isEmpty())
+            "_"
+        else
+            name.takeIf { it.matches(validNamePattern)} ?: (
+                name.substring(0, 1).replace(invalidFirstLetterPattern, "_") +
+                    if (name.length > 1)
+                        name.substring(1).replace(invalidSubsequentLetterPattern, "_")
+                    else "")
 
-        val count = nameCounts[name] ?: 0
-        nameCounts[name] = count + 1
-        return UniqueName(name, count)
+        val count = nameCounts.merge(sanitized, 1, Int::plus)!!
+        return UniqueName(name, sanitized + if (count > 1) "${count - 1}" else "")
     }
 
 }

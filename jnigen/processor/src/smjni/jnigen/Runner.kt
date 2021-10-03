@@ -19,6 +19,8 @@ package smjni.jnigen
 
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
+import kotlin.collections.ArrayList
 import com.sun.tools.javac.Main as Javac
 
 object Runner {
@@ -38,7 +40,7 @@ object Runner {
                 javacArgs.add(args[i])
                 if (args[i] == "-sourcepath" && i < args.size - 1) {
                     Files.walk(Paths.get(args[i + 1])).forEach{
-                        if (Files.isRegularFile(it) && it.toString().toLowerCase().endsWith(".java"))
+                        if (Files.isRegularFile(it) && it.toString().lowercase(Locale.getDefault()).endsWith(".java"))
                                 files.add(it.toAbsolutePath().toString())
                     }
                 }

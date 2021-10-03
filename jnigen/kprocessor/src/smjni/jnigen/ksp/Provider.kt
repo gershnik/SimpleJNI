@@ -1,6 +1,5 @@
 /*
- Copyright 2014 Smartsheet Inc.
- Copyright 2019 SmJNI Contributors
+ Copyright 2021 SmJNI Contributors
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -15,6 +14,17 @@
  limitations under the License.
 */
 
-include ":processor"
-include ":kprocessor"
-include ":annotations"
+package smjni.jnigen.ksp
+
+import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.processing.SymbolProcessor
+import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.SymbolProcessorProvider
+
+
+@KspExperimental
+class Provider : SymbolProcessorProvider {
+    override fun create(environment: SymbolProcessorEnvironment): SymbolProcessor {
+        return Processor(environment)
+    }
+}

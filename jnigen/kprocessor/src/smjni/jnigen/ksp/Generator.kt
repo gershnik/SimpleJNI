@@ -15,8 +15,10 @@
  limitations under the License.
 */
 
-package smjni.jnigen
+package smjni.jnigen.ksp
 
+import com.google.devtools.ksp.KspExperimental
+import smjni.jnigen.ksp.ClassContent.*
 import java.io.File
 import java.io.FileWriter
 import java.nio.file.Files
@@ -27,25 +29,24 @@ import java.security.MessageDigest
 import java.util.*
 
 
-internal class Generator {
+@KspExperimental
+internal class Generator(private val context: Context) {
 
-    internal fun generate(typeMap: TypeMap, context: Context) {
+    internal fun generate() {
 
-        generateTypeHeader(typeMap, context)
+        generateTypeHeader()
 
         val allHeaders = ArrayList<String>()
-        for (header in typeMap.classHeaders) {
-            if (generateClassHeader(header, typeMap, context))
+        for (header in context.typeMap.classHeaders) {
+            if (generateClassHeader(header))
                 allHeaders.add(header)
         }
 
-        generateAllClassesHeader(allHeaders, typeMap, context)
-        generateOutputsList(allHeaders, context)
+        generateAllClassesHeader(allHeaders)
+        generateOutputsList(allHeaders)
     }
 
-    private fun generateTypeHeader(typeMap: TypeMap, context: Context) {
-
-        print("JNIGen: Generating ${context.headerName}:")
+    private fun generateTypeHeader() {
 
         val generated = generateFile("${context.destPath}/${context.headerName}") { typeHeader ->
 
@@ -55,37 +56,36 @@ internal class Generator {
             typeHeader.write("//THIS FILE IS AUTO-GENERATED. DO NOT EDIT\n\n")
             typeHeader.write("#include <smjni/smjni.h>\n\n")
 
-            val exposedClasses = ArrayList(typeMap.exposedClasses.values)
-            exposedClasses.sortBy { it.cppName }
+            val exposedClasses = context.typeMap.exposedClasses.values.toTypedArray().sortedBy { it.cppName }
 
             for (classContent in exposedClasses) {
-                typeHeader.write("DEFINE_JAVA_TYPE(${classContent.cppName},  \"${classContent.binaryName}\")\n")
+                typeHeader.write("DEFINE_JAVA_TYPE(${classContent.cppName},  \"${classContent.javaName}\")\n")
             }
             typeHeader.write("\n")
 
-            for (arrayType in typeMap.exposedArrays.toTypedArray().sorted())
+            for (arrayType in context.typeMap.exposedArrays.toTypedArray().sorted())
                 typeHeader.write("DEFINE_ARRAY_JAVA_TYPE($arrayType)\n")
             typeHeader.write("\n")
 
             for (classContent in exposedClasses)
                 for (item in classContent.convertsTo.sorted())
-                    typeHeader.write("DEFINE_JAVA_CONVERSION(${typeMap.nativeNameOf(item)}, ${classContent.cppName})\n")
+                    typeHeader.write("DEFINE_JAVA_CONVERSION(${context.typeMap.nativeNameOf(item)}, ${classContent.cppName})\n")
 
             typeHeader.write("\n#endif\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.logger.logging("JNIGen: Generating ${context.headerName}:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
     }
 
-    private fun generateClassHeader(header: String, typeMap: TypeMap, context: Context) : Boolean {
+    private fun generateClassHeader(header: String) : Boolean {
 
-        if (typeMap.classesInHeader(header).find{ it.javaEntities.isNotEmpty() || it.nativeMethods.isNotEmpty() } == null)
+        if (context.typeMap.classesInHeader(header).find{ it.javaEntities.isNotEmpty() || it.nativeMethods.isNotEmpty() } == null)
             return false
-
-        print("JNIGen: Generating $header:")
 
         val generated = generateFile("${context.destPath}/$header") { classHeader ->
 
@@ -95,7 +95,7 @@ internal class Generator {
             classHeader.write("//THIS FILE IS AUTO-GENERATED. DO NOT EDIT\n\n")
             classHeader.write("#include \"${context.headerName}\"\n\n")
 
-            typeMap.classesInHeader(header).forEach { classContent ->
+            context.typeMap.classesInHeader(header).forEach { classContent ->
                 if (classContent.javaEntities.isNotEmpty() || classContent.nativeMethods.isNotEmpty())
                     generateClassDef(classHeader, classContent)
             }
@@ -103,10 +103,12 @@ internal class Generator {
             classHeader.write("#endif\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.logger.logging("JNIGen: Generating $header:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
 
         return true
     }
@@ -147,7 +149,7 @@ internal class Generator {
 
             when(javaEntity.type) {
                 JavaEntityType.Method, JavaEntityType.StaticMethod, JavaEntityType.Constructor -> {
-                    classHeader.write("    ${javaEntity.returnType} ${javaEntity.name}(JNIEnv * env")
+                    classHeader.write("    ${javaEntity.returnType} ${javaEntity.name.colliding}(JNIEnv * env")
                     for (i in 0 until javaEntity.argTypes.size) {
                         classHeader.write(", ${javaEntity.argTypes[i]} ${argNames[i + 1]}")
                     }
@@ -313,9 +315,7 @@ internal class Generator {
         classHeader.write("\n{}\n\n")
     }
 
-    private fun generateAllClassesHeader(headers: List<String>, typeMap: TypeMap, context: Context) {
-
-        print("JNIGen: Generating ${context.allHeaderName}:")
+    private fun generateAllClassesHeader(headers: List<String>) {
 
         val generated = generateFile("${context.destPath}/${context.allHeaderName}") { allHeader ->
 
@@ -329,20 +329,24 @@ internal class Generator {
 
             allHeader.write("\n#define JNIGEN_ALL_GENERATED_CLASSES \\\n    ")
 
-            allHeader.write(headers.joinToString(separator = ", \\\n    ") { header -> typeMap.classesInHeader(header).filter {it.hasCppClass }.map { it.cppClassName }.joinToString(separator = ", \\\n    ")})
+            allHeader.write(headers.joinToString(separator = ", \\\n    ") { header ->
+                context.typeMap.classesInHeader(header)
+                    .filter {it.hasCppClass }
+                    .map { it.cppClassName }
+                    .joinToString(separator = ", \\\n    ")})
 
             allHeader.write("\n\n#endif\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.logger.logging("JNIGen: Generating ${context.allHeaderName}:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
     }
 
-    private fun generateOutputsList(headers: List<String>, context: Context) {
-
-        print("JNIGen: Generating ${context.outputListName}:")
+    private fun generateOutputsList(headers: List<String>) {
 
         val generated = generateFile("${context.destPath}/${context.outputListName}") { outList ->
 
@@ -352,10 +356,12 @@ internal class Generator {
                 outList.write("$header\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.logger.logging("JNIGen: Generating ${context.outputListName}:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
     }
 
     private fun generateFile(name: String, generator: (FileWriter) -> Unit): Boolean {
@@ -398,7 +404,7 @@ internal class Generator {
             Files.newInputStream(Paths.get(path)).use { str ->
                 DigestInputStream(str, md).use { dstr ->
                     val buffer = ByteArray(1024)
-                    while (dstr.read(buffer) != -1);
+                    while (dstr.read(buffer) != -1) {/*empty body*/}
                 }
             }
         } catch (ex: java.nio.file.NoSuchFileException) {

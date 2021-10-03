@@ -1,0 +1,5 @@
+
+class KClass {
+    fun foo() {
+    }
+}

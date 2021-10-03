@@ -15,7 +15,8 @@
  limitations under the License.
 */
 buildscript {
-    ext.kotlin_version = '1.5.21'
+    ext.kotlin_version = '1.5.31'
+    ext.junit_version = '5.8.0'
 
     repositories {
         mavenCentral()
@@ -26,7 +27,11 @@ buildscript {
     }
 }
 
-def getOurVersion() {
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version "$kotlin_version" apply false
+}
+
+    def getOurVersion() {
 
     if (project.hasProperty("code.version")) {
 
@@ -78,9 +83,10 @@ task bundleCpp(type: Zip, group: 'publishing') {
 }
 
 task bundleJava(type: Zip, group: 'publishing',
-                dependsOn: ['annotations:assemble','processor:assemble']) {
+                dependsOn: ['annotations:assemble','processor:assemble','kprocessor:assemble']) {
 
     from(new File(rootProject.buildDir, 'jnigen.jar'),
+         new File(rootProject.buildDir, 'kjnigen.jar'),
          new File(rootProject.buildDir, 'jnigen-annotations.jar'))
 
     includeEmptyDirs true

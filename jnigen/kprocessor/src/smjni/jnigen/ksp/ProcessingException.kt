@@ -15,6 +15,8 @@
  limitations under the License.
 */
 
-include ":processor"
-include ":kprocessor"
-include ":annotations"
+package smjni.jnigen.ksp
+
+import com.google.devtools.ksp.symbol.KSDeclaration
+
+class ProcessingException(message: String, val declaration: KSDeclaration) : Exception(message)
