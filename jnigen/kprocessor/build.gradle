@@ -49,6 +49,7 @@ compileKotlin {
 
 test {
     useJUnitPlatform()
+    outputs.upToDateWhen {false}
     systemProperty('test.data.location', new File(rootProject.projectDir, "test_data"))
     systemProperty('test.working.dir', new File(buildDir, "test-output"))
 }

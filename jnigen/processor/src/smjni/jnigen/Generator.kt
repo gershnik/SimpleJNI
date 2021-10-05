@@ -45,8 +45,6 @@ internal class Generator {
 
     private fun generateTypeHeader(typeMap: TypeMap, context: Context) {
 
-        print("JNIGen: Generating ${context.headerName}:")
-
         val generated = generateFile("${context.destPath}/${context.headerName}") { typeHeader ->
 
             val guardName = "HEADER_${makeGuardName(context.headerName)}_INCLUDED"
@@ -74,18 +72,18 @@ internal class Generator {
             typeHeader.write("\n#endif\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.print("JNIGen: Generating ${context.headerName}:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
     }
 
     private fun generateClassHeader(header: String, typeMap: TypeMap, context: Context) : Boolean {
 
         if (typeMap.classesInHeader(header).find{ it.javaEntities.isNotEmpty() || it.nativeMethods.isNotEmpty() } == null)
             return false
-
-        print("JNIGen: Generating $header:")
 
         val generated = generateFile("${context.destPath}/$header") { classHeader ->
 
@@ -103,10 +101,12 @@ internal class Generator {
             classHeader.write("#endif\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.print("JNIGen: Generating $header:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
 
         return true
     }
@@ -315,8 +315,6 @@ internal class Generator {
 
     private fun generateAllClassesHeader(headers: List<String>, typeMap: TypeMap, context: Context) {
 
-        print("JNIGen: Generating ${context.allHeaderName}:")
-
         val generated = generateFile("${context.destPath}/${context.allHeaderName}") { allHeader ->
 
             val guardName = "HEADER_${makeGuardName(context.allHeaderName)}_INCLUDED"
@@ -334,15 +332,15 @@ internal class Generator {
             allHeader.write("\n\n#endif\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.print("JNIGen: Generating ${context.allHeaderName}:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
     }
 
     private fun generateOutputsList(headers: List<String>, context: Context) {
-
-        print("JNIGen: Generating ${context.outputListName}:")
 
         val generated = generateFile("${context.destPath}/${context.outputListName}") { outList ->
 
@@ -352,10 +350,12 @@ internal class Generator {
                 outList.write("$header\n")
         }
 
-        if (generated)
-            println("  written")
-        else
-            println("  up-to-date")
+        context.print("JNIGen: Generating ${context.outputListName}:" +
+            if (generated)
+                "  written"
+            else
+                "  up-to-date"
+        )
     }
 
     private fun generateFile(name: String, generator: (FileWriter) -> Unit): Boolean {
@@ -398,7 +398,7 @@ internal class Generator {
             Files.newInputStream(Paths.get(path)).use { str ->
                 DigestInputStream(str, md).use { dstr ->
                     val buffer = ByteArray(1024)
-                    while (dstr.read(buffer) != -1);
+                    while (dstr.read(buffer) != -1) { /* empty body*/ }
                 }
             }
         } catch (ex: java.nio.file.NoSuchFileException) {

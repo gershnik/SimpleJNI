@@ -35,7 +35,8 @@ internal class Context(private val env: SymbolProcessorEnvironment, private val 
         OUTPUT_LIST_NAME("smjni.jnigen.output.list.name", "outputs.txt"),
         EXPOSE_ANNOTATION_NAME("smjni.jnigen.expose.annotation.name", "smjni.jnigen.ExposeToNative"),
         CALLED_ANNOTATION_NAME("smjni.jnigen.called.annotation.name", "smjni.jnigen.CalledByNative"),
-        CTOR_NAME("smjni.jnigen.ctor.name", "ctor");
+        CTOR_NAME("smjni.jnigen.ctor.name", "ctor"),
+        PRINT_TO_STDOUT("smjni.jnigen.print.to.stdout", "false");
 
         fun extract(env: SymbolProcessorEnvironment): String {
 
@@ -50,6 +51,7 @@ internal class Context(private val env: SymbolProcessorEnvironment, private val 
     val exposedAnnotation = Options.EXPOSE_ANNOTATION_NAME.extract(env)
     val calledByNativeAnnotation = Options.CALLED_ANNOTATION_NAME.extract(env)
     val ctorName = Options.CTOR_NAME.extract(env)
+    private val printToStdOut = Options.PRINT_TO_STDOUT.extract(env) == "true"
 
     val exposeExtra: Map<String, String> = run {
         val exposedRegex = Regex("""([^(]+)(?:\(([^)]+)\))?""")
@@ -74,6 +76,13 @@ internal class Context(private val env: SymbolProcessorEnvironment, private val 
     val builtIns: KSBuiltIns get() = resolver.builtIns
 
     val logger: KSPLogger get() = env.logger
+
+    fun print(message: String, symbol: KSNode? = null) {
+        if (printToStdOut)
+            println(message)
+        else
+            logger.info(message, symbol)
+    }
 
     fun getClassDeclarationByName(name: String): KSClassDeclaration? = resolver.getClassDeclarationByName(name)
 

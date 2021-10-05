@@ -74,7 +74,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
 
         val exposedData = getExposedDataFromAnnotation(classInfo, cppNames, cppClassNames, context) ?: return
 
-        env.logger.logging("JNIGen: Discovered ${classInfo.qualifiedJavaClassName}")
+        context.print("JNIGen: Discovered ${classInfo.qualifiedJavaClassName}")
 
         knownClasses[classInfo] = exposedData
         cppNames[exposedData.cppName] = classInfo.qualifiedJavaClassName
@@ -99,7 +99,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
 
         val exposedData = getExposedDataFromCommandLine(classInfo, stem, cppNames, cppClassNames) ?: return
 
-        env.logger.logging("JNIGen: Discovered (command line) ${classInfo.qualifiedJavaClassName}")
+        context.print("JNIGen: Discovered (command line) ${classInfo.qualifiedJavaClassName}")
 
         knownClasses[classInfo] = exposedData
         cppNames[exposedData.cppName] = classInfo.qualifiedJavaClassName

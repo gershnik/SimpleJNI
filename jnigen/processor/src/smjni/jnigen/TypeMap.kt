@@ -65,7 +65,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             }
             val exposedData = getExposedDataFromCommandLine(exposedElement, stem, cppNames, cppClassNames, ctxt) ?: continue
 
-            println("JNIGen: Discovered (command line) ${exposedElement.qualifiedName}")
+            ctxt.print("JNIGen: Discovered (command line) ${exposedElement.qualifiedName}")
 
             knownClasses[exposedElement] = exposedData
             cppNames[exposedData.cppName] = exposedElement.qualifiedName
@@ -87,7 +87,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             val classElement = annotatedElement as TypeElement
             val exposedData = getExposedDataFromAnnotation(classElement, cppNames, cppClassNames, ctxt) ?: continue
 
-            println("JNIGen: Discovered ${classElement.qualifiedName}")
+            ctxt.print("JNIGen: Discovered ${classElement.qualifiedName}")
 
             knownClasses[classElement] = exposedData
             cppNames[exposedData.cppName] = classElement.qualifiedName
@@ -196,7 +196,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
     }
 
     private fun nativeNameOf(el: TypeParameterElement): String {
-        val bounds = el.bounds;
+        val bounds = el.bounds
         if (bounds.size > 1)
             return "jobject"
         return nativeNameOf(bounds[0])

@@ -91,7 +91,8 @@ task makeJNIHeaders(dependsOn: cleanStaleJNIHeaders) {
 test {
     dependsOn(
             gradle.includedBuild('jnigen').task(':processor:test'),
-            gradle.includedBuild('jnigen').task(':kprocessor:test')
+            gradle.includedBuild('jnigen').task(':kprocessor:test'),
+            gradle.includedBuild('jnigen').task(':annotations:jar')
     )
 }
 

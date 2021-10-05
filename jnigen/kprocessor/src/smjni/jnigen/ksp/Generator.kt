@@ -74,7 +74,7 @@ internal class Generator(private val context: Context) {
             typeHeader.write("\n#endif\n")
         }
 
-        context.logger.logging("JNIGen: Generating ${context.headerName}:" +
+        context.print("JNIGen: Generating ${context.headerName}:" +
             if (generated)
                 "  written"
             else
@@ -103,7 +103,7 @@ internal class Generator(private val context: Context) {
             classHeader.write("#endif\n")
         }
 
-        context.logger.logging("JNIGen: Generating $header:" +
+        context.print("JNIGen: Generating $header:" +
             if (generated)
                 "  written"
             else
@@ -338,7 +338,7 @@ internal class Generator(private val context: Context) {
             allHeader.write("\n\n#endif\n")
         }
 
-        context.logger.logging("JNIGen: Generating ${context.allHeaderName}:" +
+        context.print("JNIGen: Generating ${context.allHeaderName}:" +
             if (generated)
                 "  written"
             else
@@ -356,7 +356,7 @@ internal class Generator(private val context: Context) {
                 outList.write("$header\n")
         }
 
-        context.logger.logging("JNIGen: Generating ${context.outputListName}:" +
+        context.print("JNIGen: Generating ${context.outputListName}:" +
             if (generated)
                 "  written"
             else

@@ -1,0 +1,29 @@
+JNIGen: Discovered (command line) java.lang.Byte
+JNIGen: Discovered (command line) java.lang.Character
+JNIGen: Discovered (command line) java.lang.Boolean
+JNIGen: Discovered (command line) java.lang.Short
+JNIGen: Discovered (command line) java.lang.Integer
+JNIGen: Discovered (command line) java.lang.Long
+JNIGen: Discovered (command line) java.lang.Float
+JNIGen: Discovered (command line) java.lang.Double
+JNIGen: Discovered ExtensionKt
+JNIGen: Discovered Extension
+JNIGen: Discovered Extension$Inner
+JNIGen: Discovered FileLevelKt
+JNIGen: Discovered ExposedObject
+JNIGen: Discovered Middle
+JNIGen: Discovered FullClass
+JNIGen: Discovered FunkyNames
+JNIGen: Discovered Statics
+JNIGen: Discovered sources.full_class.input.Types
+JNIGen: Generating type_mapping.h:  written
+JNIGen: Generating ExtensionKt_class.h:  written
+JNIGen: Generating Extension_class.h:  written
+JNIGen: Generating FileLevelKt_class.h:  written
+JNIGen: Generating ExposedObject_class.h:  written
+JNIGen: Generating FullClass_class.h:  written
+JNIGen: Generating FunkyNames_class.h:  written
+JNIGen: Generating Statics_class.h:  written
+JNIGen: Generating Types_class.h:  written
+JNIGen: Generating all_classes.h:  written
+JNIGen: Generating outputs.txt:  written
