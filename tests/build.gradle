@@ -39,18 +39,12 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-configurations {
-    // configuration that holds jars to include in the jar
-    extraLibs
-}
-
 dependencies {
     implementation 'smjni.jnigen:annotations'
-    extraLibs 'org.junit.jupiter:junit-jupiter-api:5.3.0'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
     annotationProcessor("smjni.jnigen:processor@jar") {
         transitive true
     }
-    configurations.implementation.extendsFrom(configurations.extraLibs)
 }
 
 tasks.withType(JavaCompile) {
@@ -94,17 +88,27 @@ task makeJNIHeaders(dependsOn: cleanStaleJNIHeaders) {
 
 }
 
+test {
+    dependsOn(
+            gradle.includedBuild('jnigen').task(':processor:test'),
+            gradle.includedBuild('jnigen').task(':kprocessor:test')
+    )
+}
+
+task copyRuntimeLibs(type: Copy) {
+    into(project.buildDir.absolutePath + "/libs")
+    from(configurations.runtimeClasspath)
+}
+
 jar {
+    dependsOn("copyRuntimeLibs")
     manifest {
         attributes 'Implementation-Title': 'SmJNI Tests',
                    'Implementation-Version': project.version,
-                   'Main-Class': 'smjni.tests.TestSmJNI'
+                   'Main-Class': 'smjni.tests.TestSmJNI',
+                   'Class-Path': configurations.runtimeClasspath.collect { "libs/"+ it.getName() }.join(' ')
     }
     
     setArchiveFileName("smjnitests.jar")
     setDestinationDirectory(rootProject.buildDir)
-
-    from {
-        configurations.extraLibs.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }

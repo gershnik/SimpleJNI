@@ -27,8 +27,8 @@ dependencies {
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testImplementation "org.hamcrest:hamcrest:2.2"
-    testCompile "org.junit.jupiter:junit-jupiter-params:$junit_version"
-    testCompile project(":annotations")
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+    testImplementation project(":annotations")
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
 }
 
