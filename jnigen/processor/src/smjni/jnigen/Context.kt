@@ -19,6 +19,7 @@ package smjni.jnigen
 
 import java.io.File
 import javax.annotation.processing.ProcessingEnvironment
+import javax.tools.Diagnostic
 
 
 internal class Context(env: ProcessingEnvironment) {
@@ -31,7 +32,8 @@ internal class Context(env: ProcessingEnvironment) {
         OUTPUT_LIST_NAME("smjni.jnigen.output.list.name", "outputs.txt"),
         EXPOSE_ANNOTATION_NAME("smjni.jnigen.expose.annotation.name", "smjni.jnigen.ExposeToNative"),
         CALLED_ANNOTATION_NAME("smjni.jnigen.called.annotation.name", "smjni.jnigen.CalledByNative"),
-        CTOR_NAME("smjni.jnigen.ctor.name", "ctor");
+        CTOR_NAME("smjni.jnigen.ctor.name", "ctor"),
+        PRINT_TO_STDOUT("smjni.jnigen.print.to.stdout", "true");
 
         fun extract(env: ProcessingEnvironment): String {
 
@@ -39,7 +41,6 @@ internal class Context(env: ProcessingEnvironment) {
         }
     }
 
-    //val typeUtils = env.typeUtils!!
     val elementUtils = env.elementUtils!!
     val messager = env.messager!!
     val destPath: String = File(Options.DEST_PATH.extract(env)).absolutePath
@@ -50,6 +51,7 @@ internal class Context(env: ProcessingEnvironment) {
     val exposedAnnotation = Options.EXPOSE_ANNOTATION_NAME.extract(env)
     val calledByNativeAnnotation = Options.CALLED_ANNOTATION_NAME.extract(env)
     val ctorName = Options.CTOR_NAME.extract(env)
+    private val printToStdOut = Options.PRINT_TO_STDOUT.extract(env) == "true"
 
     init {
 
@@ -70,6 +72,13 @@ internal class Context(env: ProcessingEnvironment) {
     internal fun getSupportedOptions(): MutableSet<String> {
 
         return Options.values().map{it.externalName}.toMutableSet()
+    }
+
+    fun print(message: String) {
+        if (printToStdOut)
+            println(message)
+        else
+            messager.printMessage(Diagnostic.Kind.NOTE, message)
     }
 
 }

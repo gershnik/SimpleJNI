@@ -1,0 +1,130 @@
+/*
+ Copyright 2021 SmJNI Contributors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+*/
+
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
+}
+
+dependencies {
+    implementation "com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.0"
+
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.4')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.4')
+    testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    testImplementation "org.hamcrest:hamcrest:2.2"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_version"
+    testImplementation project(":annotations")
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junit_version"
+}
+
+sourceSets {
+    main.kotlin.srcDirs = ['src']
+    main.resources.srcDirs = ['res']
+    test.kotlin.srcDirs = ['test/src']
+    test.resources.srcDirs = ['test/res']
+}
+
+targetCompatibility = JavaVersion.VERSION_1_8
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+test {
+    useJUnitPlatform()
+    outputs.upToDateWhen {false}
+    systemProperty('test.data.location', new File(rootProject.projectDir, "test_data"))
+    systemProperty('test.working.dir', new File(buildDir, "test-output"))
+}
+
+task generateTestData(type: Test) {
+    group = 'verification'
+    testClassesDirs = sourceSets.test.output.classesDirs
+    classpath = sourceSets.test.runtimeClasspath
+    outputs.upToDateWhen { false }
+
+    useJUnitPlatform() {
+        includeTags("GENERATOR")
+    }
+    systemProperty('test.data.location', new File(rootProject.projectDir, "test_data"))
+    systemProperty('test.working.dir', new File(buildDir, "test-output"))
+    environment('JNIGEN_ENABLE_TEST_GENERATION', 'true')
+
+    reports {
+        html.enabled false
+        junitXml.enabled = false
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'SmJNI KSP Code Generator',
+                   'Implementation-Version': project.version
+    }
+    metaInf { from('META-INF') }
+
+    setArchiveFileName("kjnigen.jar")
+    setDestinationDirectory(rootProject.buildDir)
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava, sourceSets.main.kotlin
+    classifier "sources"
+}
+
+def libraryDescription = "KSP annotation processor that generates SmJNI C++ code from Java annotations"
+def libraryWebsiteUrl = 'https://github.com/smartsheet-mobile/smjni'
+def libraryVcsUrl = 'https://github.com/smartsheet-mobile/smjni.git'
+def libraryIssueTrackerUrl = 'https://github.com/smartsheet-mobile/smjni/issues'
+
+publishing {
+    if (project.hasProperty("localRepo")) {
+
+        repositories {
+            maven {
+                name "localRepo"
+                url project.getProperty("localRepo")
+            }
+        }
+    }
+    publications {
+        thePublication(MavenPublication) {
+            from components.java
+            artifact sourceJar
+            //artifact javadocJar
+            pom {
+                name = "SmJNI KSP Code Generator"
+                description = libraryDescription
+                url = libraryWebsiteUrl
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                scm {
+                    connection = "git@github.com:smartsheet-mobile/smjni.git"
+                    developerConnection = "git@github.com:smartsheet-mobile/smjni.git"
+                    url = libraryVcsUrl
+                }
+            }
+        }
+    }
+}

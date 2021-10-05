@@ -1,0 +1,7 @@
+JNIGen: Discovered ExposedOnlyKt
+JNIGen: Discovered ExposedClass
+JNIGen: Discovered ExposedInterface
+JNIGen: Discovered ExposedEnum
+JNIGen: Generating type_mapping.h:  written
+JNIGen: Generating all_classes.h:  written
+JNIGen: Generating outputs.txt:  written

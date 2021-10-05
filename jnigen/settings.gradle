@@ -16,4 +16,5 @@
 */
 
 include ":processor"
+include ":kprocessor"
 include ":annotations"
