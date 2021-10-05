@@ -24,6 +24,7 @@ buildscript {
 
 allprojects {
     repositories {
+        mavenLocal()
         mavenCentral()
     }
 }
@@ -40,9 +41,9 @@ java {
 }
 
 dependencies {
-    implementation 'smjni.jnigen:annotations'
+    implementation 'smjni.jnigen:annotations:SNAPSHOT'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
-    annotationProcessor("smjni.jnigen:processor@jar") {
+    annotationProcessor("smjni.jnigen:processor:SNAPSHOT@jar") {
         transitive true
     }
 }
@@ -86,14 +87,6 @@ task cleanStaleJNIHeaders(dependsOn: compileTestJava) {
 
 task makeJNIHeaders(dependsOn: cleanStaleJNIHeaders) {
 
-}
-
-test {
-    dependsOn(
-            gradle.includedBuild('jnigen').task(':processor:test'),
-            gradle.includedBuild('jnigen').task(':kprocessor:test'),
-            gradle.includedBuild('jnigen').task(':annotations:jar')
-    )
 }
 
 task copyRuntimeLibs(type: Copy) {

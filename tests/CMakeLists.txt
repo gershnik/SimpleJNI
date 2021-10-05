@@ -23,27 +23,27 @@ find_package(Java COMPONENTS Development REQUIRED)
 add_subdirectory(".." ${CMAKE_CURRENT_BINARY_DIR}/smjni)
 add_subdirectory("src/cpp" ${CMAKE_CURRENT_BINARY_DIR}/test)
 
+add_custom_target(build-jnigen  
+    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -Pcode.version=SNAPSHOT publishToMavenLocal
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
+)
+
+add_custom_target(run-java-tests ALL
+    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -Pcode.version=SNAPSHOT test
+    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
+)
 
 add_custom_target(javabuild  
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java -Pcode.version=SNAPSHOT makeJNIHeaders
+    DEPENDS build-jnigen  
+    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java assemble
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
 
 add_dependencies(smjnitests javabuild)
 
-add_custom_target(jar ALL
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:smjnitests> ${CMAKE_CURRENT_BINARY_DIR}/java
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java -Pcode.version=SNAPSHOT assemble
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-)
-
 add_custom_target(run-jar ALL
-    DEPENDS jar
+    DEPENDS javabuild smjnitests 
+    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:smjnitests> ${CMAKE_CURRENT_BINARY_DIR}/java
     COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR}/java:$ENV{LD_LIBRARY_PATH}" ${Java_JAVA_EXECUTABLE} -jar smjnitests.jar
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/java
-)
-
-add_custom_target(run-java-tests ALL
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java -Pcode.version=SNAPSHOT test
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
 )
