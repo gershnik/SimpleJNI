@@ -20,10 +20,7 @@ import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSAnnotation
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSFile
+import com.google.devtools.ksp.symbol.*
 
 @KspExperimental
 internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
@@ -31,7 +28,6 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
     private class ExposedData(val cppName: String, val cppClassName: String, val header: String)
 
     override fun process(resolver: Resolver) : List<KSAnnotated>{
-
         try {
             val context = Context(env, resolver)
 
@@ -43,7 +39,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
                 handleCommandLineSymbol(javaClass, stem, cppNames, cppClassNames, knownClasses, context)
             }
 
-            resolver.getSymbolsWithAnnotation(context.exposedAnnotation).forEach {
+            context.getExposedSymbols().forEach {
                 handleAnnotatedSymbol(it, cppNames, cppClassNames, knownClasses, context)
             }
 

@@ -27,6 +27,8 @@ import java.nio.file.StandardCopyOption
 import java.security.DigestInputStream
 import java.security.MessageDigest
 import java.util.*
+import kotlin.io.path.Path
+import kotlin.io.path.isDirectory
 
 
 @KspExperimental
@@ -352,8 +354,17 @@ internal class Generator(private val context: Context) {
 
             outList.write("${context.headerName}\n")
             outList.write("${context.allHeaderName}\n")
-            for (header in headers)
-                outList.write("$header\n")
+            headers.forEach { outList.write("$it\n") }
+        }
+
+        if (context.ownDestPath) {
+
+            val written = setOf(context.outputListName, context.headerName, context.allHeaderName) + headers.toSet()
+            Files.list(Path(context.destPath)).use { stream ->
+                stream
+                    .filter { !it.isDirectory() && !written.contains(it.fileName.toString()) }
+                    .forEach { Files.delete(it) }
+            }
         }
 
         context.print("JNIGen: Generating ${context.outputListName}:" +

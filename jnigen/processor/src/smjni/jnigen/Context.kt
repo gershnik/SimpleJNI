@@ -25,7 +25,8 @@ import javax.tools.Diagnostic
 internal class Context(env: ProcessingEnvironment) {
 
     private enum class Options(val externalName: String, val defaultValue: String) {
-        DEST_PATH("smjni.jnigen.dest.path", "."),
+        DEST_PATH("smjni.jnigen.dest.path", "jnigen"),
+        OWN_DEST_PATH("smjni.jnigen.own.dest.path", "false"),
         EXPOSE_EXTRA("smjni.jnigen.expose.extra", ""),
         TYPE_HEADER_NAME("smjni.jnigen.type.header.name", "type_mapping.h"),
         ALL_HEADER_NAME("smjni.jnigen.all.header.name", "all_classes.h"),
@@ -44,6 +45,7 @@ internal class Context(env: ProcessingEnvironment) {
     val elementUtils = env.elementUtils!!
     val messager = env.messager!!
     val destPath: String = File(Options.DEST_PATH.extract(env)).absolutePath
+    val ownDestPath = Options.OWN_DEST_PATH.extract(env) == "true"
     val exposeExtra: Map<String, String>
     val headerName = Options.TYPE_HEADER_NAME.extract(env)
     val allHeaderName = Options.ALL_HEADER_NAME.extract(env)
