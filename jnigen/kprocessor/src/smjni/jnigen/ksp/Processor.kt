@@ -29,6 +29,9 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
 
     override fun process(resolver: Resolver) : List<KSAnnotated>{
         try {
+            if (resolver.getNewFiles().firstOrNull() == null)
+                return emptyList()
+
             val context = Context(env, resolver)
 
             val cppNames = mutableMapOf<String, CharSequence>()
@@ -39,7 +42,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
                 handleCommandLineSymbol(javaClass, stem, cppNames, cppClassNames, knownClasses, context)
             }
 
-            context.getExposedSymbols().forEach {
+            resolver.getSymbolsWithAnnotation(context.exposedAnnotation, inDepth = false).forEach {
                 handleAnnotatedSymbol(it, cppNames, cppClassNames, knownClasses, context)
             }
 

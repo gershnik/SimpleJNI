@@ -18,10 +18,7 @@ package smjni.jnigen.ksp
 
 import com.google.devtools.ksp.KspExperimental
 import com.google.devtools.ksp.getClassDeclarationByName
-import com.google.devtools.ksp.processing.KSBuiltIns
-import com.google.devtools.ksp.processing.KSPLogger
-import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.processing.SymbolProcessorEnvironment
+import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.*
 import java.io.File
 
@@ -80,6 +77,8 @@ internal class Context(private val env: SymbolProcessorEnvironment, private val 
 
     val logger: KSPLogger get() = env.logger
 
+    val codeGenerator : CodeGenerator get() = env.codeGenerator
+
     fun print(message: String, symbol: KSNode? = null) {
         if (printToStdOut)
             println(message)
@@ -101,70 +100,4 @@ internal class Context(private val env: SymbolProcessorEnvironment, private val 
 
     @KspExperimental
     fun getOwnerJvmClassName(declaration: KSFunctionDeclaration): String? = resolver.getOwnerJvmClassName(declaration)
-
-    fun getExposedSymbols(): Sequence<KSAnnotated> {
-        fun checkAnnotation(annotated: KSAnnotated): Boolean {
-            return annotated.annotations.any {
-                it.annotationType.resolve().declaration.qualifiedName?.asString() == exposedAnnotation
-            }
-        }
-
-        val visitor = object : KSVisitorVoid() {
-            val symbols = mutableSetOf<KSAnnotated>()
-            override fun visitAnnotated(annotated: KSAnnotated, data: Unit) {
-                if (checkAnnotation(annotated)) {
-                    symbols.add(annotated)
-                }
-            }
-
-            override fun visitFile(file: KSFile, data: Unit) {
-                visitAnnotated(file, data)
-                file.declarations.forEach { it.accept(this, data) }
-            }
-
-            override fun visitClassDeclaration(classDeclaration: KSClassDeclaration, data: Unit) {
-                visitAnnotated(classDeclaration, data)
-                classDeclaration.typeParameters.forEach { it.accept(this, data) }
-                classDeclaration.declarations.forEach { it.accept(this, data) }
-                classDeclaration.primaryConstructor?.accept(this, data)
-            }
-
-            override fun visitPropertyGetter(getter: KSPropertyGetter, data: Unit) {
-                visitAnnotated(getter, data)
-            }
-
-            override fun visitPropertySetter(setter: KSPropertySetter, data: Unit) {
-                visitAnnotated(setter, data)
-            }
-
-            override fun visitFunctionDeclaration(function: KSFunctionDeclaration, data: Unit) {
-                visitAnnotated(function, data)
-                function.typeParameters.forEach { it.accept(this, data) }
-                function.parameters.forEach { it.accept(this, data) }
-                function.declarations.forEach { it.accept(this, data) }
-            }
-
-            override fun visitPropertyDeclaration(property: KSPropertyDeclaration, data: Unit) {
-                visitAnnotated(property, data)
-                property.typeParameters.forEach { it.accept(this, data) }
-                property.getter?.accept(this, data)
-                property.setter?.accept(this, data)
-            }
-
-            override fun visitTypeParameter(typeParameter: KSTypeParameter, data: Unit) {
-                visitAnnotated(typeParameter, data)
-                super.visitTypeParameter(typeParameter, data)
-            }
-
-            override fun visitValueParameter(valueParameter: KSValueParameter, data: Unit) {
-                if (valueParameter.isVal || valueParameter.isVar) {
-                    return
-                }
-                visitAnnotated(valueParameter, data)
-            }
-        }
-
-        resolver.getAllFiles().forEach { it.accept(visitor, Unit) }
-        return visitor.symbols.asSequence()
-    }
 }

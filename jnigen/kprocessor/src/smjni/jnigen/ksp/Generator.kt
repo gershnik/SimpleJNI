@@ -18,6 +18,7 @@
 package smjni.jnigen.ksp
 
 import com.google.devtools.ksp.KspExperimental
+import com.google.devtools.ksp.processing.Dependencies
 import smjni.jnigen.ksp.ClassContent.*
 import java.io.File
 import java.io.FileWriter
@@ -46,6 +47,9 @@ internal class Generator(private val context: Context) {
 
         generateAllClassesHeader(allHeaders)
         generateOutputsList(allHeaders)
+
+        context.codeGenerator.createNewFile(Dependencies.ALL_FILES,
+            "", "JniGen", extensionName = "txt").close()
     }
 
     private fun generateTypeHeader() {
