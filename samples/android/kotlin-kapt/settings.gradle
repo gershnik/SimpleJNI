@@ -1,0 +1,10 @@
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://github.com/gershnik/smjni/raw/maven" }
+    }
+}
+rootProject.name = "My Application"
+include ':app'
