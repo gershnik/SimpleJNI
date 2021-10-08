@@ -12,26 +12,26 @@ def jniGenProps = new Object() {
 dependencies {
 
     //JNI annotations
-    compileOnly("smjni.jnigen:annotations:3.2")
+    compileOnly("smjni.jnigen:annotations:${gradle.ext.jniGenVersion}")
     //JNI code generator
-    annotationProcessor("smjni.jnigen:processor:3.2")
+    annotationProcessor("smjni.jnigen:processor:${gradle.ext.jniGenVersion}")
 
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.1'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 }
 
 
 android {
-    compileSdk 30
+    compileSdk gradle.ext.compileSdk
 
     defaultConfig {
         applicationId "com.example.myapplication"
-        minSdk 21
-        targetSdk 30
+        minSdk gradle.ext.minSdk
+        targetSdk gradle.ext.targetSdk
         versionCode 1
         versionName "1.0"
 
@@ -50,7 +50,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                cppFlags ''
+                arguments "-DJNIGEN_GENERATED_DIR=${file(jniGenProps.generatedPath).parentFile.absolutePath}"
             }
         }
     }
@@ -58,7 +58,9 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro',
+                    '../../../common-proguard-rules.pro'
         }
     }
     compileOptions {
@@ -67,8 +69,8 @@ android {
     }
     externalNativeBuild {
         cmake {
-            path file('src/main/cpp/CMakeLists.txt')
-            version '3.10.2'
+            path file('../../../cpp/CMakeLists.txt')
+            version gradle.ext.cmakeVersion
         }
     }
 }
@@ -107,6 +109,11 @@ clean.dependsOn cleanJNIHeaders
 tasks.whenTaskAdded { theTask ->
     def match = theTask.name =~ ~/^buildCMake(.*)$/
     if (match) {
-        theTask.dependsOn "compile${match.group(1)}JavaWithJavac"
+        def config;
+        switch(match.group(1)) {
+            case "RelWithDebInfo": config = "Release"; break
+            default: config = match.group(1); break;
+        }
+        theTask.dependsOn "compile${config}JavaWithJavac"
     }
 }

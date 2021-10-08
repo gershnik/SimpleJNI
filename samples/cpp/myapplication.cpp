@@ -1,5 +1,5 @@
 #include <smjni/smjni.h>
-#include "generated/all_classes.h"
+#include <generated/all_classes.h>
 
 using namespace smjni;
 
