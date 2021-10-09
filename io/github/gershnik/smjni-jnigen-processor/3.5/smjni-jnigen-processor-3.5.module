@@ -1,0 +1,83 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "io.github.gershnik",
+    "module": "smjni-jnigen-processor",
+    "version": "3.5",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "6.8",
+      "buildId": "mqxrclr67bghtappkgu3hrcs3y"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.5.31"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "smjni-jnigen-processor-3.5.jar",
+          "url": "smjni-jnigen-processor-3.5.jar",
+          "size": 70222,
+          "sha512": "b31f15c9e0af761c6b857199e5f87ba504518fa482599416b8556fc29cdad60a36d50a8c224c44600e638e3f441ec386857ae6a18a9e59d3d396fd5757499d0e",
+          "sha256": "46e792a5457851fafcf5a0caffa7bfffc891ed8ff5b56d28b641cb7d22621a27",
+          "sha1": "e620db7968cb9c044909581103018f02b209a5ee",
+          "md5": "9dfacf4e08ef7a8a78c937c1cea4529b"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 8,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.localToProject": "public",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib-jdk8",
+          "version": {
+            "requires": "1.5.31"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "smjni-jnigen-processor-3.5.jar",
+          "url": "smjni-jnigen-processor-3.5.jar",
+          "size": 70222,
+          "sha512": "b31f15c9e0af761c6b857199e5f87ba504518fa482599416b8556fc29cdad60a36d50a8c224c44600e638e3f441ec386857ae6a18a9e59d3d396fd5757499d0e",
+          "sha256": "46e792a5457851fafcf5a0caffa7bfffc891ed8ff5b56d28b641cb7d22621a27",
+          "sha1": "e620db7968cb9c044909581103018f02b209a5ee",
+          "md5": "9dfacf4e08ef7a8a78c937c1cea4529b"
+        }
+      ]
+    }
+  ]
+}
