@@ -2,7 +2,7 @@
 
 A powerful lightweight C++ wrapper for JNI
 
-**Note**: this library is based on SmJNI (https://github.com/smartsheet-mobile/smjni) by the same author, which is no longer maintained. 
+**Note**: this library is based on SmJNI (https://github.com/smartsheet-mobile/smjni) developed by the same author. The SmJNI library is no longer actively maintained and all further enhancements will happen here. 
 
 ## Purpose
 
