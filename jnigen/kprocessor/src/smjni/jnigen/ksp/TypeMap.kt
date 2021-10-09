@@ -1,5 +1,5 @@
 /*
- Copyright 2021 SmJNI Contributors
+ Copyright 2021 SimpleJNI Contributors
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -106,7 +106,7 @@ internal class TypeMap(private val resolver: Resolver, private val logger: KSPLo
                 _javaToCppNameMap.computeIfAbsent(javaName) {
                     val typeName = (type.declaration.qualifiedName ?: type.declaration.simpleName).asString()
                     if (!reportedUnmapped.contains(typeName)) {
-                        logger.logging("Type ${typeName} is not exposed to SmJNI and will be represented as jobject")
+                        logger.logging("Type ${typeName} is not exposed to SimpleJNI and will be represented as jobject")
                         reportedUnmapped.add(typeName)
                     }
                     "jobject"

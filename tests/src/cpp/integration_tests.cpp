@@ -1,4 +1,7 @@
 /*
+ Copyright 2021 SimpleJNI Contributors
+
+ Incorporates work covered by the following copyright
  Copyright 2019 SmJNI Contributors
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,10 +30,10 @@ using namespace smjni;
 TEST_CASE( "testCallingNativeMethod", "[integration]" )
 {
     JNIEnv * env = jni_provider::get_jni();
-    CHECK(java_classes::get<TestSmJNI>().testCallingNativeMethod(env) == java_true);
+    CHECK(java_classes::get<TestSimpleJNI>().testCallingNativeMethod(env) == java_true);
 }
 
-jboolean JNICALL TestSmJNI::nativeMethodImplementation(JNIEnv * env, jclass, jboolean bl, jbyte b, jchar c, jshort s, jint i, jlong l, jfloat f, jdouble d, jstring str,
+jboolean JNICALL TestSimpleJNI::nativeMethodImplementation(JNIEnv * env, jclass, jboolean bl, jbyte b, jchar c, jshort s, jint i, jlong l, jfloat f, jdouble d, jstring str,
                                      jbooleanArray bla, jbyteArray ba, jcharArray ca, jshortArray sa, jintArray ia, jlongArray la, jfloatArray fa, jdoubleArray da, jstringArray stra)
 {
     NATIVE_PROLOG
@@ -146,10 +149,10 @@ TEST_CASE( "testCallingJava", "[integration]" )
 TEST_CASE( "testPrimitiveArray", "[integration]" )
 {
     JNIEnv * env = jni_provider::get_jni();
-    CHECK_NOTHROW(java_classes::get<TestSmJNI>().testPrimitiveArray(env));
+    CHECK_NOTHROW(java_classes::get<TestSimpleJNI>().testPrimitiveArray(env));
 }
 
-jcharArray JNICALL TestSmJNI::doTestPrimitiveArray(JNIEnv * env, jclass, jintArray array)
+jcharArray JNICALL TestSimpleJNI::doTestPrimitiveArray(JNIEnv * env, jclass, jintArray array)
 {
     NATIVE_PROLOG
 
@@ -190,10 +193,10 @@ jcharArray JNICALL TestSmJNI::doTestPrimitiveArray(JNIEnv * env, jclass, jintArr
 TEST_CASE( "testObjectArray", "[integration]" )
 {
     JNIEnv * env = jni_provider::get_jni();
-    CHECK_NOTHROW(java_classes::get<TestSmJNI>().testObjectArray(env));
+    CHECK_NOTHROW(java_classes::get<TestSimpleJNI>().testObjectArray(env));
 }
 
-jstringArray JNICALL TestSmJNI::doTestObjectArray(JNIEnv * env, jclass, jstringArray array)
+jstringArray JNICALL TestSimpleJNI::doTestObjectArray(JNIEnv * env, jclass, jstringArray array)
 {
     NATIVE_PROLOG
 
@@ -218,10 +221,10 @@ jstringArray JNICALL TestSmJNI::doTestObjectArray(JNIEnv * env, jclass, jstringA
 TEST_CASE( "testDirectBuffer", "[integration]" )
 {
     JNIEnv * env = jni_provider::get_jni();
-    CHECK_NOTHROW(java_classes::get<TestSmJNI>().testDirectBuffer(env));
+    CHECK_NOTHROW(java_classes::get<TestSimpleJNI>().testDirectBuffer(env));
 }
 
-jByteBuffer JNICALL TestSmJNI::doTestDirectBuffer(JNIEnv * env, jclass, jByteBuffer buffer)
+jByteBuffer JNICALL TestSimpleJNI::doTestDirectBuffer(JNIEnv * env, jclass, jByteBuffer buffer)
 {
     NATIVE_PROLOG
 

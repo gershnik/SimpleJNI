@@ -1,6 +1,8 @@
-# SmJNI library #
+# SimpleJNI library #
 
-A powerful lighweight C++ wrapper for JNI
+A powerful lightweight C++ wrapper for JNI
+
+**Note**: this library is based on SmJNI (https://github.com/smartsheet-mobile/smjni) by the same author, which is no longer maintained. 
 
 ## Purpose
 
@@ -19,9 +21,9 @@ classes partially natively or using Java from within C++ application.
 
 ### Goals
 
-*    Never have to figure out things like "([BLjava/lang/String;)Ljava/lang/Throwable;"
+*    Never have to figure out things like `([BLjava/lang/String;)Ljava/lang/Throwable;`
 *    Never have to call vararg (...) functions hoping that you got the arguments right. And debug weird behavior when you didn't...
-*    Type safety: never have to worry "is this jobject what I think it is?"
+*    Type safety: never have to worry "is this `jobject` what I think it is?"
 *    RAII wrappers for anything that has do/undo semantics
 *    Proper error handling. Use exceptions instead of error-prone and ill-defined manual checks.
      If Java call threw an exception it should automatically become C++ exception. You should also be able to easily
@@ -34,7 +36,7 @@ classes partially natively or using Java from within C++ application.
 *    All of the above should be accomplished without sacrificing performance compared to "raw" JNI use. However, if there
      is an unavoidable choice between marginal performance gain and correctness/safety the later should win.
 *    All of the JNI functionality required to write correct code should be available in the library. There should never be a need
-     to manually invoke JNIEnv methods. Conversely dangerous (e.g. ThrowNew) and unnecessary JNI methods should not
+     to manually invoke JNIEnv methods. Conversely dangerous (e.g. `ThrowNew`) and unnecessary JNI methods should not
      be exposed.
 *    Modularity: it should be possible to mix and match parts of library with hand written JNI code if desired. It should not
      force all or nothing approach.
@@ -42,16 +44,16 @@ classes partially natively or using Java from within C++ application.
 ### Non-Goals
 
 *    Automatically expose C or C++ code to Java
-*    Completely hide JNI fundamentals: existence of per thread JNIEnv *, global/local reference semantics etc. from C++ code
+*    Completely hide JNI fundamentals: existence of per thread `JNIEnv *`, global/local reference semantics etc. from C++ code
 *    Provide C++ wrappers for common Java classes
 *    Provide Java wrappers for common C++ classes
 *    Support old C++ compilers and libraries. This library requires C++17. 
 
 ## Building
 
-Instructions on how to build SmJNI are available on project [wiki](https://github.com/smartsheet-mobile/smjni/wiki/Building)
+Instructions on how to build SimpleJNI are available on project [wiki](https://github.com/gershnik/SimpleJNI/wiki/Building)
 
 ## User's Guide
 
-User's guide (work in progress) is also available on [wiki](https://github.com/smartsheet-mobile/smjni/wiki/User%27s-Guide)
+User's guide (work in progress) is also available on [wiki](https://github.com/gershnik/SimpleJNI/wiki/User%27s-Guide)
 

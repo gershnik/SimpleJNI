@@ -1,5 +1,5 @@
 /*
- Copyright 2021 SmJNI Contributors
+ Copyright 2021 SimpleJNI Contributors
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@ plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
 }
+
+def libraryPomName = "SimpleJNI KSP Code Generator"
+def libraryDescription = "KSP annotation processor that generates SimpleJNI C++ code from Java annotations"
+
 
 dependencies {
     implementation "com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.0"
@@ -43,7 +47,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = kotlinJvmTarget
     }
 }
 
@@ -75,7 +79,7 @@ task generateTestData(type: Test) {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'SmJNI KSP Code Generator',
+        attributes 'Implementation-Title': libraryPomName,
                    'Implementation-Version': project.version
     }
     metaInf { from('META-INF') }
@@ -89,15 +93,9 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
-def libraryDescription = "KSP annotation processor that generates SmJNI C++ code from Java annotations"
-def libraryWebsiteUrl = 'https://github.com/smartsheet-mobile/smjni'
-def libraryVcsUrl = 'https://github.com/smartsheet-mobile/smjni.git'
-def libraryIssueTrackerUrl = 'https://github.com/smartsheet-mobile/smjni/issues'
-
 publishing {
-    if (project.hasProperty("localRepo")) {
-
-        repositories {
+    repositories {
+        if (project.hasProperty("localRepo")) {
             maven {
                 name "localRepo"
                 url project.getProperty("localRepo")
@@ -106,23 +104,24 @@ publishing {
     }
     publications {
         thePublication(MavenPublication) {
+            artifactId "${artifactIdPrefix}${project.name}"
             from components.java
             artifact sourceJar
             //artifact javadocJar
             pom {
-                name = "SmJNI KSP Code Generator"
+                name = libraryPomName
                 description = libraryDescription
-                url = libraryWebsiteUrl
+                url = websiteUrl
                 licenses {
                     license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        name = licenseName
+                        url = licenseUrl
                     }
                 }
                 scm {
-                    connection = "git@github.com:smartsheet-mobile/smjni.git"
-                    developerConnection = "git@github.com:smartsheet-mobile/smjni.git"
-                    url = libraryVcsUrl
+                    connection = gitUrl
+                    developerConnection = gitUrl
+                    url = vcsUrl
                 }
             }
         }

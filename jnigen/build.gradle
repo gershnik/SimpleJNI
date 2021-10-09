@@ -1,4 +1,7 @@
 /*
+ Copyright 2021 SimpleJNI Contributors
+
+ Incorporates work covered by the following copyright
  Copyright 2014 Smartsheet Inc.
  Copyright 2019 SmJNI Contributors
 
@@ -16,7 +19,7 @@
 */
 buildscript {
     ext.kotlin_version = '1.5.31'
-    ext.junit_version = '5.8.0'
+    ext.junit_version = '5.8.1'
 
     repositories {
         mavenCentral()
@@ -59,7 +62,16 @@ allprojects {
     }
 
     project.version = getOurVersion()
-    project.group "smjni.jnigen"
+    project.group "io.github.gershnik"
+    project.ext.artifactIdPrefix = "smjni-jnigen-"
+    project.ext.gitUrl = "git@github.com:gershnik/SimpleJNI.git"
+    project.ext.licenseName = "The Apache License, Version 2.0"
+    project.ext.licenseUrl = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+    project.ext.websiteUrl = 'https://github.com/gershnik/SimpleJNI'
+    project.ext.vcsUrl = 'https://github.com/gershnik/SimpleJNI.git'
+    project.ext.issueTrackerUrl = 'https://github.com/gershnik/SimpleJNI/issues'
+
+    project.ext.kotlinJvmTarget = "1.8"
 }
 
 task bundleCpp(type: Zip, group: 'publishing') {
@@ -78,7 +90,7 @@ task bundleCpp(type: Zip, group: 'publishing') {
          '../NOTICE.txt',
          '../README.md')
 
-    setArchiveFileName("smjni-${project.version}-cpp-only.zip")
+    setArchiveFileName("SimpleJNI-${project.version}-cpp-only.zip")
     setDestinationDirectory(rootProject.buildDir)
 }
 
@@ -90,7 +102,7 @@ task bundleJava(type: Zip, group: 'publishing',
          new File(rootProject.buildDir, 'jnigen-annotations.jar'))
 
     includeEmptyDirs true
-    setArchiveFileName("smjni-${project.version}-jnigen.zip")
+    setArchiveFileName("SimpleJNI-${project.version}-jnigen.zip")
     setDestinationDirectory(rootProject.buildDir)
 }
 

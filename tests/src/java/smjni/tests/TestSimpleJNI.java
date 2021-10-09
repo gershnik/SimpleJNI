@@ -1,4 +1,7 @@
 /*
+ Copyright 2021 SimpleJNI Contributors
+
+ Incorporates work covered by the following copyright
  Copyright 2019 SmJNI Contributors
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,8 +27,8 @@ import java.nio.ByteBuffer;
 import static org.junit.jupiter.api.Assertions.*;
 
 
-@ExposeToNative(className="TestSmJNI")
-class TestSmJNI  {
+@ExposeToNative(className="TestSimpleJNI")
+class TestSimpleJNI  {
 
     @ExposeToNative(typeName="jBase", className="Base")
     static class Base

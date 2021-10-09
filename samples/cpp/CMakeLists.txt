@@ -4,16 +4,17 @@
 
 cmake_minimum_required(VERSION 3.18.1)
 
+include(FetchContent)
+
 project("myapplication")
 
-#Fetch SmJNI library
-include(FetchContent)
-FetchContent_Declare(smjni
-        GIT_REPOSITORY git@github.com:gershnik/smjni.git
-        GIT_TAG 5a0f5197
+#Fetch SimpleJNI library
+FetchContent_Declare(SimpleJNI
+        GIT_REPOSITORY git@github.com:gershnik/SimpleJNI.git
+        GIT_TAG 5e57c0ae
         GIT_SHALLOW TRUE
 )
-FetchContent_MakeAvailable(smjni)
+FetchContent_MakeAvailable(SimpleJNI)
 
 
 add_library(myapplication SHARED
@@ -31,7 +32,7 @@ find_library(log-lib log)
 
 target_link_libraries(myapplication 
 PRIVATE
-    #Declare dependecy on SmJNI
+    #Declare dependecy on SimpleJNI (the library name is 'smjni' for backward compatibility)
     smjni
     ${log-lib} 
 )

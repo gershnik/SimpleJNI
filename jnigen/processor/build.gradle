@@ -1,4 +1,7 @@
 /*
+ Copyright 2021 SimpleJNI Contributors
+
+ Incorporates work covered by the following copyright
  Copyright 2014 Smartsheet Inc.
  Copyright 2019 SmJNI Contributors
 
@@ -15,10 +18,14 @@
  limitations under the License.
 */
 
+
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
 }
+
+def libraryPomName = "SimpleJNI Code Generator"
+def libraryDescription = "Annotation processor that generates SimpleJNI C++ code from Java annotations"
 
 targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -44,7 +51,7 @@ sourceSets {
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = kotlinJvmTarget
     }
 }
 
@@ -77,7 +84,7 @@ task generateTestData(type: Test) {
 
 jar {
     manifest {
-        attributes 'Implementation-Title': 'SmJNI Code Generator',
+        attributes 'Implementation-Title': libraryPomName,
                    'Implementation-Version': project.version,
                    'Main-Class': 'smjni.jnigen.Runner'
     }
@@ -96,15 +103,10 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
-def libraryDescription = "Annotation processor that generates SmJNI C++ code from Java annotations"
-def libraryWebsiteUrl = 'https://github.com/smartsheet-mobile/smjni'
-def libraryVcsUrl = 'https://github.com/smartsheet-mobile/smjni.git'
-def libraryIssueTrackerUrl = 'https://github.com/smartsheet-mobile/smjni/issues'
 
 publishing {
-    if (project.hasProperty("localRepo")) {
-
-        repositories {
+    repositories {
+        if (project.hasProperty("localRepo")) {
             maven {
                 name "localRepo"
                 url project.getProperty("localRepo")
@@ -113,23 +115,24 @@ publishing {
     }
     publications {
         thePublication(MavenPublication) {
+            artifactId "${artifactIdPrefix}${project.name}"
             from components.java
             artifact sourceJar
             //artifact javadocJar
             pom {
-                name = "SmJNI Code Generator"
+                name = libraryPomName
                 description = libraryDescription
-                url = libraryWebsiteUrl
+                url = websiteUrl
                 licenses {
                     license {
-                        name = "The Apache License, Version 2.0"
-                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        name = licenseName
+                        url = licenseUrl
                     }
                 }
                 scm {
-                    connection = "git@github.com:smartsheet-mobile/smjni.git"
-                    developerConnection = "git@github.com:smartsheet-mobile/smjni.git"
-                    url = libraryVcsUrl
+                    connection = gitUrl
+                    developerConnection = gitUrl
+                    url = vcsUrl
                 }
             }
         }

@@ -4,7 +4,11 @@
 ==  in this case for the Smartsheet SmJNI distribution.                ==
 =========================================================================
 
-Smartsheet SmJNI
+SimpleJNI
+Copyright 2021 SimpleJNI Contributors
+
+This product incorporates work covered by the following copyright
+
 Copyright 2014 Smartsheet Inc.
 Copyright 2019 SmJNI Contributors
 

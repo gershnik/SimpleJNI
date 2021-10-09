@@ -1,4 +1,7 @@
 /*
+ Copyright 2021 SimpleJNI Contributors
+
+ Incorporates work covered by the following copyright
  Copyright 2019 SmJNI Contributors
 
  Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,7 +58,7 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)
     return 0;
 }
 
-jint JNICALL TestSmJNI::testMain(JNIEnv * env, jclass, jstringArray args)
+jint JNICALL TestSimpleJNI::testMain(JNIEnv * env, jclass, jstringArray args)
 {
     java_array_access argsAccess(env, args);
     std::vector<std::string> cppArgs;
