@@ -44,11 +44,9 @@ java {
 }
 
 dependencies {
-    implementation 'smjni.jnigen:annotations:SNAPSHOT'
+    implementation 'io.github.gershnik:smjni-jnigen-annotations:SNAPSHOT'
     implementation 'org.junit.jupiter:junit-jupiter-api:5.8.0'
-    annotationProcessor("smjni.jnigen:processor:SNAPSHOT@jar") {
-        transitive true
-    }
+    annotationProcessor("io.github.gershnik:smjni-jnigen-processor:SNAPSHOT")
 }
 
 tasks.withType(JavaCompile) {
