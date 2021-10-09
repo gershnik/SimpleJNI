@@ -21,10 +21,11 @@
 plugins {
     id 'java'
     id 'maven-publish'
+    id 'signing'
 }
 
-def libraryPomName = "SimpleJNI Code Generation Annotations"
-def libraryDescription = "Annotations used by SimpleJNI JniGen annotation processor to generate C++ code"
+project.ext.libraryPomName = "SimpleJNI Code Generation Annotations"
+project.ext.libraryDescription = "Annotations used by SimpleJNI JniGen annotation processor to generate C++ code"
 
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -58,37 +59,6 @@ task javadocJar(type: Jar) {
     classifier 'javadoc'
 }
 
-publishing {
-    repositories {
-        if (project.hasProperty("localRepo")) {
-            maven {
-                name "localRepo"
-                url project.getProperty("localRepo")
-            }
-        }
-    }
-    publications {
-        thePublication(MavenPublication) {
-            artifactId "${artifactIdPrefix}${project.name}"
-            from components.java
-            artifact sourceJar
-            artifact javadocJar
-            pom {
-                name = libraryPomName
-                description = libraryDescription
-                url = websiteUrl
-                licenses {
-                    license {
-                        name = licenseName
-                        url = licenseUrl
-                    }
-                }
-                scm {
-                    connection = gitUrl
-                    developerConnection = gitUrl
-                    url = vcsUrl
-                }
-            }
-        }
-    }
-}
+apply from: '../publishing.gradle'
+
+

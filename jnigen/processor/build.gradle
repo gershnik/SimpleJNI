@@ -22,10 +22,11 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
+    id 'signing'
 }
 
-def libraryPomName = "SimpleJNI Code Generator"
-def libraryDescription = "Annotation processor that generates SimpleJNI C++ code from Java annotations"
+project.ext.libraryPomName = "SimpleJNI Code Generator"
+project.ext.libraryDescription = "Annotation processor that generates SimpleJNI C++ code from Java annotations"
 
 targetCompatibility = JavaVersion.VERSION_1_8
 
@@ -103,41 +104,12 @@ task sourceJar(type: Jar) {
     classifier "sources"
 }
 
-
-publishing {
-    repositories {
-        if (project.hasProperty("localRepo")) {
-            maven {
-                name "localRepo"
-                url project.getProperty("localRepo")
-            }
-        }
-    }
-    publications {
-        thePublication(MavenPublication) {
-            artifactId "${artifactIdPrefix}${project.name}"
-            from components.java
-            artifact sourceJar
-            //artifact javadocJar
-            pom {
-                name = libraryPomName
-                description = libraryDescription
-                url = websiteUrl
-                licenses {
-                    license {
-                        name = licenseName
-                        url = licenseUrl
-                    }
-                }
-                scm {
-                    connection = gitUrl
-                    developerConnection = gitUrl
-                    url = vcsUrl
-                }
-            }
-        }
-    }
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier 'javadoc'
 }
+
+apply from: '../publishing.gradle'
 
 
 

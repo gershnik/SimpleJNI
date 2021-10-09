@@ -17,10 +17,11 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm'
     id 'maven-publish'
+    id 'signing'
 }
 
-def libraryPomName = "SimpleJNI KSP Code Generator"
-def libraryDescription = "KSP annotation processor that generates SimpleJNI C++ code from Java annotations"
+project.ext.libraryPomName = "SimpleJNI KSP Code Generator"
+project.ext.libraryDescription = "KSP annotation processor that generates SimpleJNI C++ code from Java annotations"
 
 
 dependencies {
@@ -88,42 +89,18 @@ jar {
     setDestinationDirectory(rootProject.buildDir)
 }
 
+javadoc {
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava, sourceSets.main.kotlin
     classifier "sources"
 }
 
-publishing {
-    repositories {
-        if (project.hasProperty("localRepo")) {
-            maven {
-                name "localRepo"
-                url project.getProperty("localRepo")
-            }
-        }
-    }
-    publications {
-        thePublication(MavenPublication) {
-            artifactId "${artifactIdPrefix}${project.name}"
-            from components.java
-            artifact sourceJar
-            //artifact javadocJar
-            pom {
-                name = libraryPomName
-                description = libraryDescription
-                url = websiteUrl
-                licenses {
-                    license {
-                        name = licenseName
-                        url = licenseUrl
-                    }
-                }
-                scm {
-                    connection = gitUrl
-                    developerConnection = gitUrl
-                    url = vcsUrl
-                }
-            }
-        }
-    }
+task javadocJar(type: Jar) {
+    from javadoc
+    classifier 'javadoc'
 }
+
+apply from: '../publishing.gradle'

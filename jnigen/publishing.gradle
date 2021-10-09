@@ -1,0 +1,57 @@
+publishing {
+    repositories {
+        if (project.hasProperty("localRepo")) {
+            maven {
+                name "localRepo"
+                url project.getProperty("localRepo")
+            }
+        }
+        if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
+            maven {
+                name "ossrh"
+                url project.version.endsWith('SNAPSHOT') ?
+                        "https://s01.oss.sonatype.org/content/repositories/snapshots/" :
+                        "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+                credentials {
+                    username = project.getProperty('ossrhUsername')
+                    password = project.getProperty('ossrhPassword')
+                }
+            }
+        }
+    }
+    publications {
+        thePublication(MavenPublication) {
+            artifactId "${artifactIdPrefix}${project.name}"
+            from components.java
+            artifact sourceJar
+            artifact javadocJar
+            pom {
+                name = libraryPomName
+                description = libraryDescription
+                url = websiteUrl
+                licenses {
+                    license {
+                        name = licenseName
+                        url = licenseUrl
+                    }
+                }
+                scm {
+                    connection = gitUrl
+                    developerConnection = gitUrl
+                    url = vcsUrl
+                }
+                developers {
+                    developer {
+                        id = 'gershnik'
+                        name = 'gershnik'
+                        email = 'gershnik-maven@gershnik.info'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.thePublication
+}
