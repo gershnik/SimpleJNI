@@ -1,5 +1,5 @@
 gradle.ext.jniGenMavenUrl = 'https://github.com/gershnik/SimpleJNI/raw/maven'
-gradle.ext.jniGenVersion = '3.2'
+gradle.ext.jniGenVersion = '3.5'
 gradle.ext.cmakeVersion = '3.18.1'
 gradle.ext.compileSdk = 30
 gradle.ext.minSdk = 21
