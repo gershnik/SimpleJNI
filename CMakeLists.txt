@@ -18,14 +18,16 @@
 cmake_minimum_required(VERSION 3.5)
 project(smjni)
 
-if (NOT ANDROID)
-    set(JAVA_AWT_INCLUDE_PATH NotNeeded)
-    set(JAVA_AWT_LIBRARY NotNeeded)
-    find_package(JNI)
+if(NOT DEFINED JNI_INCLUDE_DIRS)
+    if (NOT ANDROID)
+        set(JAVA_AWT_INCLUDE_PATH NotNeeded)
+        set(JAVA_AWT_LIBRARY NotNeeded)
+        find_package(JNI)
 
-    set(JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} CACHE PATH "JNI include dirs")
-else()
-    set(JNI_INCLUDE_DIRS "")
+        set(JNI_INCLUDE_DIRS ${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} CACHE PATH "JNI include dirs")
+    else()
+        set(JNI_INCLUDE_DIRS "")
+    endif()
 endif()
 
 
