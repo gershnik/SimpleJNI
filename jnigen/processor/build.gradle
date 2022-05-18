@@ -33,7 +33,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     compileOnly files("${System.properties['java.home']}/../lib/tools.jar")
 
-    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.4')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.8')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testImplementation "org.hamcrest:hamcrest:2.2"
@@ -48,6 +48,23 @@ sourceSets {
     main.resources.srcDirs = ['res']
     test.kotlin.srcDirs = ['test/src']
     test.resources.srcDirs = ['test/res']
+}
+
+if (JavaVersion.current() >= JavaVersion.VERSION_16) {
+    test {
+        jvmArgs(
+                "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+                "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+        )
+    }
 }
 
 compileKotlin {

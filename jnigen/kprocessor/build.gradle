@@ -25,10 +25,10 @@ project.ext.libraryDescription = "KSP annotation processor that generates Simple
 
 
 dependencies {
-    implementation "com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.0"
+    implementation "com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.5"
 
-    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.4')
-    testImplementation('com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.4')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.8')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.8')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testImplementation "org.hamcrest:hamcrest:2.2"

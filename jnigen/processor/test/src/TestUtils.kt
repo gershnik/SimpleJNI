@@ -79,6 +79,8 @@ fun collectOutput(result: KotlinCompilation.Result) : List<String> {
     return result.messages.lines().mapNotNull {
         if (it.startsWith("i: Note: JNIGen:"))
             it.removePrefix("i: Note: ")
+        else if (it.startsWith("e: Note: JNIGen:"))
+            it.removePrefix("e: Note: ")
         else
             null
     }
