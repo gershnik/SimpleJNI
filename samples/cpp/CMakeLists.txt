@@ -11,7 +11,7 @@ project("myapplication")
 #Fetch SimpleJNI library
 FetchContent_Declare(SimpleJNI
         GIT_REPOSITORY git@github.com:gershnik/SimpleJNI.git
-        GIT_TAG d0237019cc0353f6c7508ba8a1e6d87ec5d90978
+        GIT_TAG 3.6
         GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(SimpleJNI)
