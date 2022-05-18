@@ -25,6 +25,8 @@
 #include <smjni/java_cast.h>
 #include <smjni/ct_string.h>
 
+#include <limits>
+
 namespace smjni
 {
 
