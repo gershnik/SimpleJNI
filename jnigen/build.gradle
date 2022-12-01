@@ -18,7 +18,7 @@
  limitations under the License.
 */
 buildscript {
-    ext.kotlin_version = '1.6.21'
+    ext.kotlin_version = '1.7.21'
     ext.junit_version = '5.8.2'
 
     repositories {

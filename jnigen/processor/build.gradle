@@ -33,7 +33,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     compileOnly files("${System.properties['java.home']}/../lib/tools.jar")
 
-    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.8')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.9')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testImplementation "org.hamcrest:hamcrest:2.2"
