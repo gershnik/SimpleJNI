@@ -25,10 +25,10 @@ project.ext.libraryDescription = "KSP annotation processor that generates Simple
 
 
 dependencies {
-    implementation "com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.8"
+    implementation "com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.9"
 
-    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.4.9')
-    testImplementation('com.github.tschuchortdev:kotlin-compile-testing-ksp:1.4.9')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing:1.5.0')
+    testImplementation('com.github.tschuchortdev:kotlin-compile-testing-ksp:1.5.0')
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version"
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_version"
     testImplementation "org.hamcrest:hamcrest:2.2"
@@ -46,10 +46,8 @@ sourceSets {
 
 targetCompatibility = JavaVersion.VERSION_1_8
 
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = kotlinJvmTarget
-    }
+kotlin {
+    jvmToolchain(kotlinJvmTarget)
 }
 
 test {
@@ -73,8 +71,8 @@ task generateTestData(type: Test) {
     environment('JNIGEN_ENABLE_TEST_GENERATION', 'true')
 
     reports {
-        html.enabled false
-        junitXml.enabled = false
+        html.required = false
+        junitXml.required = false
     }
 }
 
@@ -95,12 +93,14 @@ javadoc {
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava, sourceSets.main.kotlin
-    classifier "sources"
+    archiveClassifier.convention('sources')
+    archiveClassifier.set('sources')
 }
 
 task javadocJar(type: Jar) {
     from javadoc
-    classifier 'javadoc'
+    archiveClassifier.convention('javadoc')
+    archiveClassifier.set('javadoc')
 }
 
 apply from: '../publishing.gradle'

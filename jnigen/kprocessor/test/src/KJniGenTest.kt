@@ -17,7 +17,6 @@
 import com.google.devtools.ksp.KspExperimental
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -88,7 +87,7 @@ class KJniGenTest {
         listPath(expectedDir)
             .filter {setOf("h", "cpp", "txt").contains(it.extension) }
             .forEach {
-                assertFileContent(cppPath/it.fileName, Files.readString(it))
+                assertFileContent(cppPath/it.fileName, it.toFile().readText())
             }
         listPath(cppPath)
             .filter {setOf("h", "cpp", "txt").contains(it.extension) }
