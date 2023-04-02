@@ -29,6 +29,8 @@
 #include <cxxabi.h>
 #endif
 
+#include <algorithm>
+
 using namespace smjni;
 
 
