@@ -19,8 +19,7 @@
 
 #include <smjni/smjni.h>
 
-#define CATCH_CONFIG_RUNNER
-#include "catch.hpp"
+#include <catch2/catch_session.hpp>
 
 #include "test_util.h"
 
@@ -29,6 +28,8 @@
 #include <memory>
 #include <cxxabi.h>
 #endif
+
+#include <algorithm>
 
 using namespace smjni;
 

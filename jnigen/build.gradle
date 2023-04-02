@@ -18,7 +18,7 @@
  limitations under the License.
 */
 buildscript {
-    ext.kotlin_version = '1.7.21'
+    ext.kotlin_version = '1.8.0'
     ext.junit_version = '5.8.2'
 
     repositories {
@@ -71,7 +71,7 @@ allprojects {
     project.ext.vcsUrl = 'https://github.com/gershnik/SimpleJNI.git'
     project.ext.issueTrackerUrl = 'https://github.com/gershnik/SimpleJNI/issues'
 
-    project.ext.kotlinJvmTarget = "1.8"
+    project.ext.kotlinJvmTarget = 8
 }
 
 task bundleCpp(type: Zip, group: 'publishing') {

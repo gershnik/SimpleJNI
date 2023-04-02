@@ -30,6 +30,11 @@ project.ext.libraryDescription = "Annotation processor that generates SimpleJNI 
 
 targetCompatibility = JavaVersion.VERSION_1_8
 
+kotlin {
+    jvmToolchain(kotlinJvmTarget)
+}
+
+
 dependencies {
     compileOnly files("${System.properties['java.home']}/../lib/tools.jar")
 
@@ -50,34 +55,16 @@ sourceSets {
     test.resources.srcDirs = ['test/res']
 }
 
-if (JavaVersion.current() >= JavaVersion.VERSION_16) {
-    test {
-        jvmArgs(
-                "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-                "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
-        )
-    }
-}
-
-compileKotlin {
-    kotlinOptions {
-        jvmTarget = kotlinJvmTarget
-    }
-}
-
 test {
     useJUnitPlatform()
     outputs.upToDateWhen {false}
     systemProperty('test.data.location', new File(rootProject.projectDir, "test_data"))
     systemProperty('test.working.dir', new File(buildDir, "test-output"))
+    //testLogging.showStandardStreams = true
+    testLogging.showExceptions = true
+    testLogging.showStackTraces = true
+    testLogging.showCauses = true
+    testLogging.exceptionFormat = "full"
 }
 
 task generateTestData(type: Test) {
@@ -94,8 +81,8 @@ task generateTestData(type: Test) {
     environment('JNIGEN_ENABLE_TEST_GENERATION', 'true')
 
     reports {
-        html.enabled false
-        junitXml.enabled = false
+        html.required = false
+        junitXml.required = false
     }
 }
 
@@ -118,12 +105,14 @@ javadoc {
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava, sourceSets.main.kotlin
-    classifier "sources"
+    archiveClassifier.convention("sources")
+    archiveClassifier.set("sources")
 }
 
 task javadocJar(type: Jar) {
     from javadoc
-    classifier 'javadoc'
+    archiveClassifier.convention('javadoc')
+    archiveClassifier.set('javadoc')
 }
 
 apply from: '../publishing.gradle'

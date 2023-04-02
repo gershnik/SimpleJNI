@@ -20,8 +20,8 @@ package smjni.jnigen
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
-import kotlin.collections.ArrayList
-import com.sun.tools.javac.Main as Javac
+import javax.tools.JavaCompiler
+import javax.tools.ToolProvider
 
 object Runner {
 
@@ -48,7 +48,9 @@ object Runner {
 
             javacArgs += files
 
-            Javac.main(javacArgs.toTypedArray())
+            val compiler: JavaCompiler = ToolProvider.getSystemJavaCompiler()
+
+            compiler.run(null, null, null, *(javacArgs.toTypedArray()))
         } catch (ex: Exception) {
             throw RuntimeException(ex)
         }

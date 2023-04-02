@@ -51,12 +51,14 @@ javadoc {
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allJava
-    classifier "sources"
+    archiveClassifier.convention("sources")
+    archiveClassifier.set("sources")
 }
 
 task javadocJar(type: Jar) {
     from javadoc
-    classifier 'javadoc'
+    archiveClassifier.convention('javadoc')
+    archiveClassifier.set('javadoc')
 }
 
 apply from: '../publishing.gradle'

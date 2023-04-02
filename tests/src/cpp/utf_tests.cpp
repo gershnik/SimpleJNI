@@ -16,7 +16,7 @@
 
 #include <smjni/smjni.h>
 
-#include "catch.hpp"
+#include <catch2/catch_test_macros.hpp>
 
 using namespace smjni;
 
