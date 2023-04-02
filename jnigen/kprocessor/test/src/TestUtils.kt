@@ -52,9 +52,9 @@ fun compileFiles(workingDir: Path,
     }.compile()
 }
 
-fun assertFileContent(path: Path, content: String) {
+fun assertFileContent(path: Path, content: List<String>) {
     assertTrue(Files.exists(path))
-    assertThat(path.toFile().readText(), Is(equalTo(content)))
+    assertThat(path.toFile().readLines(), Is(equalTo(content)))
 }
 
 fun loadArguments(argsPath: Path) : Map<String, String> {

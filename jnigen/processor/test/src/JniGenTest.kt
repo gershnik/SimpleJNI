@@ -83,7 +83,7 @@ class JniGenTest {
         listPath(expectedDir)
             .filter {setOf("h", "cpp", "txt").contains(it.extension) }
             .forEach {
-                assertFileContent(cppPath/it.fileName, it.toFile().readText())
+                assertFileContent(cppPath/it.fileName, it.toFile().readLines())
             }
         listPath(cppPath)
             .filter {setOf("h", "cpp", "txt").contains(it.extension) }
