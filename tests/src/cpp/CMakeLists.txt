@@ -16,10 +16,21 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+include(FetchContent)
+
+FetchContent_Declare(catch2
+    GIT_REPOSITORY  https://github.com/catchorg/Catch2.git
+    GIT_TAG         v3.3.2
+    GIT_PROGRESS    TRUE
+)
+
+FetchContent_MakeAvailable(catch2)
+
 add_library(smjnitests SHARED EXCLUDE_FROM_ALL)
 
 target_link_libraries(smjnitests PRIVATE
     smjni
+    Catch2::Catch2
 )
 
 set_property(TARGET smjnitests PROPERTY CXX_STANDARD 17)
@@ -27,6 +38,8 @@ set_property(TARGET smjnitests PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET smjnitests PROPERTY CXX_VISIBILITY_PRESET hidden)
 set_property(TARGET smjnitests PROPERTY VISIBILITY_INLINES_HIDDEN ON)
 set_property(TARGET smjnitests PROPERTY POSITION_INDEPENDENT_CODE ON)
+
+set_property(TARGET Catch2 PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_compile_options(smjnitests 
     PRIVATE 
@@ -39,7 +52,6 @@ target_compile_options(smjnitests
 file(GLOB GENERATED_FILES CONFIGURE_DEPENDS generated/*.h)
 
 target_sources(smjnitests PRIVATE
-    catch.hpp
     integration_tests.cpp
     java_ref_tests.cpp
     smjnitests.cpp

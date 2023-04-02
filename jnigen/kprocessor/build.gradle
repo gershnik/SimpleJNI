@@ -55,6 +55,11 @@ test {
     outputs.upToDateWhen {false}
     systemProperty('test.data.location', new File(rootProject.projectDir, "test_data"))
     systemProperty('test.working.dir', new File(buildDir, "test-output"))
+    //testLogging.showStandardStreams = true
+    testLogging.showExceptions = true
+    testLogging.showStackTraces = true
+    testLogging.showCauses = true
+    testLogging.exceptionFormat = "full"
 }
 
 task generateTestData(type: Test) {
