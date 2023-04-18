@@ -15,6 +15,6 @@
  limitations under the License.
 */
 
-include ":processor"
-include ":kprocessor"
-include ":annotations"
+include(":processor")
+include(":kprocessor")
+include(":annotations")
