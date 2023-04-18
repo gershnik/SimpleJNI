@@ -23,11 +23,15 @@ plugins {
 val libraryPomName by project.extra("SimpleJNI KSP Code Generator")
 val libraryDescription by project.extra("KSP annotation processor that generates SimpleJNI C++ code from Java annotations")
 val kotlinJvmTarget: Int by project.extra
-val kotlin_version: String by rootProject.extra
-val junit_version: String by rootProject.extra
+val javaTargetCompatibility: JavaVersion by project.extra
+val kotlinVersion: String by (gradle as ExtensionAware).extra
+val kspVersion: String by (gradle as ExtensionAware).extra
+val junitVersion: String by (gradle as ExtensionAware).extra
+val kotlinCompileTestingVersion: String by (gradle as ExtensionAware).extra
+val hamcrestVersion: String by (gradle as ExtensionAware).extra
 
 java {
-    targetCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = javaTargetCompatibility
 }
 
 kotlin {
@@ -35,16 +39,16 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:$kotlin_version-1.0.9")
+    implementation("com.google.devtools.ksp:symbol-processing-api:$kotlinVersion-$kspVersion")
 
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.5.0")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:1.5.0")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
-    testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestingVersion")
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:$kotlinCompileTestingVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testImplementation("org.hamcrest:hamcrest:$hamcrestVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation(project(":annotations"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 sourceSets {

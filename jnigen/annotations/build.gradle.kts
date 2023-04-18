@@ -26,10 +26,11 @@ plugins {
 
 val libraryPomName by project.extra("SimpleJNI Code Generation Annotations")
 val libraryDescription by project.extra("Annotations used by SimpleJNI JniGen annotation processor to generate C++ code")
+val javaTargetCompatibility: JavaVersion by project.extra
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = javaTargetCompatibility
 }
 
 sourceSets {

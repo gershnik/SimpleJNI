@@ -28,11 +28,14 @@ plugins {
 val libraryPomName by project.extra("SimpleJNI Code Generator")
 val libraryDescription by project.extra("Annotation processor that generates SimpleJNI C++ code from Java annotations")
 val kotlinJvmTarget: Int by project.extra
-val kotlin_version: String by rootProject.extra
-val junit_version: String by rootProject.extra
+val javaTargetCompatibility: JavaVersion by project.extra
+val kotlinVersion: String by (gradle as ExtensionAware).extra
+val junitVersion: String by (gradle as ExtensionAware).extra
+val kotlinCompileTestingVersion: String by (gradle as ExtensionAware).extra
+val hamcrestVersion: String by (gradle as ExtensionAware).extra
 
 java {
-    targetCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = javaTargetCompatibility
 }
 
 kotlin {
@@ -42,13 +45,13 @@ kotlin {
 dependencies {
     compileOnly(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlin_version")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junit_version")
-    testImplementation("org.hamcrest:hamcrest:2.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junit_version")
+    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestingVersion")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
+    testImplementation("org.hamcrest:hamcrest:$hamcrestVersion")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation(project(":annotations"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_version")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
 

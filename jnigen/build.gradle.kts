@@ -18,21 +18,14 @@
  limitations under the License.
 */
 buildscript {
-    val kotlin_version by extra("1.8.0")
-    val junit_version by extra("5.8.2")
-
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        val kotlinVersion:String by (gradle as ExtensionAware).extra
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
-}
-
-plugins {
-    val kotlin_version: String by extra
-    id("org.jetbrains.kotlin.jvm") version "$kotlin_version" apply false
 }
 
 fun getOurVersion(): String {
@@ -73,6 +66,7 @@ allprojects {
     val issueTrackerUrl by project.extra("https://github.com/gershnik/SimpleJNI/issues")
 
     val kotlinJvmTarget by project.extra(8)
+    val javaTargetCompatibility by project.extra(JavaVersion.VERSION_1_8)
 }
 
 tasks.register<Zip>("bundleCpp") {
