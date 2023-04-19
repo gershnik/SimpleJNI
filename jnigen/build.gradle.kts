@@ -58,12 +58,16 @@ allprojects {
     project.version = getOurVersion()
     project.group = "io.github.gershnik"
     val artifactIdPrefix by project.extra("smjni-jnigen-")
-    val gitUrl by project.extra("git@github.com:gershnik/SimpleJNI.git")
-    val licenseName by project.extra("The Apache License, Version 2.0")
-    val licenseUrl by project.extra("http://www.apache.org/licenses/LICENSE-2.0.txt")
-    val websiteUrl by project.extra("https://github.com/gershnik/SimpleJNI")
-    val vcsUrl by project.extra("https://github.com/gershnik/SimpleJNI.git")
-    val issueTrackerUrl by project.extra("https://github.com/gershnik/SimpleJNI/issues")
+    val pomData by project.extra(mapOf(
+        "gitUrl" to "git@github.com:gershnik/SimpleJNI.git",
+        "licenseName" to "The Apache License, Version 2.0",
+        "licenseUrl" to "http://www.apache.org/licenses/LICENSE-2.0.txt",
+        "websiteUrl" to "https://github.com/gershnik/SimpleJNI",
+        "vcsUrl" to "https://github.com/gershnik/SimpleJNI.git",
+        "issueTrackerUrl" to "https://github.com/gershnik/SimpleJNI/issues",
+        "developer" to "gershnik",
+        "developerEmail" to "gershnik-maven@gershnik.info"
+    ))
 
     val kotlinJvmTarget by project.extra(8)
     val javaTargetCompatibility by project.extra(JavaVersion.VERSION_1_8)

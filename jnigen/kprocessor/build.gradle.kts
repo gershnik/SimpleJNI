@@ -114,4 +114,4 @@ tasks.register<Jar>("javadocJar") {
     archiveClassifier.set("javadoc")
 }
 
-apply(from="../publishing.gradle")
+apply(from="../publishing.gradle.kts")
