@@ -91,20 +91,20 @@ tasks.register<Zip>("bundleCpp") {
          "../README.md")
 
     archiveFileName.set("SimpleJNI-${project.version}-cpp-only.zip")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.register<Zip>("bundleJava") {
     group = "publishing"
     dependsOn("annotations:assemble", "processor:assemble", "kprocessor:assemble")
 
-    from(File(rootProject.buildDir, "jnigen.jar"),
-         File(rootProject.buildDir, "kjnigen.jar"),
-         File(rootProject.buildDir, "jnigen-annotations.jar"))
+    from(rootProject.layout.buildDirectory.file("jnigen.jar").get().asFile,
+         rootProject.layout.buildDirectory.file("kjnigen.jar").get().asFile,
+         rootProject.layout.buildDirectory.file("jnigen-annotations.jar").get().asFile)
 
     includeEmptyDirs = true
     archiveFileName.set("SimpleJNI-${project.version}-jnigen.zip")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.withType<Javadoc> {

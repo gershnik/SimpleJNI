@@ -45,7 +45,7 @@ tasks.jar {
     }
 
     archiveFileName.set("jnigen-annotations.jar")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.register<Jar>("sourceJar") {

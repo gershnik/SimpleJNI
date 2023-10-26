@@ -43,8 +43,6 @@ kotlin {
 }
 
 dependencies {
-    compileOnly(files("${System.getProperty("java.home")}/../lib/tools.jar"))
-
     testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestingVersion")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
@@ -68,7 +66,7 @@ tasks.test {
     useJUnitPlatform()
     outputs.upToDateWhen {false}
     systemProperty("test.data.location", File(rootProject.projectDir, "test_data"))
-    systemProperty("test.working.dir", File(buildDir, "test-output"))
+    systemProperty("test.working.dir", project.layout.buildDirectory.file("test-output").get().asFile)
     //testLogging.showStandardStreams = true
     testLogging.showExceptions = true
     testLogging.showStackTraces = true
@@ -83,11 +81,11 @@ tasks.create<Test>("generateTestData"){
     classpath = test.runtimeClasspath
     outputs.upToDateWhen { false }
 
-    useJUnitPlatform() {
+    useJUnitPlatform {
         includeTags("GENERATOR")
     }
     systemProperty("test.data.location", File(rootProject.projectDir, "test_data"))
-    systemProperty("test.working.dir", File(buildDir, "test-output"))
+    systemProperty("test.working.dir", project.layout.buildDirectory.file("test-output").get().asFile)
     environment("JNIGEN_ENABLE_TEST_GENERATION", "true")
 
     reports {
@@ -106,7 +104,7 @@ tasks.jar {
     metaInf { from("META-INF") }
 
     archiveFileName.set("jnigen.jar")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.register<Jar>("sourceJar") {
