@@ -37,7 +37,7 @@ jobs:
         shell: bash
         run: |
           echo $GPG_KEY | base64 --decode | gpg --import --batch --pinentry-mode=loopback
-          gpg --batch --pinentry-mode=loopback --keyring secring.gpg --export-secret-keys > $HOME/.gnupg/secring.gpg
+          gpg --batch --pinentry-mode=loopback --keyring secring.gpg --export-secret-keys --passphrase "$GPG_KEY_PASSWD" > $HOME/.gnupg/secring.gpg
           ./gradlew -PbuildDir=build \
             -Psigning.keyId=$GPG_KEY_ID \
             -Psigning.password=$GPG_KEY_PASSWD \
