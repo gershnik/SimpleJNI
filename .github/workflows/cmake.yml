@@ -13,7 +13,7 @@ jobs:
       matrix:
         java: ['8', '17']
         os: [macos-latest, windows-latest, ubuntu-latest]
-        compiler: []
+        compiler: ['default']
         include:
         - compiler: 'gcc-11|g++-11'
           os: ubuntu-latest
@@ -60,7 +60,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
-        if [[ '${{ matrix.compiler }}' != '' ]]; then
+        if [[ '${{ matrix.compiler }}' != 'default' ]]; then
           IFS='|' read -ra COMPILER  <<< '${{ matrix.compiler }}'
           export CC=${COMPILER[0]}
           export CXX=${COMPILER[1]}
