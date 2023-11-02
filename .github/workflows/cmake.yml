@@ -14,24 +14,18 @@ jobs:
         java: ['8', '17']
         os: ['macos-latest', 'windows-latest', 'ubuntu-latest']
         include:
-        - os: ubuntu-latest
-          cc: gcc-11
-          cxx: g++-11
-        - os: ubuntu-latest
-          cc: gcc-12
-          cxx: g++-12
-        - os: ubuntu-latest
-          cc: gcc-13
-          cxx: g++-13
-        - os: ubuntu-latest
-          cc: clang-13
-          cxx: clang++-13
-        - os: ubuntu-latest
-          cc: clang-14
-          cxx: clang++-14
-        - os: ubuntu-latest
-          cc: clang-15
-          cxx: clang++-15
+        - compiler: 'gcc-11|g++-11'
+          os: ubuntu-latest
+        - compiler: 'gcc-12|g++-12'
+          os: ubuntu-latest
+        - compiler: 'gcc-13|g++-13'
+          os: ubuntu-latest
+        - compiler: 'clang-13|clang++-13'
+          os: ubuntu-latest
+        - compiler: 'clang-14|clang++-14'
+          os: ubuntu-latest
+        - compiler: 'clang-15|clang++-15'
+          os: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -40,17 +34,17 @@ jobs:
       shell: bash
       run: |
         if [[ '${{ matrix.os }}' == 'ubuntu-latest' ]]; then
-          if [[ '${{ matrix.cc }}' == 'clang-15' ]]; then
+          if [[ '${{ matrix.compiler}}' == 'clang-15|clang++-15' ]]; then
             sudo apt-get update
             sudo apt-get install -y clang-15 clang++-15
           fi
 
-          if [[ '${{ matrix.cc }}' == 'gcc-12' ]]; then
+          if [[ '${{ matrix.compiler }}' == 'gcc-12|g++-12' ]]; then
             sudo apt-get update
             sudo apt-get install -y gcc-12 g++-12
           fi
 
-          if [[ '${{ matrix.cc }}' == 'gcc-13' ]]; then
+          if [[ '${{ matrix.compiler }}' == 'gcc-13|g++-13' ]]; then
             sudo apt-get update
             sudo apt-get install -y gcc-13 g++-13
           fi
@@ -65,11 +59,10 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
-        if [[ '${{ matrix.cc }}' != '' ]]; then
-          export CC=${{ matrix.cc }}
-        fi
-        if [[ '${{ matrix.cxx }}' != '' ]]; then
-          export CXX=${{ matrix.cxx }}
+        if [[ '${{ matrix.compiler }}' != '' ]]; then
+          IFS='|' read -ra COMPILER  <<< '${{ matrix.compiler }}'
+          export CC=${COMPILER[0]}
+          export CXX=${COMPILER[1]}
         fi
         cmake -S . -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
 

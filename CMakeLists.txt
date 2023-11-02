@@ -84,7 +84,6 @@ PUBLIC
     inc/smjni/smjni.h
     inc/smjni/utf_util.h
 PRIVATE
-    src/stdpch.h
     src/java_exception.cpp
     src/java_externals.cpp
     src/java_field.cpp
