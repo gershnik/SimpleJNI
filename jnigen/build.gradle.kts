@@ -34,18 +34,12 @@ fun getOurVersion(): String {
 
         return project.property("code.version") as String
 
-    } else if (file("../.git").isDirectory()) {
+    } else if (file("../VERSION").isFile()) {
 
-        val tagStdOut = java.io.ByteArrayOutputStream()
-        exec {
-            commandLine("git", "describe", "--tags", "--abbrev=0")
-            standardOutput = tagStdOut
-        }
-        return tagStdOut.toString().trim()
-
+        return file("../VERSION").readText(Charsets.UTF_8).trim()
     }
 
-    throw RuntimeException("version cannot be obtained from Git or properties")
+    throw RuntimeException("version cannot be obtained from properties or ../VERSION")
 }
 
 
