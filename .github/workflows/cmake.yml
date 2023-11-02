@@ -12,9 +12,8 @@ jobs:
       fail-fast: false
       matrix:
         java: ['8', '17']
+        os: ['macos-latest', 'windows-latest', 'ubuntu-latest']
         include:
-        - os: macos-latest
-        - os: windows-latest
         - os: ubuntu-latest
           cc: gcc-11
           cxx: g++-11
