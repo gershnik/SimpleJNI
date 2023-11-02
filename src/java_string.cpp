@@ -20,6 +20,7 @@
 
 #include <iterator>
 #include <cstring>
+#include <vector>
 
 using namespace smjni;
 
