@@ -46,7 +46,7 @@ public @interface ExposeToNative {
 
     /**
      * The "stem" of the name to be used for generated C++ types
-     *
+     * <p>
      * For example if value is "Foo" the generated objected type will be jFoo,
      * the C++ class Foo_class etc.
      */
@@ -54,21 +54,21 @@ public @interface ExposeToNative {
 
     /**
      * The name of the C++ strong type to represent instances of the class
-     *
+     * <p>
      * The default is jJavaTypeName or if {@link #value()} is set j{$value}
      */
     String typeName() default "";
 
     /**
      * The name of the C++ type to represent the class
-     *
+     * <p>
      * The default is JavaTypeName_class or if {@link #value()} is set {$value}_class
      */
     String className() default "";
 
     /**
      * Name of the header file for the generated C++ code
-     *
+     * <p>
      * The default is JavaTypeName_class.h or if {@link #value()} is set {$value}_class.h
      */
     String header() default "";
