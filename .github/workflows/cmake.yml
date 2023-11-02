@@ -15,9 +15,13 @@ jobs:
         - os: macos-latest
           java: '8'
         - os: macos-latest
+          java: '11'
+        - os: macos-latest
           java: '17'
         - os: windows-latest
           java: '8'
+        - os: windows-latest
+          java: '11'
         - os: windows-latest
           java: '17'
         - os: ubuntu-latest
@@ -89,7 +93,7 @@ jobs:
     - name: Configure CMake
       shell: bash
       run: |
-        if [[ '${{ matrix.compiler }}' != 'default' ]]; then
+        if [[ '${{ matrix.compiler }}' != '' ]]; then
           IFS='|' read -ra COMPILER  <<< '${{ matrix.compiler }}'
           export CC=${COMPILER[0]}
           export CXX=${COMPILER[1]}
