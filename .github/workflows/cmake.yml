@@ -11,9 +11,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        java: ['8', '17']
         include:
-        - java: '8'
-        - java: '17'
         - os: macos-latest
         - os: windows-latest
         - os: ubuntu-latest
