@@ -1,0 +1,38 @@
+name: Publish
+
+on: workflow_dispatch
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get Release Name
+        shell: python
+        run: |
+          import os
+          #ref = os.environ['GITHUB_REF']
+          #name = ref[ref.rfind('/') + 2:]
+          with open('VERSION', 'r') as verFile:
+            name = verFile.read().strip()
+          with open(os.environ['GITHUB_ENV'], 'w') as env:
+            print('RELEASE_NAME=' + name, file=env) 
+
+      - name: Bundle Code
+        working-directory: ${{github.workspace}}/jnigen
+        shell: bash
+        run: ./gradlew -PbuildDir=build bundleCpp bundleJava
+
+      - name: Make release
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          prerelease: false
+          name: ${{ env.RELEASE_NAME }}
+          body: ...edit me...
+          files: |
+            SimpleJNI-${{ env.RELEASE_NAME }}-cpp-only.zip
+            SimpleJNI-${{ env.RELEASE_NAME }}-jnigen.zip
