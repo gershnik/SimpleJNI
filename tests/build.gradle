@@ -17,8 +17,6 @@
  limitations under the License.
 */
 
-import java.util.regex.Pattern
-
 buildscript {
     repositories {
         mavenCentral()
@@ -34,8 +32,12 @@ allprojects {
 
 apply plugin: 'java'
 
-String JNIGEN_GENERATED_PATH = "src/cpp/generated"
-String JNIGEN_OUTPUT_LIST_NAME = "outputs.txt"
+//JniGen settings
+def jniGenProps = new Object() {
+    def generatedPath = "src/cpp/generated"
+    def outputListName = "outputs.txt"
+    def additionalClasses = ["java.lang.AssertionError"]
+}
 
 
 java {
@@ -49,49 +51,28 @@ dependencies {
     annotationProcessor("io.github.gershnik:smjni-jnigen-processor:SNAPSHOT")
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     options.compilerArgs = [
-                "-Asmjni.jnigen.dest.path=" + file(JNIGEN_GENERATED_PATH).path,
-                "-Asmjni.jnigen.output.list.name=" + JNIGEN_OUTPUT_LIST_NAME,
-                "-Asmjni.jnigen.expose.extra=" + ["java.lang.AssertionError"].join(";").toString()
-        ]
-    outputs.file("$JNIGEN_GENERATED_PATH/$JNIGEN_OUTPUT_LIST_NAME")
+            "-Asmjni.jnigen.dest.path=" + file(jniGenProps.generatedPath).path,
+            "-Asmjni.jnigen.output.list.name=" + jniGenProps.outputListName,
+            "-Asmjni.jnigen.expose.extra=" + jniGenProps.additionalClasses.join(";").toString()
+    ]
+    outputs.file("$jniGenProps.generatedPath/$jniGenProps.outputListName")
 }
 
 sourceSets {
     main.java.srcDirs = ['src/java']
 }
 
-task cleanStaleJNIHeaders(dependsOn: compileTestJava) {
-
-    inputs.files file("$JNIGEN_GENERATED_PATH/$JNIGEN_OUTPUT_LIST_NAME")
-
-    doLast {
-        def generated = new HashSet<String>()
-        def outputs = file("$JNIGEN_GENERATED_PATH/$JNIGEN_OUTPUT_LIST_NAME")
-        if (outputs.exists()) {
-            outputs.eachLine { line ->
-                generated.add(line)
-            }
-        }
-        def existing = project.fileTree(dir: file("$JNIGEN_GENERATED_PATH"), include: "*.h").files
-        def toDelete = []
-        for (file in existing) {
-            if (!generated.contains(file.name))
-                toDelete.add(file)
-        }
-
-        project.delete { delete toDelete }
-    }
+tasks.register('cleanJNIHeaders', Delete) {
+    delete file("${jniGenProps.generatedPath}")
 }
+clean.dependsOn "cleanJNIHeaders"
 
-task makeJNIHeaders(dependsOn: cleanStaleJNIHeaders) {
 
-}
-
-task copyRuntimeLibs(type: Copy) {
-    into(project.buildDir.absolutePath + "/libs")
+tasks.register('copyRuntimeLibs', Copy) {
+    into(project.layout.buildDirectory.dir("libs").get())
     from(configurations.runtimeClasspath)
 }
 
@@ -105,5 +86,5 @@ jar {
     }
     
     setArchiveFileName("smjnitests.jar")
-    setDestinationDirectory(rootProject.buildDir)
+    setDestinationDirectory(rootProject.layout.buildDirectory.get())
 }
