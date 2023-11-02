@@ -14,7 +14,6 @@
  limitations under the License.
 */
 
-#include "stdpch.h"
 #include <smjni/java_field.h>
 
 using namespace smjni;

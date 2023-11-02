@@ -15,8 +15,6 @@
  limitations under the License.
 */
 
-#include "stdpch.h"
-
 #include <vector>
 #include <iterator>
 
