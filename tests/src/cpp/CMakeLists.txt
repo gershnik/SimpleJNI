@@ -29,7 +29,7 @@ FetchContent_MakeAvailable(catch2)
 add_library(smjnitests SHARED EXCLUDE_FROM_ALL)
 
 target_link_libraries(smjnitests PRIVATE
-    smjni
+    smjni::smjni
     Catch2::Catch2
 )
 

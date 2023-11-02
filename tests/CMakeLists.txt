@@ -20,7 +20,6 @@ project(test)
 
 find_package(Java COMPONENTS Development REQUIRED)
 
-add_subdirectory(".." ${CMAKE_CURRENT_BINARY_DIR}/smjni)
 add_subdirectory("src/cpp" ${CMAKE_CURRENT_BINARY_DIR}/test)
 
 add_custom_target(build-jnigen  

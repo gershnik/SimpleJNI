@@ -16,7 +16,23 @@
 #
 
 cmake_minimum_required(VERSION 3.5)
-project(smjni)
+
+cmake_policy(SET CMP0076 NEW)  #target_sources() command converts relative paths to absolute
+
+if(CMAKE_VERSION VERSION_LESS 3.21)
+  get_property(not_top DIRECTORY PROPERTY PARENT_DIRECTORY)
+  if(NOT not_top)
+    set(PROJECT_IS_TOP_LEVEL true)
+  endif()
+endif()
+
+file(READ VERSION SMJNI_VERSION)
+if (NOT SMJNI_VERSION)
+    message(FATAL_ERROR "Cannot determine library version (VERSION file not found)")
+endif()
+string(STRIP ${SMJNI_VERSION} SMJNI_VERSION)
+
+project(smjni VERSION ${SMJNI_VERSION} LANGUAGES CXX)
 
 if(NOT DEFINED JNI_INCLUDE_DIRS)
     if (NOT ANDROID)
@@ -31,16 +47,23 @@ if(NOT DEFINED JNI_INCLUDE_DIRS)
 endif()
 
 
-add_library(smjni STATIC
-    src/stdpch.h
-    src/java_exception.cpp
-    src/java_externals.cpp
-    src/java_field.cpp
-    src/java_method.cpp
-    src/java_runtime.cpp
-    src/java_string.cpp
-    src/jni_provider.cpp
+add_library(smjni STATIC)
+add_library(smjni::smjni ALIAS smjni)
 
+set_target_properties(smjni PROPERTIES
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+    POSITION_INDEPENDENT_CODE ON
+)
+
+target_compile_features(smjni 
+PUBLIC 
+    cxx_std_17
+)
+
+
+target_sources(smjni
+PUBLIC
     inc/smjni/config.h
     inc/smjni/ct_string.h
     inc/smjni/java_array.h
@@ -60,19 +83,23 @@ add_library(smjni STATIC
     inc/smjni/jni_provider.h
     inc/smjni/smjni.h
     inc/smjni/utf_util.h
+PRIVATE
+    src/stdpch.h
+    src/java_exception.cpp
+    src/java_externals.cpp
+    src/java_field.cpp
+    src/java_method.cpp
+    src/java_runtime.cpp
+    src/java_string.cpp
+    src/jni_provider.cpp
 )
 
-set_property(TARGET smjni PROPERTY CXX_STANDARD 17)
-set_property(TARGET smjni PROPERTY CXX_STANDARD_REQUIRED ON)
-set_property(TARGET smjni PROPERTY CXX_VISIBILITY_PRESET hidden)
-set_property(TARGET smjni PROPERTY VISIBILITY_INLINES_HIDDEN ON)
-set_property(TARGET smjni PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_compile_options(smjni 
-    PUBLIC 
+PUBLIC 
     $<$<CXX_COMPILER_ID:MSVC>:/Zc:__cplusplus>
 
-    PRIVATE
+PRIVATE
     $<$<CXX_COMPILER_ID:MSVC>:/W4;/wd4100;/wd4127>
     $<$<CXX_COMPILER_ID:Clang>:-Wall;-Wextra;-Wno-unused-parameter>
     $<$<CXX_COMPILER_ID:AppleClang>:-Wall;-Wextra;-Wno-unused-parameter>
@@ -80,8 +107,14 @@ target_compile_options(smjni
 )
 
 target_include_directories(smjni 
-
-    PUBLIC
+PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${JNI_INCLUDE_DIRS}
 )
+
+
+if (PROJECT_IS_TOP_LEVEL)
+
+    add_subdirectory(tests)
+
+endif()
