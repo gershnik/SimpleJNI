@@ -23,7 +23,6 @@ find_package(Java COMPONENTS Development REQUIRED)
 add_subdirectory("src/cpp" ${CMAKE_CURRENT_BINARY_DIR}/test)
 
 add_custom_target(build-jnigen  
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -q javaToolchains -Pcode.version=SNAPSHOT
     COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -Pcode.version=SNAPSHOT publishToMavenLocal
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
 )
