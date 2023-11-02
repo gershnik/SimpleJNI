@@ -22,6 +22,7 @@
 #include <stdexcept>
 #include <string>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include <smjni/java_externals.h>
 
