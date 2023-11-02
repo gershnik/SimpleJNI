@@ -112,7 +112,7 @@ PUBLIC
 )
 
 
-if (PROJECT_IS_TOP_LEVEL)
+if (PROJECT_IS_TOP_LEVEL AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
 
     add_subdirectory(tests)
 

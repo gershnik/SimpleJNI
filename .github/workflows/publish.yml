@@ -34,5 +34,5 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           body: ...edit me...
           files: |
-            SimpleJNI-${{ env.RELEASE_NAME }}-cpp-only.zip
-            SimpleJNI-${{ env.RELEASE_NAME }}-jnigen.zip
+            build/SimpleJNI-${{ env.RELEASE_NAME }}-cpp-only.zip
+            build/SimpleJNI-${{ env.RELEASE_NAME }}-jnigen.zip

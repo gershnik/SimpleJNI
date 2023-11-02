@@ -79,9 +79,9 @@ tasks.register<Zip>("bundleCpp") {
         into("inc")
     }
     from("../CMakeLists.txt",
-         "../COPYRIGHT.txt",
-         "../LICENSE.txt",
-         "../NOTICE.txt",
+         "../VERSION",
+         "../LICENSE",
+         "../NOTICE",
          "../README.md")
 
     archiveFileName.set("SimpleJNI-${project.version}-cpp-only.zip")
