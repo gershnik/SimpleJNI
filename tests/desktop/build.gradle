@@ -34,7 +34,7 @@ apply plugin: 'java'
 
 //JniGen settings
 def jniGenProps = new Object() {
-    def generatedPath = "src/cpp/generated"
+    def generatedPath = "../src/cpp/generated"
     def outputListName = "outputs.txt"
     def additionalClasses = ["java.lang.AssertionError"]
 }
@@ -62,7 +62,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 sourceSets {
-    main.java.srcDirs = ['src/java']
+    main.java.srcDirs = ['../src/java']
 }
 
 tasks.register('cleanJNIHeaders', Delete) {

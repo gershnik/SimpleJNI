@@ -77,7 +77,8 @@ jint JNICALL TestSimpleJNI::testMain(JNIEnv * env, jclass, jstringArray args)
         return &arg[0];
     });
 
-    return Catch::Session().run(int(cArgs.size()), &cArgs[0]);
+    static Catch::Session session;
+    return session.run(int(cArgs.size()), &cArgs[0]);
 }
 
 
