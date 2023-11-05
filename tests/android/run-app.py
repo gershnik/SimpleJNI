@@ -40,7 +40,11 @@ print(f'Device external storage is at {sdcard}')
 subprocess.run([adb, 'install', '-r', '-d', apk], check=True)
 subprocess.run([adb, 'shell', 'pm', 'grant', 'com.example.smjni_test', 'android.permission.WRITE_EXTERNAL_STORAGE'], check=True)
 subprocess.run([adb, 'shell', 'pm', 'grant', 'com.example.smjni_test', 'android.permission.READ_EXTERNAL_STORAGE'], check=True)
-subprocess.run([adb, 'shell', 'content', 'call', '--uri', 'content://com.example.smjni_test.provider', '--method', 'blah'], check=True)
+callres = subprocess.run([adb, 'shell', 'content', 'call', '--uri', 'content://com.example.smjni_test.provider', '--method', 'blah'], 
+                         check=True, stdout=subprocess.PIPE, stderr=sys.stderr, encoding='utf-8').stdout.strip()
+if callres != 'Result: Bundle[{}]':
+    print(callres)
+    sys.exit(1)
 subprocess.run([adb, 'pull', f'{sdcard}/Download/smjni_test/results.json', outdir], check=True)
 
 
