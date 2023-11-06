@@ -8,7 +8,9 @@ on:
     paths-ignore:
       - 'README.md'
       - '.gitignore'
+      - '.gitattributes'
       - 'LICENSE'
+      - 'NOTICE'
       - '.github/workflows/publish.yml'
 
 env:
