@@ -15,7 +15,6 @@
  limitations under the License.
 */
 
-#include "stdpch.h"
 
 #include <smjni/jni_provider.h>
 #include <smjni/java_externals.h>

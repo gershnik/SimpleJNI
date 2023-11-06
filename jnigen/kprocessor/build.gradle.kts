@@ -64,7 +64,7 @@ tasks.test {
     useJUnitPlatform()
     outputs.upToDateWhen {false}
     systemProperty("test.data.location", File(rootProject.projectDir, "test_data"))
-    systemProperty("test.working.dir", File(buildDir, "test-output"))
+    systemProperty("test.working.dir", layout.buildDirectory.file("test-output").get().asFile)
     //testLogging.showStandardStreams = true
     testLogging.showExceptions = true
     testLogging.showStackTraces = true
@@ -79,11 +79,11 @@ tasks.create<Test>("generateTestData"){
     classpath = test.runtimeClasspath
     outputs.upToDateWhen { false }
 
-    useJUnitPlatform() {
+    useJUnitPlatform {
         includeTags("GENERATOR")
     }
     systemProperty("test.data.location", File(rootProject.projectDir, "test_data"))
-    systemProperty("test.working.dir", File(buildDir, "test-output"))
+    systemProperty("test.working.dir", project.layout.buildDirectory.file("test-output").get().asFile)
     environment("JNIGEN_ENABLE_TEST_GENERATION", "true")
 
     reports {
@@ -100,7 +100,7 @@ tasks.jar {
     metaInf { from("META-INF") }
 
     archiveFileName.set("kjnigen.jar")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.register<Jar>("sourceJar") {

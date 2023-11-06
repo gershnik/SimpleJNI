@@ -21,6 +21,8 @@
 #include <smjni/jni_provider.h>
 #include <smjni/java_ref.h>
 
+#include <stdexcept>
+
 namespace smjni
 {
     template<typename T>

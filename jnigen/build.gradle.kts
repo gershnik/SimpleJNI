@@ -34,18 +34,12 @@ fun getOurVersion(): String {
 
         return project.property("code.version") as String
 
-    } else if (file("../.git").isDirectory()) {
+    } else if (file("../VERSION").isFile()) {
 
-        val tagStdOut = java.io.ByteArrayOutputStream()
-        exec {
-            commandLine("git", "describe", "--tags", "--abbrev=0")
-            standardOutput = tagStdOut
-        }
-        return tagStdOut.toString().trim()
-
+        return file("../VERSION").readText(Charsets.UTF_8).trim()
     }
 
-    throw RuntimeException("version cannot be obtained from Git or properties")
+    throw RuntimeException("version cannot be obtained from properties or ../VERSION")
 }
 
 
@@ -85,26 +79,26 @@ tasks.register<Zip>("bundleCpp") {
         into("inc")
     }
     from("../CMakeLists.txt",
-         "../COPYRIGHT.txt",
-         "../LICENSE.txt",
-         "../NOTICE.txt",
+         "../VERSION",
+         "../LICENSE",
+         "../NOTICE",
          "../README.md")
 
     archiveFileName.set("SimpleJNI-${project.version}-cpp-only.zip")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.register<Zip>("bundleJava") {
     group = "publishing"
     dependsOn("annotations:assemble", "processor:assemble", "kprocessor:assemble")
 
-    from(File(rootProject.buildDir, "jnigen.jar"),
-         File(rootProject.buildDir, "kjnigen.jar"),
-         File(rootProject.buildDir, "jnigen-annotations.jar"))
+    from(rootProject.layout.buildDirectory.file("jnigen.jar").get().asFile,
+         rootProject.layout.buildDirectory.file("kjnigen.jar").get().asFile,
+         rootProject.layout.buildDirectory.file("jnigen-annotations.jar").get().asFile)
 
     includeEmptyDirs = true
     archiveFileName.set("SimpleJNI-${project.version}-jnigen.zip")
-    destinationDirectory.set(rootProject.buildDir)
+    destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
 tasks.withType<Javadoc> {

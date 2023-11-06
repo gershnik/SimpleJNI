@@ -1,4 +1,2 @@
-/local.properties
-/gradle.properties
+gradle.properties
 /src/cpp/generated
-/xcode

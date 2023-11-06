@@ -38,8 +38,8 @@ public @interface CalledByNative
 {
     /**
      * Make a non-static method also callable non-virtually
-     *
-     * By default JniGen only exposes normal virtual calls
+     * <p>
+     * By default, JniGen only exposes normal virtual calls
      * to class methods. If this argument is set to true JniGen
      * will generate additional wrappers to allow non-virtual
      * call.

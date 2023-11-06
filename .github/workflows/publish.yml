@@ -26,6 +26,26 @@ jobs:
         shell: bash
         run: ./gradlew -PbuildDir=build bundleCpp bundleJava
 
+      - name: Publish to OSSRH
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_KEY_PASSWD: ${{ secrets.GPG_KEY_PASSWD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+        working-directory: ${{github.workspace}}/jnigen
+        shell: bash
+        run: |
+          echo $GPG_KEY | base64 --decode | gpg --import --batch --pinentry-mode=loopback
+          gpg --batch --pinentry-mode=loopback --keyring secring.gpg --export-secret-keys --passphrase "$GPG_KEY_PASSWD" > $HOME/.gnupg/secring.gpg
+          ./gradlew -PbuildDir=build \
+            -Psigning.keyId=$GPG_KEY_ID \
+            -Psigning.password=$GPG_KEY_PASSWD \
+            -Psigning.secretKeyRingFile=$HOME/.gnupg/secring.gpg \
+            -PossrhUsername=$OSSRH_USERNAME \
+            -PossrhPassword=$OSSRH_PASSWORD \
+            publishAllPublicationsToOssrhRepository
+
       - name: Make release
         uses: softprops/action-gh-release@v1
         with:
@@ -34,5 +54,5 @@ jobs:
           name: ${{ env.RELEASE_NAME }}
           body: ...edit me...
           files: |
-            SimpleJNI-${{ env.RELEASE_NAME }}-cpp-only.zip
-            SimpleJNI-${{ env.RELEASE_NAME }}-jnigen.zip
+            jnigen/build/SimpleJNI-${{ env.RELEASE_NAME }}-cpp-only.zip
+            jnigen/build/SimpleJNI-${{ env.RELEASE_NAME }}-jnigen.zip

@@ -16,34 +16,64 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-project(test)
-
-find_package(Java COMPONENTS Development REQUIRED)
-
-add_subdirectory(".." ${CMAKE_CURRENT_BINARY_DIR}/smjni)
 add_subdirectory("src/cpp" ${CMAKE_CURRENT_BINARY_DIR}/test)
 
 add_custom_target(build-jnigen  
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -Pcode.version=SNAPSHOT publishToMavenLocal
+    COMMAND ./gradlew --no-daemon -Pcode.version=SNAPSHOT publishToMavenLocal
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
 )
 
-add_custom_target(run-java-tests ALL
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -Pcode.version=SNAPSHOT test
+add_custom_target(test-jnigen ALL
+    COMMAND ./gradlew --no-daemon -Pcode.version=SNAPSHOT test
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
 )
 
-add_custom_target(javabuild  
-    DEPENDS build-jnigen  
-    COMMAND ${CMAKE_CURRENT_LIST_DIR}/gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java assemble
-    WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-)
 
-add_dependencies(smjnitests javabuild)
+if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
 
-add_custom_target(run-jar ALL
-    DEPENDS javabuild smjnitests 
-    COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:smjnitests> ${CMAKE_CURRENT_BINARY_DIR}/java
-    COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR}/java:$ENV{LD_LIBRARY_PATH}" ${Java_JAVA_EXECUTABLE} -jar smjnitests.jar
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/java
-)
+    set(ANDROID_SDK_DIR ${CMAKE_ANDROID_NDK}/../..)
+    set(ADB ${ANDROID_SDK_DIR}/platform-tools/adb)
+    set(ANDROID_TEST_DIR /data/local/tmp/smjni_test)
+
+    add_custom_target(javabuild  
+        DEPENDS build-jnigen  
+        COMMAND ./gradlew --no-daemon -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java
+            -Pandroid.sdk=${ANDROID_SDK_DIR}
+            assemble
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    )
+
+    add_dependencies(smjnitests javabuild)
+
+    add_custom_target(run-dex ALL
+        DEPENDS javabuild smjnitests 
+        COMMAND ${ADB} shell mkdir -p ${ANDROID_TEST_DIR}
+        COMMAND ${ADB} push ${CMAKE_CURRENT_BINARY_DIR}/java/smjnitests.dex $<TARGET_FILE:smjnitests> ${ANDROID_TEST_DIR}/
+        COMMAND ${ADB} shell 
+                CLASSPATH=${ANDROID_TEST_DIR}/smjnitests.dex
+                ANDROID_DATA=${ANDROID_TEST_DIR} 
+                LD_LIBRARY_PATH=${ANDROID_TEST_DIR} 
+                app_process ${ANDROID_TEST_DIR} smjni.tests.TestSimpleJNI
+    )
+
+else()
+
+    find_package(Java COMPONENTS Development REQUIRED)
+
+    add_custom_target(javabuild  
+        DEPENDS build-jnigen  
+        COMMAND ./gradlew --no-daemon -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java assemble
+        WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+    )
+
+    add_dependencies(smjnitests javabuild)
+
+    add_custom_target(run-jar ALL
+        DEPENDS javabuild smjnitests 
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:smjnitests> ${CMAKE_CURRENT_BINARY_DIR}/java
+        COMMAND ${CMAKE_COMMAND} -E env "LD_LIBRARY_PATH=${CMAKE_CURRENT_BINARY_DIR}/java:$ENV{LD_LIBRARY_PATH}" 
+            ${Java_JAVA_EXECUTABLE} -jar smjnitests.jar
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/java
+    )
+
+endif()

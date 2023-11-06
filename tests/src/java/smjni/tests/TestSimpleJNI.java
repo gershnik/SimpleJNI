@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 @ExposeToNative(className="TestSimpleJNI")
-class TestSimpleJNI  {
+public class TestSimpleJNI  {
 
     @ExposeToNative(typeName="jBase", className="Base")
     static class Base
@@ -74,7 +74,12 @@ class TestSimpleJNI  {
 
     public static void main(String[] args) {
         System.loadLibrary("smjnitests");
-        testMain(args);
+        System.exit(testMain(args));
+    }
+
+    public static int androidMain(String[] args) {
+        System.loadLibrary("smjnitests");
+        return testMain(args);
     }
 
     private static native int testMain(String[] args);

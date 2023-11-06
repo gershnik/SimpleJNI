@@ -15,12 +15,12 @@
  limitations under the License.
 */
 
-#include "stdpch.h"
 #include <smjni/java_string.h>
 #include <smjni/java_type_traits.h>
 
 #include <iterator>
 #include <cstring>
+#include <vector>
 
 using namespace smjni;
 
