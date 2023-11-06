@@ -16,7 +16,7 @@
 
 #include <smjni/smjni.h>
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest.h>
 
 using namespace smjni;
 
@@ -48,7 +48,9 @@ static std::u16string convert32(const char32_t * utf32)
     return ret;
 }
 
-TEST_CASE( "utf8 to utf16", "[utf]" )
+TEST_SUITE_BEGIN("utf8");
+
+TEST_CASE( "utf8 to utf16" )
 {
     //Adapted from https://www.w3.org/2001/06/utf-8-wrong/UTF-8-test.html
         
@@ -168,7 +170,7 @@ TEST_CASE( "utf8 to utf16", "[utf]" )
 
 }
 
-TEST_CASE( "utf16 to utf8", "[utf]" )
+TEST_CASE( "utf16 to utf8" )
 {
     CHECK(convert(u"κόσμε") == u8"κόσμε");
     CHECK(convert(u"\xD800") == u8"�");
@@ -186,7 +188,7 @@ TEST_CASE( "utf16 to utf8", "[utf]" )
     CHECK(convert(u"\xDBFF\xDFFF") == u8"\U0010FFFF");
 }
 
-TEST_CASE( "utf16 to utf32", "[utf]" )
+TEST_CASE( "utf16 to utf32" )
 {
     CHECK(convert32(u"κόσμε") == U"κόσμε");
     CHECK(convert32(u"\xD800") == U"�");
@@ -204,7 +206,7 @@ TEST_CASE( "utf16 to utf32", "[utf]" )
     CHECK(convert32(u"\xDBFF\xDFFF") == U"\U0010FFFF");
 }
 
-TEST_CASE( "utf32 to utf16", "[utf]" )
+TEST_CASE( "utf32 to utf16" )
 {
     CHECK(convert32(U"κόσμε") == u"κόσμε");
     CHECK(convert32(U"𐀀") == u"\xD800\xDC00");
@@ -212,3 +214,5 @@ TEST_CASE( "utf32 to utf16", "[utf]" )
     CHECK(convert32(U"\U0010FC00") == u"\xDBFF\xDC00");
     CHECK(convert32(U"\U0010FFFF") == u"\xDBFF\xDFFF");
 }
+
+TEST_SUITE_END();

@@ -16,11 +16,13 @@
 
 #include <smjni/smjni.h>
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest.h>
 
 using namespace smjni;
 
-TEST_CASE( "testString", "[string]" )
+TEST_SUITE_BEGIN("string");
+
+TEST_CASE( "testString" )
 {
     JNIEnv * env = jni_provider::get_jni();
 
@@ -62,3 +64,5 @@ TEST_CASE( "testString", "[string]" )
     CHECK(0 == null_access.size());
     CHECK(null_access.begin() == null_access.end());
 }
+
+TEST_SUITE_END();

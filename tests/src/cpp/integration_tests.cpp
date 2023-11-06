@@ -19,7 +19,7 @@
 
 #include <smjni/smjni.h>
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest.h>
 
 #include "test_util.h"
 
@@ -27,7 +27,9 @@
 
 using namespace smjni;
 
-TEST_CASE( "testCallingNativeMethod", "[integration]" )
+TEST_SUITE_BEGIN("integration");
+
+TEST_CASE( "testCallingNativeMethod" )
 {
     JNIEnv * env = jni_provider::get_jni();
     CHECK(java_classes::get<TestSimpleJNI>().testCallingNativeMethod(env) == java_true);
@@ -136,7 +138,7 @@ static void doTestCallingJava()
     CHECK(4 == base_class.instanceMethod(env, derived, base_class, 3));
 }
 
-TEST_CASE( "testCallingJava", "[integration]" )
+TEST_CASE( "testCallingJava" )
 {
     doTestCallingJava();
     
@@ -146,7 +148,7 @@ TEST_CASE( "testCallingJava", "[integration]" )
 }
 
 
-TEST_CASE( "testPrimitiveArray", "[integration]" )
+TEST_CASE( "testPrimitiveArray" )
 {
     JNIEnv * env = jni_provider::get_jni();
     CHECK_NOTHROW(java_classes::get<TestSimpleJNI>().testPrimitiveArray(env));
@@ -190,7 +192,7 @@ jcharArray JNICALL TestSimpleJNI::doTestPrimitiveArray(JNIEnv * env, jclass, jin
     return nullptr;
 }
 
-TEST_CASE( "testObjectArray", "[integration]" )
+TEST_CASE( "testObjectArray" )
 {
     JNIEnv * env = jni_provider::get_jni();
     CHECK_NOTHROW(java_classes::get<TestSimpleJNI>().testObjectArray(env));
@@ -218,7 +220,7 @@ jstringArray JNICALL TestSimpleJNI::doTestObjectArray(JNIEnv * env, jclass, jstr
     return nullptr;
 }
 
-TEST_CASE( "testDirectBuffer", "[integration]" )
+TEST_CASE( "testDirectBuffer" )
 {
     JNIEnv * env = jni_provider::get_jni();
     CHECK_NOTHROW(java_classes::get<TestSimpleJNI>().testDirectBuffer(env));
@@ -243,3 +245,5 @@ jByteBuffer JNICALL TestSimpleJNI::doTestDirectBuffer(JNIEnv * env, jclass, jByt
     NATIVE_EPILOG
     return nullptr;
 }
+
+TEST_SUITE_END();

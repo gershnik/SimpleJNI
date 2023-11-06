@@ -16,7 +16,7 @@
 
 #include <smjni/smjni.h>
 
-#include <catch2/catch_test_macros.hpp>
+#include <doctest.h>
 
 #include "test_util.h"
 
@@ -58,7 +58,9 @@ void ForEach(Func func)
     }
 }
 
-TEST_CASE( "testJavaRefProperties", "[javaref]" )
+TEST_SUITE_BEGIN("javaref");
+
+TEST_CASE( "testJavaRefProperties" )
 {
     using RefTypes = TypeList<auto_java_ref<jobject>, local_java_ref<jobject>, global_java_ref<jobject>, weak_java_ref<jobject>>;
 
@@ -112,3 +114,7 @@ TEST_CASE( "testJavaRefProperties", "[javaref]" )
 
     });
 }
+
+TEST_SUITE_END();
+
+

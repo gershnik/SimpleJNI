@@ -77,11 +77,6 @@ public class TestSimpleJNI  {
         System.exit(testMain(args));
     }
 
-    public static int androidMain(String[] args) {
-        System.loadLibrary("smjnitests");
-        return testMain(args);
-    }
-
     private static native int testMain(String[] args);
 
     @CalledByNative

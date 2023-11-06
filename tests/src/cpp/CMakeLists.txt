@@ -16,21 +16,21 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+cmake_policy(SET CMP0135 NEW)
+
 include(FetchContent)
 
-FetchContent_Declare(catch2
-    GIT_REPOSITORY  https://github.com/catchorg/Catch2.git
-    GIT_TAG         v3.4.0
-    GIT_PROGRESS    TRUE
+FetchContent_Declare(doctest
+    URL  https://raw.githubusercontent.com/doctest/doctest/v2.4.11/doctest/doctest.h
+    DOWNLOAD_NO_EXTRACT TRUE
 )
 
-FetchContent_MakeAvailable(catch2)
+FetchContent_MakeAvailable(doctest)
 
 add_library(smjnitests SHARED EXCLUDE_FROM_ALL)
 
 target_link_libraries(smjnitests PRIVATE
     smjni::smjni
-    Catch2::Catch2
     $<$<PLATFORM_ID:Android>:log>
 )
 
@@ -40,7 +40,10 @@ set_property(TARGET smjnitests PROPERTY CXX_VISIBILITY_PRESET hidden)
 set_property(TARGET smjnitests PROPERTY VISIBILITY_INLINES_HIDDEN ON)
 set_property(TARGET smjnitests PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-set_property(TARGET Catch2 PROPERTY POSITION_INDEPENDENT_CODE ON)
+target_include_directories(smjnitests
+PRIVATE
+    ${doctest_SOURCE_DIR}
+)
 
 target_compile_options(smjnitests 
 PRIVATE 

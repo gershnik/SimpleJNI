@@ -19,7 +19,8 @@
 
 #include <smjni/smjni.h>
 
-#include <catch2/catch_session.hpp>
+#define DOCTEST_CONFIG_IMPLEMENT
+#include <doctest.h>
 
 #include "test_util.h"
 
@@ -77,8 +78,7 @@ jint JNICALL TestSimpleJNI::testMain(JNIEnv * env, jclass, jstringArray args)
         return &arg[0];
     });
 
-    static Catch::Session session;
-    return session.run(int(cArgs.size()), &cArgs[0]);
+    return doctest::Context(int(cArgs.size()), &cArgs[0]).run();
 }
 
 
