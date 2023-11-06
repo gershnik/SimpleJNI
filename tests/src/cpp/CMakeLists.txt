@@ -55,8 +55,6 @@ PRIVATE
     $<$<PLATFORM_ID:Android>:-Wl,--export-dynamic>
 )
 
-file(GLOB GENERATED_FILES CONFIGURE_DEPENDS generated/*.h)
-
 target_sources(smjnitests PRIVATE
     integration_tests.cpp
     java_ref_tests.cpp
@@ -64,6 +62,5 @@ target_sources(smjnitests PRIVATE
     string_tests.cpp
     test_util.h
     utf_tests.cpp
-    ${GENERATED_FILES}
 )
 
