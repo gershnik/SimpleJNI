@@ -34,7 +34,7 @@ apply plugin: 'java'
 
 //JniGen settings
 def jniGenProps = new Object() {
-    def generatedPath = "../src/cpp/generated"
+    def generatedPath = "src/cpp/generated"
     def outputListName = "outputs.txt"
     def additionalClasses = ["java.lang.AssertionError"]
 }
@@ -62,7 +62,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 sourceSets {
-    main.java.srcDirs = ['../src/java']
+    main.java.srcDirs = ['src/java']
 }
 
 tasks.register('cleanJNIHeaders', Delete) {
@@ -87,4 +87,34 @@ jar {
     
     setArchiveFileName("smjnitests.jar")
     setDestinationDirectory(rootProject.layout.buildDirectory.get())
+}
+
+if (project.hasProperty('android.sdk')) {
+
+    def ANDROID_SDK = project.property('android.sdk')
+
+    tasks.register('dex') {
+        dependsOn("jar")
+        group('build')
+
+        doLast {
+            exec {
+                workingDir project.layout.buildDirectory.get()
+
+                executable "${ANDROID_SDK}/build-tools/34.0.0/d8"
+                args([
+                        '--debug',
+                        '--lib', "${ANDROID_SDK}/platforms/android-34/android.jar"
+                ])
+                args += tasks.named('jar').get().outputs.collect { it.files[0].getName() }
+                args += configurations.runtimeClasspath.collect { "libs/" + it.getName() }
+            }
+
+
+            ant.move file: "${project.layout.buildDirectory.get()}/classes.dex",
+                     tofile: "${project.layout.buildDirectory.get()}/smjnitests.dex"
+        }
+    }
+    assemble.dependsOn 'dex'
+
 }
