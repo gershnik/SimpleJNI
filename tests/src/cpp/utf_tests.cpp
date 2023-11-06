@@ -18,6 +18,9 @@
 
 #include <doctest.h>
 
+#include <iterator>
+#include <string>
+
 using namespace smjni;
 
 static std::u16string convert(const char * utf8)

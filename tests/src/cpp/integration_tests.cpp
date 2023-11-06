@@ -24,6 +24,8 @@
 #include "test_util.h"
 
 #include <thread>
+#include <vector>
+#include <algorithm>
 
 using namespace smjni;
 
