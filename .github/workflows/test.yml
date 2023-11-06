@@ -195,7 +195,7 @@ jobs:
             cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
             echo "::endgroup::"
             echo "::group::Build and Test Native"
-            cmake --build build --config $BUILD_TYPE --target run-app
+            cmake --build build --config $BUILD_TYPE --target run-dex
             echo "::endgroup::"
             echo "::group::Build and Test JniGen"
             cmake --build build --config $BUILD_TYPE --target test-jnigen
