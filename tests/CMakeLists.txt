@@ -19,12 +19,12 @@ cmake_minimum_required(VERSION 3.16)
 add_subdirectory("src/cpp" ${CMAKE_CURRENT_BINARY_DIR}/test)
 
 add_custom_target(build-jnigen  
-    COMMAND ./gradlew --no-daemon -Pcode.version=SNAPSHOT publishToMavenLocal
+    COMMAND ./gradlew -Pcode.version=SNAPSHOT publishToMavenLocal
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
 )
 
 add_custom_target(test-jnigen ALL
-    COMMAND ./gradlew --no-daemon -Pcode.version=SNAPSHOT test
+    COMMAND ./gradlew -Pcode.version=SNAPSHOT test
     WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/../jnigen
 )
 
@@ -37,7 +37,7 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
 
     add_custom_target(javabuild  
         DEPENDS build-jnigen  
-        COMMAND ./gradlew --no-daemon -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java
+        COMMAND ./gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java
             -Pandroid.sdk=${ANDROID_SDK_DIR}
             assemble
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
@@ -62,7 +62,7 @@ else()
 
     add_custom_target(javabuild  
         DEPENDS build-jnigen  
-        COMMAND ./gradlew --no-daemon -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java assemble
+        COMMAND ./gradlew -PbuildDir=${CMAKE_CURRENT_BINARY_DIR}/java assemble
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
     )
 
