@@ -95,29 +95,28 @@ if (project.hasProperty('android.sdk')) {
     def ANDROID_BUILD_TOOLS_VER = "34.0.0"
     def ANDROID_VER = "34"
 
+    def d8 = "${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_VER}/d8"
+    def android_jar = "${ANDROID_SDK}/platforms/android-${ANDROID_VER}/android.jar"
+
     tasks.register('dex') {
         dependsOn("jar")
         group('build')
 
         inputs.files([jar.archiveFile] + configurations.runtimeClasspath.files)
 
-        outputs.file("${project.layout.buildDirectory.get()}/smjnitests.dex")
+        outputs.file(layout.buildDirectory.file(jar.archiveFileName.get().dropRight(4) + ".dex"))
 
         doLast {
             exec {
-                workingDir project.layout.buildDirectory.get()
-
-                executable "${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_VER}/d8"
-                args([
-                        '--debug',
-                        '--lib', "${ANDROID_SDK}/platforms/android-${ANDROID_VER}/android.jar"
-                ])
+                workingDir layout.buildDirectory.get()
+                executable d8
+                args += ['--debug', '--lib', android_jar]
                 args += inputs.files.collect { it.path }
             }
 
 
-            ant.move file: "${project.layout.buildDirectory.get()}/classes.dex",
-                     tofile: outputs.files[0].path
+            ant.move file: layout.buildDirectory.file("classes.dex").get(),
+                     tofile: outputs.files[0]
         }
     }
     assemble.dependsOn 'dex'
