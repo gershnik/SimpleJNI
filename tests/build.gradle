@@ -92,6 +92,8 @@ jar {
 if (project.hasProperty('android.sdk')) {
 
     def ANDROID_SDK = project.property('android.sdk')
+    def ANDROID_BUILD_TOOLS_VER = "34.0.0"
+    def ANDROID_VER = "34"
 
     tasks.register('dex') {
         dependsOn("jar")
@@ -105,10 +107,10 @@ if (project.hasProperty('android.sdk')) {
             exec {
                 workingDir project.layout.buildDirectory.get()
 
-                executable "${ANDROID_SDK}/build-tools/34.0.0/d8"
+                executable "${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_VER}/d8"
                 args([
                         '--debug',
-                        '--lib', "${ANDROID_SDK}/platforms/android-34/android.jar"
+                        '--lib', "${ANDROID_SDK}/platforms/android-${ANDROID_VER}/android.jar"
                 ])
                 args += inputs.files.collect { it.path }
             }

@@ -47,11 +47,11 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
         DEPENDS javabuild smjnitests 
         COMMAND ${ADB} shell mkdir -p ${ANDROID_TEST_DIR}
         COMMAND ${ADB} push smjnitests.dex $<TARGET_FILE:smjnitests> ${ANDROID_TEST_DIR}/
-        COMMAND ${ADB} shell 
-                CLASSPATH=${ANDROID_TEST_DIR}/smjnitests.dex
-                ANDROID_DATA=${ANDROID_TEST_DIR} 
-                LD_LIBRARY_PATH=${ANDROID_TEST_DIR} 
-                app_process ${ANDROID_TEST_DIR} smjni.tests.TestSimpleJNI
+        COMMAND ${ADB} shell ANDROID_DATA=${ANDROID_TEST_DIR} app_process 
+                        -cp ${ANDROID_TEST_DIR}/smjnitests.dex 
+                        -Djava.library.path=${ANDROID_TEST_DIR} 
+                        ${ANDROID_TEST_DIR} 
+                        smjni.tests.TestSimpleJNI
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/build
     )
 
@@ -59,8 +59,7 @@ else()
 
     add_custom_target(test-native ALL
         DEPENDS javabuild smjnitests 
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:smjnitests> ${CMAKE_CURRENT_LIST_DIR}/build
-        COMMAND ${Java_JAVA_EXECUTABLE} -Djava.library.path=${CMAKE_CURRENT_LIST_DIR}/build -jar smjnitests.jar
+        COMMAND ${Java_JAVA_EXECUTABLE} -Djava.library.path=$<TARGET_FILE_DIR:smjnitests> -jar smjnitests.jar
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/build
     )
 
