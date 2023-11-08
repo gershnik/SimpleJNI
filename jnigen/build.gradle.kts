@@ -65,6 +65,13 @@ allprojects {
 
     val kotlinJvmTarget by project.extra(8)
     val javaTargetCompatibility by project.extra(JavaVersion.VERSION_1_8)
+
+    tasks.withType<Javadoc> {
+        options {
+            this as StandardJavadocDocletOptions
+            addStringOption("Xdoclint:none", "-quiet")
+        }
+    }
 }
 
 tasks.register<Zip>("bundleCpp") {
@@ -101,10 +108,5 @@ tasks.register<Zip>("bundleJava") {
     destinationDirectory.set(rootProject.layout.buildDirectory)
 }
 
-tasks.withType<Javadoc> {
-    options {
-        this as StandardJavadocDocletOptions
-        addStringOption("Xdoclint:none", "-quiet")
-    }
-}
+
 

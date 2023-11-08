@@ -97,7 +97,7 @@ if (project.hasProperty('android.sdk')) {
         dependsOn("jar")
         group('build')
 
-        inputs.files(tasks.named('jar').get().outputs.files + configurations.runtimeClasspath.files)
+        inputs.files([jar.archiveFile] + configurations.runtimeClasspath.files)
 
         outputs.file("${project.layout.buildDirectory.get()}/smjnitests.dex")
 
