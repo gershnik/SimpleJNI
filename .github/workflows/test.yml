@@ -26,13 +26,13 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - os: macos-latest
+        - os: macos-13
           java: '8'
-        - os: macos-latest
+        - os: macos-13
           java: '11'
-        - os: macos-latest
+        - os: macos-13
           java: '17'
-        - os: macos-latest
+        - os: macos-13
           java: '21'
         - os: windows-latest
           java: '8'
