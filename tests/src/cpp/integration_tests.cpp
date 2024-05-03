@@ -138,6 +138,9 @@ static void doTestCallingJava()
     CHECK(5 == base_class.instanceMethod(env, derived, 3));
 
     CHECK(4 == base_class.instanceMethod(env, derived, base_class, 3));
+
+    auto en = java_classes::get<AnEnum>();
+    CHECK(0 == en.foo(env, en.get_FIRST(env)));
 }
 
 TEST_CASE( "testCallingJava" )

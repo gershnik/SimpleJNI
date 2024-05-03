@@ -72,6 +72,18 @@ public class TestSimpleJNI  {
         }
     }
 
+    @ExposeToNative(typeName = "jAnEnum", className="AnEnum")
+    enum AnEnum {
+        @CalledByNative FIRST,
+        @CalledByNative SECOND,
+        @CalledByNative THIRD;
+
+        @CalledByNative
+        int foo() {
+            return ordinal();
+        }
+    }
+
     public static void main(String[] args) {
         System.loadLibrary("smjnitests");
         System.exit(testMain(args));

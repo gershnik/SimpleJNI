@@ -90,6 +90,11 @@ internal class JavaClassInfo private constructor(val qualifiedJavaClassName: Str
         val jvmName : String get() = declaration.simpleName.asString()
     }
 
+    class EnumEntry(private val declaration: KSClassDeclaration) : ExposedEntity(true) {
+        val type: KSType get() = (declaration.parentDeclaration!! as KSClassDeclaration).asStarProjectedType()
+        val jvmName : String get() = declaration.simpleName.asString()
+    }
+
 
     companion object {
         fun from(classDeclaration: KSClassDeclaration, context: Context) : JavaClassInfo {
@@ -186,6 +191,8 @@ internal class JavaClassInfo private constructor(val qualifiedJavaClassName: Str
                                 is KSPropertyDeclaration -> yieldAll(handleProperty(context, companionDecl, isFileLevel = false, isFromCompanionObject = true))
                             }
                         }
+                    } else if (decl.classKind == ClassKind.ENUM_ENTRY) {
+                        yieldAll(handleEnumEntry(context, decl))
                     }
                 }
             }
@@ -263,6 +270,15 @@ internal class JavaClassInfo private constructor(val qualifiedJavaClassName: Str
                 }
             }
         }
+    }
+
+    private fun handleEnumEntry(context: Context, decl: KSClassDeclaration) : Sequence<ExposedEntity> {
+        val annotations = collectAnnotations(decl.annotations, setOf(context.calledByNativeAnnotation))
+
+        return if (annotations[context.calledByNativeAnnotation] != null)
+            sequenceOf(EnumEntry(decl))
+        else
+            emptySequence()
     }
 
     private fun collectAnnotations(annotations: Sequence<KSAnnotation>, names: Set<String>) : Map<String, KSAnnotation> {
