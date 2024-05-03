@@ -9,6 +9,7 @@
 #include "Extension_class.h"
 #include "FileLevelKt_class.h"
 #include "FullClass_class.h"
+#include "SomeEnum_class.h"
 #include "Statics_class.h"
 #include "Types_class.h"
 
@@ -18,6 +19,7 @@
     Extension_class, \
     FileLevelKt_class, \
     FullClass_class, \
+    SomeEnum_class, \
     Statics_class, \
     Types_class
 

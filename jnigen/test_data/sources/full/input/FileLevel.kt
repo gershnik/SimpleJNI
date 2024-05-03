@@ -40,3 +40,11 @@ object ExposedObject {
     @JvmField
     val field = 1
 }
+
+@ExposeToNative
+enum class SomeEnum {
+    @CalledByNative NORTH,
+    @CalledByNative SOUTH,
+    @CalledByNative WEST,
+    @CalledByNative EAST
+}

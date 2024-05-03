@@ -11,6 +11,7 @@ JNIGen: Discovered Extension
 JNIGen: Discovered Extension$Inner
 JNIGen: Discovered FileLevelKt
 JNIGen: Discovered ExposedObject
+JNIGen: Discovered SomeEnum
 JNIGen: Discovered Middle
 JNIGen: Discovered FullClass
 JNIGen: Discovered FunkyNames
@@ -23,6 +24,7 @@ JNIGen: Generating Extension_class.h:  written
 JNIGen: Generating FileLevelKt_class.h:  written
 JNIGen: Generating FullClass_class.h:  written
 JNIGen: Generating FunkyNames_class.h:  written
+JNIGen: Generating SomeEnum_class.h:  written
 JNIGen: Generating Statics_class.h:  written
 JNIGen: Generating Types_class.h:  written
 JNIGen: Generating all_classes.h:  written

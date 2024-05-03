@@ -22,6 +22,7 @@ DEFINE_JAVA_TYPE(jInteger,  "java.lang.Integer")
 DEFINE_JAVA_TYPE(jLong,  "java.lang.Long")
 DEFINE_JAVA_TYPE(jMiddle,  "Middle")
 DEFINE_JAVA_TYPE(jShort,  "java.lang.Short")
+DEFINE_JAVA_TYPE(jSomeEnum,  "SomeEnum")
 DEFINE_JAVA_TYPE(jStatics,  "Statics")
 DEFINE_JAVA_TYPE(jTypes,  "sources.full_class.input.Types")
 

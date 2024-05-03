@@ -5,5 +5,6 @@ ExtensionKt_class.h
 Extension_class.h
 FileLevelKt_class.h
 FullClass_class.h
+SomeEnum_class.h
 Statics_class.h
 Types_class.h
