@@ -7,6 +7,7 @@
 #include <smjni/smjni.h>
 
 DEFINE_JAVA_TYPE(jAClass,  "AClass")
+DEFINE_JAVA_TYPE(jAnEnum,  "AnEnum")
 
 
 

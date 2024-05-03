@@ -1,3 +1,4 @@
 type_mapping.h
 all_classes.h
 AClass_class.h
+AnEnum_class.h

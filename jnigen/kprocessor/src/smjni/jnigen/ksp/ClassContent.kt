@@ -97,6 +97,7 @@ internal class ClassContent(classInfo: JavaClassInfo,
                 is JavaClassInfo.Getter -> addJavaGetter(it, context)
                 is JavaClassInfo.Setter -> addJavaSetter(it, context)
                 is JavaClassInfo.Field  -> addJavaField(it, context)
+                is JavaClassInfo.EnumEntry -> addJavaEnumEntry(it, context)
             }
         }
 
@@ -227,6 +228,30 @@ internal class ClassContent(classInfo: JavaClassInfo,
         val field = JavaEntity(
             if (fieldInfo.isStatic) JavaEntityType.StaticField else JavaEntityType.Field,
             !isWritable,
+            false, //meaningless for fields
+            fieldName, templateArguments, returnType, argTypes, argNames
+        )
+        _javaEntities.add(field)
+    }
+
+    private fun addJavaEnumEntry(enumEntryInfo: JavaClassInfo.EnumEntry, context: Context) {
+        val fieldName = nameTable.allocateName(enumEntryInfo.jvmName)
+
+        val templateArguments = ArrayList<String>()
+        val argTypes = ArrayList<String>()
+        val argNames = ArrayList<String>()
+
+        val fieldType = enumEntryInfo.type
+        val fieldTypeName = context.typeMap.nativeNameOf(fieldType)
+        templateArguments.add(fieldTypeName)
+        val returnType = context.typeMap.wrapperNameOf(fieldTypeName, false)
+        templateArguments.add(cppName)
+
+        argTypes.add(context.typeMap.wrapperNameOf(fieldTypeName, true))
+
+        val field = JavaEntity(
+            JavaEntityType.StaticField,
+            true,
             false, //meaningless for fields
             fieldName, templateArguments, returnType, argTypes, argNames
         )

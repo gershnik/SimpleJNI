@@ -92,7 +92,7 @@ internal class ClassContent(val classElement: TypeElement,
 
                         }
                     }
-                    ElementKind.FIELD -> {
+                    ElementKind.ENUM_CONSTANT, ElementKind.FIELD -> {
 
                         val fieldElement = childElement as VariableElement
 

@@ -36,7 +36,7 @@ internal class Generator {
         generateTypeHeader(typeMap, context)
 
         val allHeaders = ArrayList<String>()
-        for (header in typeMap.classHeaders) {
+        for (header in typeMap.classHeaders.sorted()) {
             if (generateClassHeader(header, typeMap, context))
                 allHeaders.add(header)
         }
@@ -55,8 +55,7 @@ internal class Generator {
             typeHeader.write("//THIS FILE IS AUTO-GENERATED. DO NOT EDIT\n\n")
             typeHeader.write("#include <smjni/smjni.h>\n\n")
 
-            val exposedClasses = ArrayList(typeMap.exposedClasses.values)
-            exposedClasses.sortBy { it.cppName }
+            val exposedClasses = ArrayList(typeMap.exposedClasses.values).sortedBy { it.cppName }
 
             for (classContent in exposedClasses) {
                 typeHeader.write("DEFINE_JAVA_TYPE(${classContent.cppName},  \"${classContent.binaryName}\")\n")
@@ -95,7 +94,7 @@ internal class Generator {
             classHeader.write("//THIS FILE IS AUTO-GENERATED. DO NOT EDIT\n\n")
             classHeader.write("#include \"${context.headerName}\"\n\n")
 
-            typeMap.classesInHeader(header).forEach { classContent ->
+            typeMap.classesInHeader(header).sortedBy { it.cppName }.forEach { classContent ->
                 if (classContent.javaEntities.isNotEmpty() || classContent.nativeMethods.isNotEmpty())
                     generateClassDef(classHeader, classContent)
             }
@@ -329,7 +328,12 @@ internal class Generator {
 
             allHeader.write("\n#define JNIGEN_ALL_GENERATED_CLASSES \\\n    ")
 
-            allHeader.write(headers.joinToString(separator = ", \\\n    ") { header -> typeMap.classesInHeader(header).filter {it.hasCppClass }.map { it.cppClassName }.joinToString(separator = ", \\\n    ")})
+            allHeader.write(headers.joinToString(separator = ", \\\n    ") { header ->
+                typeMap.classesInHeader(header)
+                    .filter {it.hasCppClass }
+                    .map { it.cppClassName }
+                    .sorted()
+                    .joinToString(separator = ", \\\n    ")})
 
             allHeader.write("\n\n#endif\n")
         }

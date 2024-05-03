@@ -46,6 +46,7 @@ class KJniGenTest {
     fun generateOutput(name: String, dir: Path) {
         val sources = Files.list(dir / "input")
             .filter { setOf("kt", "java").contains(it.extension)}
+            .sorted(compareBy { it.fileName.toString() })
             .map { SourceFile.fromPath(it.toFile()) }.toList()
 
         val args = loadArguments(dir / "args.properties")
