@@ -1,4 +1,4 @@
-gradle.ext.jniGenVersion = '3.8'
+gradle.ext.jniGenVersion = '3.9'
 gradle.ext.cmakeVersion = '3.22.1'
 gradle.ext.compileSdk = 34
 gradle.ext.minSdk = 21
