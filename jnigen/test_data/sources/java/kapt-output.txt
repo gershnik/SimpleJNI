@@ -1,5 +1,5 @@
-JNIGen: Discovered AnEnum
 JNIGen: Discovered AClass
+JNIGen: Discovered AnEnum
 JNIGen: Generating type_mapping.h:  written
 JNIGen: Generating AnEnum_class.h:  written
 JNIGen: Generating AClass_class.h:  written
