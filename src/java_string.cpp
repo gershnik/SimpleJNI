@@ -27,7 +27,7 @@ using namespace smjni;
 static thread_local std::vector<jchar> g_utf16_buffer;
 static constexpr size_t g_max_buffer_size = 64 * 1024;
 
-static local_java_ref<jstring> java_string_create(JNIEnv * env, const char * str, size_t size)
+local_java_ref<jstring> smjni::java_string_create(JNIEnv * env, const char * str, size_t size)
 {
     g_utf16_buffer.clear();
     utf8_to_utf16(str, str + size, std::back_inserter(g_utf16_buffer));

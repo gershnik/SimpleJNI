@@ -36,6 +36,9 @@ TEST_CASE( "testString" )
     auto str3 = java_string_create(env, std::string("hello"));
     CHECK(5 == java_string_get_length(env, str3));
     CHECK("hello" == java_string_to_cpp(env, str3));
+    auto str4 = java_string_create(env, "hello world", 5);
+    CHECK(5 == java_string_get_length(env, str4));
+    CHECK("hello" == java_string_to_cpp(env, str4));
 
     auto empty = java_string_create(env, nullptr);
     CHECK(0 == java_string_get_length(env, empty));
