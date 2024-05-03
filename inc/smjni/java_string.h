@@ -37,6 +37,7 @@ namespace smjni
         return jattach(env, ret);
     } 
         
+    local_java_ref<jstring> java_string_create(JNIEnv * env, const char * str, size_t size);
     local_java_ref<jstring> java_string_create(JNIEnv * env, const char * str);
     local_java_ref<jstring> java_string_create(JNIEnv * env, const std::string & str);
         
