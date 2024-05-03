@@ -40,7 +40,7 @@ internal class Generator(private val context: Context) {
         generateTypeHeader()
 
         val allHeaders = ArrayList<String>()
-        for (header in context.typeMap.classHeaders) {
+        for (header in context.typeMap.classHeaders.sorted()) {
             if (generateClassHeader(header))
                 allHeaders.add(header)
         }
@@ -101,7 +101,7 @@ internal class Generator(private val context: Context) {
             classHeader.write("//THIS FILE IS AUTO-GENERATED. DO NOT EDIT\n\n")
             classHeader.write("#include \"${context.headerName}\"\n\n")
 
-            context.typeMap.classesInHeader(header).forEach { classContent ->
+            context.typeMap.classesInHeader(header).sortedBy { it.cppName }.forEach { classContent ->
                 if (classContent.javaEntities.isNotEmpty() || classContent.nativeMethods.isNotEmpty())
                     generateClassDef(classHeader, classContent)
             }
@@ -339,6 +339,7 @@ internal class Generator(private val context: Context) {
                 context.typeMap.classesInHeader(header)
                     .filter {it.hasCppClass }
                     .map { it.cppClassName }
+                    .sorted()
                     .joinToString(separator = ", \\\n    ")})
 
             allHeader.write("\n\n#endif\n")
