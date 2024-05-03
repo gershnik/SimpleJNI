@@ -8,14 +8,14 @@ jobs:
     permissions: write-all
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Get Release Name
         shell: python
         run: |
           import os
           #ref = os.environ['GITHUB_REF']
-          #name = ref[ref.rfind('/') + 2:]
+          #name = ref[ref.rfind('/') + 1:]
           with open('VERSION', 'r') as verFile:
             name = verFile.read().strip()
           with open(os.environ['GITHUB_ENV'], 'w') as env:
@@ -47,7 +47,7 @@ jobs:
             publishAllPublicationsToOssrhRepository
 
       - name: Make release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           prerelease: false
