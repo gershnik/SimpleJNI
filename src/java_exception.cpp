@@ -24,6 +24,11 @@
 
 using namespace smjni;
 
+static constexpr char g_defaultWhat[] = "smjni::java_exception";
+static constexpr char g_defaultWhatPrefix[] = "smjni::java_exception: ";
+    
+    
+
 const char * java_exception::what() const noexcept
 { 
     if (m_what.empty())
@@ -43,19 +48,15 @@ const char * java_exception::what() const noexcept
 
 std::string java_exception::do_what() const
 {
-    std::string ret = "smjni::java_exception";
-    
     JNIEnv * jenv = jni_provider::get_jni();
     auto message = java_runtime::object().toString(jenv, m_throwable.c_ptr());
     if (!message)
-        return ret;
-    jsize len = java_string_get_length(jenv, message);
-    if (!len)
-        return ret;
-    std::vector<jchar> buf(len);
-    java_string_get_region(jenv, message, 0, len, &buf[0]);
-    ret += ": ";
-    utf16_to_utf8(buf.begin(), buf.end(), std::back_inserter(ret));
+        return g_defaultWhat;
+    java_string_access messageAccess(jenv, message);
+    std::string ret;
+    ret.reserve(std::size(g_defaultWhatPrefix) - 1 + messageAccess.size());
+    ret = g_defaultWhatPrefix;
+    utf16_to_utf8(messageAccess.begin(), messageAccess.end(), std::back_inserter(ret));
     return ret;
 }
 

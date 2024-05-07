@@ -158,4 +158,23 @@ public class TestSimpleJNI  {
     }
 
     private static native ByteBuffer doTestDirectBuffer(ByteBuffer buffer);
+
+    @CalledByNative
+    private static void testExceptionFromJava() {
+        throw new RuntimeException("hello world");
+    }
+
+    @CalledByNative
+    private static void testExceptionPassthrough() {
+        try {
+            doTestExceptionPassthrough();
+            fail("exception not thrown");
+        } catch(RuntimeException ex) {
+            assertEquals(ex.toString(), "java.lang.RuntimeException: hello world");
+        } catch(Exception ex) {
+            fail("exception of wrong type thrown");
+        }
+    }
+
+    private static native void doTestExceptionPassthrough();
 }

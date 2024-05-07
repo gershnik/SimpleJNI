@@ -251,4 +251,25 @@ jByteBuffer JNICALL TestSimpleJNI::doTestDirectBuffer(JNIEnv * env, jclass, jByt
     return nullptr;
 }
 
+TEST_CASE( "testExceptionFromJava" ) 
+{
+    JNIEnv * env = jni_provider::get_jni();
+    CHECK_THROWS_WITH_AS(java_classes::get<TestSimpleJNI>().testExceptionFromJava(env), 
+                "smjni::java_exception: java.lang.RuntimeException: hello world", smjni::java_exception);
+}
+
+TEST_CASE( "testExceptionPassthrough" ) 
+{
+    JNIEnv * env = jni_provider::get_jni();
+    java_classes::get<TestSimpleJNI>().testExceptionPassthrough(env);
+}
+
+void JNICALL TestSimpleJNI::doTestExceptionPassthrough(JNIEnv * env, jclass) 
+{
+    NATIVE_PROLOG
+        java_classes::get<TestSimpleJNI>().testExceptionFromJava(env);
+    NATIVE_EPILOG
+}
+
+
 TEST_SUITE_END();
