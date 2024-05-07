@@ -22,16 +22,10 @@
 
 namespace smjni
 {
-    template<typename... Classes>
-    class java_class_table
+    namespace internal
     {
-    private:
-        template<typename... T>
-        static JNIEnv * tuple_forward(JNIEnv * env)
-            { return env; }
-        
         template <typename Func, typename... T>
-        static void tuple_for_each(std::tuple<T...> &ts, Func func) 
+        void tuple_for_each(std::tuple<T...> &ts, Func func) 
         {
             int unused[] = {(func(std::get<T>(ts)),0)...};
             (void)unused;
@@ -42,11 +36,15 @@ namespace smjni
         {
             typedef std::tuple<Transform<T>...> type;
         };
-        
-        class registrator
+
+        template<typename X, typename... T>
+        decltype(auto) dependent_forward(X && val)
+            { return std::forward<X>(val); }
+
+        class class_registrator
         {
         public:
-            registrator(JNIEnv * env):
+            class_registrator(JNIEnv * env):
                 m_env(env)
             {}
 
@@ -68,13 +66,18 @@ namespace smjni
 
             JNIEnv * const m_env;
         };
-        
+    }
+
+    template<typename... Classes>
+    class java_class_table
+    {
+    private:
         struct table : public std::tuple<Classes...>
         {
             table(JNIEnv * env):
-                std::tuple<Classes...>(tuple_forward<Classes>(env)...)
+                std::tuple<Classes...>(internal::dependent_forward<Classes>(env)...)
             {
-                tuple_for_each(*this, registrator(env));
+                internal::tuple_for_each(*this, internal::class_registrator(env));
             }
         };
     public:
@@ -94,7 +97,7 @@ namespace smjni
         }
         
         template <template<typename> class Transform>
-        using transformed_type = typename tuple_transform<Transform, Classes...>::type;
+        using transformed_type = typename internal::tuple_transform<Transform, Classes...>::type;
     private:
         java_class_table(JNIEnv * env):
             m_table(env)
