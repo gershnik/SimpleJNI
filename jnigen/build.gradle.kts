@@ -89,7 +89,8 @@ tasks.register<Zip>("bundleCpp") {
          "../VERSION",
          "../LICENSE",
          "../NOTICE",
-         "../README.md")
+         "../README.md",
+         "../CHANGELOG.md")
 
     archiveFileName.set("SimpleJNI-${project.version}-cpp-only.zip")
     destinationDirectory.set(rootProject.layout.buildDirectory)

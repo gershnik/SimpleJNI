@@ -7,10 +7,12 @@ on:
       - '*/**'
     paths-ignore:
       - 'README.md'
+      - 'CHANGELOG.md'
       - '.gitignore'
       - '.gitattributes'
       - 'LICENSE'
       - 'NOTICE'
+      - '.tools/create-release'
       - '.github/workflows/publish.yml'
 
 env:
