@@ -31,12 +31,6 @@ namespace smjni
             (void)unused;
         }
         
-        template <template<typename> class Transform, typename... T>
-        struct tuple_transform
-        {
-            typedef std::tuple<Transform<T>...> type;
-        };
-
         template<typename X, typename... T>
         decltype(auto) dependent_forward(X && val)
             { return std::forward<X>(val); }
@@ -71,15 +65,6 @@ namespace smjni
     template<typename... Classes>
     class java_class_table
     {
-    private:
-        struct table : public std::tuple<Classes...>
-        {
-            table(JNIEnv * env):
-                std::tuple<Classes...>(internal::dependent_forward<Classes>(env)...)
-            {
-                internal::tuple_for_each(*this, internal::class_registrator(env));
-            }
-        };
     public:
         static void init(JNIEnv * env)
         {
@@ -95,16 +80,17 @@ namespace smjni
         {
             return std::get<T>(s_instance->m_table);
         }
-        
-        template <template<typename> class Transform>
-        using transformed_type = typename internal::tuple_transform<Transform, Classes...>::type;
+
+        java_class_table(const java_class_table &) = delete;
+        java_class_table & operator=(const java_class_table &) = delete;
     private:
         java_class_table(JNIEnv * env):
-            m_table(env)
+            m_table(internal::dependent_forward<Classes>(env)...)
         {
+            internal::tuple_for_each(m_table, internal::class_registrator(env));
         }
     private:
-        table m_table;
+        std::tuple<Classes...> m_table;
         
         static java_class_table * s_instance;
     };
