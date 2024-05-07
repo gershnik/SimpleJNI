@@ -43,6 +43,21 @@ namespace smjni
             if (m_pushed)
                 m_env->PopLocalFrame(nullptr);
         }
+
+        java_frame(java_frame && src): 
+            m_env(std::exchange(src.m_env, nullptr)),
+            m_pushed(std::exchange(src.m_pushed, false))
+        {
+        }
+
+        java_frame & operator=(java_frame && src)
+        {
+            if (this != &src) {
+                this->~java_frame();
+                new (this) java_frame(std::move(src));
+            }
+            return *this; 
+        }
         
         template<typename T>
         T pop(T obj)
@@ -57,8 +72,6 @@ namespace smjni
         
         java_frame(const java_frame &) = delete;
         java_frame & operator=(const java_frame &) = delete;
-        java_frame(java_frame &&) = delete;
-        java_frame & operator=(java_frame &&) = delete;
     private:
         JNIEnv * m_env;
         bool m_pushed;
