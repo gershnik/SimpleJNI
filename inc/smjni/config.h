@@ -23,9 +23,9 @@
 
 #endif
 
-#if __cplusplus < 201402L
+#if __cplusplus < 201703L
 
-#error This library requires C++14 or above
+#error This library requires C++17 or above
 
 #endif
 
