@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.10] - 2024-05-09
+
 ### Native Code
 * `java_string_create(JNIEnv *, const char *, size_t)` exposed publicly (thank you @JonathanLennox)
 * Reduced amount of allocations during exception message extraction
@@ -72,3 +74,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.7]: https://github.com/gershnik/SimpleJNI/releases/3.7
 [3.8]: https://github.com/gershnik/SimpleJNI/releases/3.8
 [3.9]: https://github.com/gershnik/SimpleJNI/releases/3.9
+[3.10]: https://github.com/gershnik/SimpleJNI/releases/3.10
