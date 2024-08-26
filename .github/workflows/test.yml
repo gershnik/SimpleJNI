@@ -73,7 +73,7 @@ jobs:
     - name: System Setup
       shell: bash
       run: |
-        if [[ '${{ matrix.os }}' == 'ubuntu-*' ]]; then
+        if [[ '${{ matrix.os }}' == ubuntu-* ]]; then
           if [[ '${{ matrix.compiler }}' == 'clang' ]]; then
             wget https://apt.llvm.org/llvm.sh
             chmod u+x llvm.sh
