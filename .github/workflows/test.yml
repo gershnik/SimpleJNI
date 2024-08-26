@@ -28,76 +28,44 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - os: macos-13
-          java: '8'
-        - os: macos-13
-          java: '11'
-        - os: macos-13
-          java: '17'
-        - os: macos-13
-          java: '21'
-        - os: windows-latest
-          java: '8'
-        - os: windows-latest
-          java: '11'
-        - os: windows-latest
-          java: '17'
-        - os: windows-latest
-          java: '21'
-        - os: ubuntu-latest
-          java: '8'
-          compiler: 'gcc-11|g++-11'
-        - os: ubuntu-latest
-          java: '8'
-          compiler: 'gcc-12|g++-12'
-        - os: ubuntu-latest
-          java: '8'
-          compiler: 'gcc-13|g++-13'
-        - os: ubuntu-latest
-          java: '8'
-          compiler: 'clang-13|clang++-13'
-        - os: ubuntu-latest
-          java: '8'
-          compiler: 'clang-14|clang++-14'
-        - os: ubuntu-latest
-          java: '8'
-          compiler: 'clang-15|clang++-15'
-        - os: ubuntu-latest
-          java: '17'
-          compiler: 'gcc-11|g++-11'
-        - os: ubuntu-latest
-          java: '17'
-          compiler: 'gcc-12|g++-12'
-        - os: ubuntu-latest
-          java: '17'
-          compiler: 'gcc-13|g++-13'
-        - os: ubuntu-latest
-          java: '17'
-          compiler: 'clang-13|clang++-13'
-        - os: ubuntu-latest
-          java: '17'
-          compiler: 'clang-14|clang++-14'
-        - os: ubuntu-latest
-          java: '17'
-          compiler: 'clang-15|clang++-15'
-        - os: ubuntu-latest
-          java: '21'
-          compiler: 'gcc-11|g++-11'
-        - os: ubuntu-latest
-          java: '21'
-          compiler: 'gcc-12|g++-12'
-        - os: ubuntu-latest
-          java: '21'
-          compiler: 'gcc-13|g++-13'
-        - os: ubuntu-latest
-          java: '21'
-          compiler: 'clang-13|clang++-13'
-        - os: ubuntu-latest
-          java: '21'
-          compiler: 'clang-14|clang++-14'
-        - os: ubuntu-latest
-          java: '21'
-          compiler: 'clang-15|clang++-15'
+        - { os: macos-13, java: '8' }
+        - { os: macos-13, java: '11' }
+        - { os: macos-13, java: '17' }
+        - { os: macos-13, java: '21' }
+        - { os: windows-latest, java: '8' }
+        - { os: windows-latest, java: '11' }
+        - { os: windows-latest, java: '17' }
+        - { os: windows-latest, java: '21' }
+        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 11 }
+        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 12 }
+        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 13 }
+        - { os: ubuntu-24.04, java: '8', compiler: 'gcc', compiler_version: 14 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 15 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 16 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 17 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 18 }
+        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 11 }
+        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 12 }
+        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 13 }
+        - { os: ubuntu-24.04, java: '17', compiler: 'gcc', compiler_version: 14 }
+        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 14 }
+        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 15 }
+        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 16 }
+        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 17 }
+        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 18 }
+        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 11 }
+        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 12 }
+        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 13 }
+        - { os: ubuntu-24.04, java: '21', compiler: 'gcc', compiler_version: 14 }
+        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 14 }
+        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 15 }
+        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 16 }
+        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 17 }
+        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 18 }
 
     steps:
     - uses: actions/checkout@v4
@@ -105,20 +73,22 @@ jobs:
     - name: System Setup
       shell: bash
       run: |
-        if [[ '${{ matrix.os }}' == 'ubuntu-latest' ]]; then
-          if [[ '${{ matrix.compiler}}' == 'clang-15|clang++-15' ]]; then
-            sudo apt-get update
-            sudo apt-get install -y clang-15 clang++-15
+        if [[ '${{ matrix.os }}' == 'ubuntu-*' ]]; then
+          if [[ '${{ matrix.compiler }}' == 'clang' ]]; then
+            wget https://apt.llvm.org/llvm.sh
+            chmod u+x llvm.sh
+            sudo ./llvm.sh ${{ matrix.compiler_version }} 
+            sudo apt-get install -y clang-tools-${{ matrix.compiler_version }}
+            echo "CC=clang-${{ matrix.compiler_version }}" >> $GITHUB_ENV
+            echo "CXX=clang++-${{ matrix.compiler_version }}" >> $GITHUB_ENV
           fi
 
-          if [[ '${{ matrix.compiler }}' == 'gcc-12|g++-12' ]]; then
+          if [[ '${{ matrix.compiler }}' == 'gcc' ]]; then
+            sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
             sudo apt-get update
-            sudo apt-get install -y gcc-12 g++-12
-          fi
-
-          if [[ '${{ matrix.compiler }}' == 'gcc-13|g++-13' ]]; then
-            sudo apt-get update
-            sudo apt-get install -y gcc-13 g++-13
+            sudo apt-get install -y gcc-${{ matrix.compiler_version }} g++-${{ matrix.compiler_version }}
+            echo "CC=gcc-${{ matrix.compiler_version }}" >> $GITHUB_ENV
+            echo "CXX=g++-${{ matrix.compiler_version }}" >> $GITHUB_ENV
           fi
         fi
 
@@ -132,13 +102,7 @@ jobs:
 
     - name: Configure CMake
       shell: bash
-      run: |
-        if [[ '${{ matrix.compiler }}' != '' ]]; then
-          IFS='|' read -ra COMPILER  <<< '${{ matrix.compiler }}'
-          export CC=${COMPILER[0]}
-          export CXX=${COMPILER[1]}
-        fi
-        cmake -S . -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
 
     - name: Build and Test Native
       shell: bash

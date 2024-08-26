@@ -19,6 +19,7 @@ import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasItem
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Tag
@@ -36,6 +37,7 @@ import kotlin.io.path.isDirectory
 import kotlin.streams.toList
 
 
+@OptIn(ExperimentalCompilerApi::class)
 @KspExperimental
 class KJniGenTest {
 

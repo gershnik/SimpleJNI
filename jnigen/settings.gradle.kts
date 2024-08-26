@@ -18,11 +18,11 @@
 pluginManagement {
     plugins {
         val gradleExtra = (gradle as ExtensionAware).extra
-        val kotlinVersion by gradleExtra("1.9.23")
+        val kotlinVersion by gradleExtra("1.9.24")
         val kspVersion by gradleExtra("1.0.20")
-        val junitVersion by gradleExtra("5.10.2")
-        val kotlinCompileTestingVersion by gradleExtra("1.5.0")
-        val hamcrestVersion by gradleExtra("2.2")
+        val junitVersion by gradleExtra("5.11.0")
+        val kotlinCompileTestingVersion by gradleExtra("1.6.0")
+        val hamcrestVersion by gradleExtra("3.0")
 
         id("org.jetbrains.kotlin.jvm") version kotlinVersion
     }
