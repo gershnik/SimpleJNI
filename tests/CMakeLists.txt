@@ -57,9 +57,15 @@ if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
 
 else()
 
+    if (Java_VERSION VERSION_GREATER_EQUAL 9)
+
+        set(SMJNITEST_JAVA_ARGS "-XX:+CreateCoredumpOnCrash")
+
+    endif()
+
     add_custom_target(test-native ALL
         DEPENDS javabuild smjnitests 
-        COMMAND ${Java_JAVA_EXECUTABLE} -Djava.library.path=$<TARGET_FILE_DIR:smjnitests> -jar smjnitests.jar
+        COMMAND ${Java_JAVA_EXECUTABLE} ${SMJNITEST_JAVA_ARGS} -Djava.library.path=$<TARGET_FILE_DIR:smjnitests> -jar smjnitests.jar
         WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/build
     )
 
