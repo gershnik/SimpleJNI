@@ -112,6 +112,16 @@ jobs:
       shell: bash
       run: cmake --build build --config $BUILD_TYPE --target test-jnigen
 
+    - name: Upload JDK crashes
+      if: matrix.os == 'windows-latest'
+      uses: actions/upload-artifact@v4
+      with:
+        if-no-files-found: ignore
+        name: JNI_Crash_Logs
+        path: |
+          tests/build/hs_*.log
+          tests/build/hs_*.mdmp
+
   android:
     runs-on: ubuntu-latest
 
