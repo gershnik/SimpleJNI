@@ -117,7 +117,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         if-no-files-found: ignore
-        name: JNI_Crash_Logs_${{ matrix }}
+        name: JNI_Crash_Logs_${{ matrix.os }}_${{ matrix.java }}
         path: |
           tests/build/hs_*.log
           tests/build/hs_*.mdmp
