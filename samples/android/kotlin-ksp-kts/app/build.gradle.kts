@@ -1,17 +1,7 @@
-val gradleExt = gradle as ExtensionAware
-class Global {
-    val jniGenVersion: String by gradleExt.extra
-    val cmakeVersion: String by gradleExt.extra
-    val compileSdk: Int by gradleExt.extra
-    val minSdk: Int by gradleExt.extra
-    val targetSdk: Int by gradleExt.extra
-}
-val global = Global()
-
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("com.google.devtools.ksp") version "1.9.23-1.0.20"
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 //JniGen settings
@@ -25,27 +15,27 @@ val jniGenProps = JniGenProps()
 dependencies {
 
     //JNI annotations
-    compileOnly("io.github.gershnik:smjni-jnigen-annotations:${global.jniGenVersion}")
+    compileOnly(libs.smjni.jnigen.annotations)
     //JNI code generator
-    ksp("io.github.gershnik:smjni-jnigen-kprocessor:${global.jniGenVersion}")
+    ksp(libs.smjni.jnigen.kprocessor)
 
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.android.material)
+    implementation(libs.androidx.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 android {
-    compileSdk = global.compileSdk
+    compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "com.example.myapplication"
 
     defaultConfig {
         applicationId = "com.example.myapplication"
-        minSdk = global.minSdk
-        targetSdk = global.targetSdk
+        minSdk = libs.versions.minSdk.get().toInt()
+        targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
 
@@ -75,7 +65,7 @@ android {
     externalNativeBuild {
         cmake {
             path = file("../../../cpp/CMakeLists.txt")
-            version = global.cmakeVersion
+            version = libs.versions.cmake.get()
         }
     }
 }
@@ -110,6 +100,7 @@ tasks.withType<com.google.devtools.ksp.gradle.KspTaskJvm> {
 
 //Clean generated headers on project clean
 tasks.register<Delete>("cleanJNIHeaders") {
+    group = "build"
     delete(file(jniGenProps.generatedPath))
 }
 tasks.named("clean") {
