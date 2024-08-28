@@ -47,7 +47,7 @@ java {
 
 dependencies {
     implementation 'io.github.gershnik:smjni-jnigen-annotations:SNAPSHOT'
-    implementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+    implementation 'org.junit.jupiter:junit-jupiter-api:5.10.3'
     annotationProcessor("io.github.gershnik:smjni-jnigen-processor:SNAPSHOT")
 }
 
