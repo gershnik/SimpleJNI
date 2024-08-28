@@ -17,16 +17,6 @@
  See the License for the specific language governing permissions and
  limitations under the License.
 */
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        val kotlinVersion:String by (gradle as ExtensionAware).extra
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
-    }
-}
 
 fun getOurVersion(): String {
 
@@ -45,10 +35,6 @@ fun getOurVersion(): String {
 
 
 allprojects {
-    repositories {
-        mavenCentral()
-    }
-
     project.version = getOurVersion()
     project.group = "io.github.gershnik"
     val artifactIdPrefix by project.extra("smjni-jnigen-")
