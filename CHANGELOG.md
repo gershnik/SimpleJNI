@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.11] - 2024-08-30
+
 ### Native Code
 * `java_string_create` now has overloads that accept `char8_t *`, `(char8_t *, size_t)`, `char16_t *`, `(char16_t *, size_t)` and, under C++20, any contiguous range of these types (e.g. `std::vector`, `std::string_view`, `std::span` etc.)
 * `java_string_access` is now movable
@@ -90,3 +92,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.8]: https://github.com/gershnik/SimpleJNI/releases/3.8
 [3.9]: https://github.com/gershnik/SimpleJNI/releases/3.9
 [3.10]: https://github.com/gershnik/SimpleJNI/releases/3.10
+[3.11]: https://github.com/gershnik/SimpleJNI/releases/3.11
