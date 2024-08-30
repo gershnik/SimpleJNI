@@ -183,11 +183,11 @@ namespace smjni
                 return ret;
             }
             friend iterator operator+(const iterator & me, jsize dist) noexcept
-                { return iterator(*me->m_parent, me->m_idx + dist); }
+                { return iterator(*me.m_parent, me.m_idx + dist); }
             friend iterator operator+(jsize dist, const iterator & me) noexcept
-                { return iterator(*me->m_parent, me->m_idx + dist); }
+                { return iterator(*me.m_parent, me.m_idx + dist); }
             friend iterator operator-(const iterator & me, jsize dist) noexcept
-                { return iterator(*me->m_parent, me->m_idx - dist); }
+                { return iterator(*me.m_parent, me.m_idx - dist); }
             friend jsize operator-(const iterator & lhs, const iterator & rhs) noexcept
                 { return lhs.m_idx - rhs.m_idx; }
 
@@ -274,11 +274,11 @@ namespace smjni
                 return ret;
             }
             friend const_iterator operator+(const const_iterator & me, jsize dist) noexcept
-                { return const_iterator(*me->m_parent, me->m_idx + dist); }
+                { return const_iterator(*me.m_parent, me.m_idx + dist); }
             friend const_iterator operator+(jsize dist, const const_iterator & me) noexcept
-                { return const_iterator(*me->m_parent, me->m_idx + dist); }
+                { return const_iterator(*me.m_parent, me.m_idx + dist); }
             friend const_iterator operator-(const const_iterator & me, jsize dist) noexcept
-                { return const_iterator(*me->m_parent, me->m_idx - dist); }
+                { return const_iterator(*me.m_parent, me.m_idx - dist); }
             friend jsize operator-(const const_iterator & lhs, const const_iterator & rhs) noexcept
                 { return lhs.m_idx - rhs.m_idx; }
 

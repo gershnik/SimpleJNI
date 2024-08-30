@@ -19,7 +19,9 @@
 #include <doctest.h>
 
 #include <vector>
+#include <array>
 #include <iterator>
+#include <algorithm>
 
 using namespace smjni;
 
