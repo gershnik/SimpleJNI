@@ -21,7 +21,7 @@ It targets two main scenarios
 2. Implement native Java methods in C++
 
 The approach this library is taking is different from SWIG and JNA. Unlike either it does not attempt to easily
-expose existing C or C++ code to Java. Trying to do so is, in our opinion, rarely a good idea. Instead it does
+expose existing C or C++ code to Java. Trying to do so is, in my opinion, rarely a good idea. Instead it does
 exactly the opposite: easily exposes Java to C++.
 With this library if you want to simply connect existing C++ code to Java you will need to write your own wrappers.
 However, doing so will become easy and straightforward. As will be more sophisticated things like implementing
@@ -44,7 +44,7 @@ classes partially natively or using Java from within C++ application.
 *    All of the above should be accomplished without sacrificing performance compared to "raw" JNI use. However, if there
      is an unavoidable choice between marginal performance gain and correctness/safety the later should win.
 *    All of the JNI functionality required to write correct code should be available in the library. There should never be a need
-     to manually invoke JNIEnv methods. Conversely dangerous (e.g. `ThrowNew`) and unnecessary JNI methods should not
+     to manually invoke `JNIEnv` methods. Conversely dangerous (e.g. `ThrowNew`) and unnecessary JNI methods should not
      be exposed.
 *    Modularity: it should be possible to mix and match parts of library with hand written JNI code if desired. It should not
      force all or nothing approach.
