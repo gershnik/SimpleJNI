@@ -19,6 +19,7 @@
 #include <doctest.h>
 
 #include <vector>
+#include <iterator>
 
 using namespace smjni;
 
@@ -118,11 +119,13 @@ TEST_CASE( "testObject" )
         auto arr = java_array_create(env, java_runtime::object(), 5);
         java_array_access<jobjectArray> acc(env, arr);
         CHECK(acc.size() == 5);
-        local_java_ref<jobject> obj = acc.at(0);
-        CHECK(!obj);
-        acc[0] = java_string_create(env, "abc");
-        obj = acc.at(0);
-        CHECK(obj);
+        {
+            local_java_ref<jobject> obj = acc.at(0);
+            CHECK(!obj);
+            acc[0] = java_string_create(env, "abc");
+            obj = acc.at(0);
+            CHECK(obj);
+        }
 
         std::vector<std::string> buf;
         for(local_java_ref<jobject> obj: acc) {

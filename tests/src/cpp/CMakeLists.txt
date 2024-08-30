@@ -29,15 +29,6 @@ FetchContent_Declare(doctest
 
 FetchContent_MakeAvailable(doctest)
 
-if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
-
-    set(ANDROID_SDK_DIR ${CMAKE_ANDROID_NDK}/../..)
-    set(ADB ${ANDROID_SDK_DIR}/platform-tools/adb)
-    set(ANDROID_TEST_DIR /data/local/tmp/smjni_test)
-    set(GRADLE_BUILD_PROS -Pandroid.sdk=${ANDROID_SDK_DIR})
-
-endif()
-
 add_custom_target(test-native ALL)
 
 set (TEST_SUFFIXES
@@ -99,6 +90,8 @@ foreach(TEST_SUFFIX ${TEST_SUFFIXES})
     )
 
     if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
+
+        set(ANDROID_TEST_DIR /data/local/tmp/smjni_test)
 
         add_custom_target(test-native-${TEST_SUFFIX}
             DEPENDS ${TEST_TARGET_NAME}

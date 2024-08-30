@@ -16,6 +16,14 @@
 
 cmake_minimum_required(VERSION 3.16)
 
+if (${CMAKE_SYSTEM_NAME} STREQUAL Android)
+
+    set(ANDROID_SDK_DIR ${CMAKE_ANDROID_NDK}/../..)
+    set(ADB ${ANDROID_SDK_DIR}/platform-tools/adb)
+    set(GRADLE_BUILD_PROS -Pandroid.sdk=${ANDROID_SDK_DIR})
+
+endif()
+
 add_subdirectory("../jnigen" ${CMAKE_CURRENT_BINARY_DIR}/jnigen)
 
 
