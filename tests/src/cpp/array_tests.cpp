@@ -18,6 +18,8 @@
 
 #include <doctest.h>
 
+#include <vector>
+
 using namespace smjni;
 
 TEST_SUITE_BEGIN("array");
@@ -129,6 +131,19 @@ TEST_CASE( "testObject" )
             }
         }
         CHECK(buf == std::vector<std::string>{ "abc" });
+    }
+
+    {
+        auto str = java_string_create(env, "abc");
+        auto arr = java_array_create(env, java_runtime::object(), 5, str);
+        const java_array_access<jobjectArray> acc(env, arr);
+        std::vector<std::string> buf;
+        for(local_java_ref<jobject> obj: acc) {
+            if (obj) {
+                buf.push_back(java_string_to_cpp(env, obj));
+            }
+        }
+        CHECK(buf == std::vector<std::string>{ "abc", "abc", "abc", "abc", "abc" });
     }
 
 }

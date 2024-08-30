@@ -24,6 +24,8 @@
 #include <smjni/utf_util.h>
 
 #include <string>
+#include <cstring>
+#include <stdexcept>
 
 #if __cpp_lib_ranges >= 201911L
     #include <ranges>
@@ -42,7 +44,7 @@ namespace smjni
         return jattach(env, ret);
     }
 
-    inline local_java_ref<jstring> java_string_create(JNIEnv * env, nullptr_t)
+    inline local_java_ref<jstring> java_string_create(JNIEnv * env, std::nullptr_t)
         { return java_string_create(env, (const jchar *)nullptr, 0); }
 
     inline local_java_ref<jstring> java_string_create(JNIEnv * env, const char16_t * str, size_t size)

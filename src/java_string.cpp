@@ -18,7 +18,6 @@
 #include <smjni/java_string.h>
 
 #include <iterator>
-#include <cstring>
 #include <vector>
 
 using namespace smjni;
