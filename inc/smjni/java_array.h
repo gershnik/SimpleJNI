@@ -23,6 +23,10 @@
 
 #include <stdexcept>
 
+#if __cpp_lib_ranges >= 201911L
+    #include <ranges>
+#endif
+
 namespace smjni
 {
     template<typename T>
@@ -48,11 +52,18 @@ namespace smjni
         {
             java_exception::check(env);
         }
+
+        java_array_access_base(java_array_access_base && src) noexcept:
+            m_env(src.m_env),
+            m_array(std::exchange(src.m_array, nullptr)),
+            m_length(std::exchange(src.m_length, 0))
+
+        {}
         
     protected:
         JNIEnv * const m_env = nullptr;
-        const T m_array = nullptr;
-        const jsize m_length = 0;
+        T m_array = nullptr;
+        jsize m_length = 0;
     };
 
 
@@ -126,15 +137,19 @@ namespace smjni
             typedef proxy reference;
         public:
             iterator() noexcept = default;
+
+            void swap(iterator & other) noexcept
+            {
+                std::swap(m_parent, other.m_parent);
+                std::swap(m_idx, other.m_idx);
+            }
+            friend void swap(iterator & lhs, iterator & rhs) noexcept
+                { lhs.swap(rhs); }
             
             proxy operator*() const
-            {
-                return proxy(*m_parent, m_idx);
-            }
+                { return proxy(*m_parent, m_idx); }
             proxy operator[](jsize dist) const
-            {
-                return proxy(*m_parent, m_idx + dist);
-            }
+                { return proxy(*m_parent, m_idx + dist); }
             iterator & operator++() noexcept
             {
                 ++m_idx;
@@ -157,63 +172,37 @@ namespace smjni
             }
             iterator operator++(int) noexcept
             {
-                const_iterator ret(*this);
+                iterator ret(*this);
                 ++m_idx;
                 return ret;
             }
             iterator operator--(int) noexcept
             {
-                const_iterator ret(*this);
+                iterator ret(*this);
                 --m_idx;
                 return ret;
             }
-            iterator operator+(jsize dist) const noexcept
-            {
-                return iterator(*m_parent, m_idx + dist);
-            }
-            iterator operator-(jsize dist) const noexcept
-            {
-                return iterator(*m_parent, m_idx - dist);
-            }
-            jsize operator-(const iterator & rhs) const noexcept
-            {
-                return m_idx - rhs.m_idx;
-            }
+            friend iterator operator+(const iterator & me, jsize dist) noexcept
+                { return iterator(*me.m_parent, me.m_idx + dist); }
+            friend iterator operator+(jsize dist, const iterator & me) noexcept
+                { return iterator(*me.m_parent, me.m_idx + dist); }
+            friend iterator operator-(const iterator & me, jsize dist) noexcept
+                { return iterator(*me.m_parent, me.m_idx - dist); }
+            friend jsize operator-(const iterator & lhs, const iterator & rhs) noexcept
+                { return lhs.m_idx - rhs.m_idx; }
 
-            void swap(iterator & other) noexcept
-            {
-                std::swap(m_parent, other.m_parent);
-                std::swap(m_idx, other.m_idx);
-            }
-            friend void swap(iterator & lhs, iterator & rhs) noexcept
-            {
-                lhs.swap(rhs);
-            }
-            
             bool operator==(const iterator & rhs) const noexcept
-            {
-                return m_idx == rhs.m_idx;
-            }
+                { return m_idx == rhs.m_idx; }
             bool operator!=(const iterator & rhs) const noexcept
-            {
-                return !(*this == rhs);
-            }
+                { return !(*this == rhs); }
             bool operator<(const iterator & rhs) const noexcept
-            {
-                return m_idx < rhs.m_idx;
-            }
+                { return m_idx < rhs.m_idx; }
             bool operator<=(const iterator & rhs) const noexcept
-            {
-                return m_idx <= rhs.m_idx;
-            }
+                { return m_idx <= rhs.m_idx; }
             bool operator>(const iterator & rhs) const noexcept
-            {
-                return !(*this <= rhs);
-            }
+                { return !(*this <= rhs); }
             bool operator>=(const iterator & rhs) const noexcept
-            {
-                return !(*this < rhs);
-            }
+                { return !(*this < rhs); }
         private:
             iterator(java_array_access & parent, jsize idx) noexcept:
                 m_parent(&parent), 
@@ -246,18 +235,12 @@ namespace smjni
                 std::swap(m_idx, other.m_idx);
             }
             friend constexpr void swap(const_iterator & lhs, const_iterator & rhs) noexcept
-            {
-                lhs.swap(rhs);
-            }
+                { lhs.swap(rhs); }
 
             local_java_ref<element_type> operator*() const
-            {
-                return jattach(m_parent->m_env, m_parent->get(m_idx));
-            }
+                { return jattach(m_parent->m_env, m_parent->get(m_idx)); }
             local_java_ref<element_type> operator[](jsize dist) const
-            {
-                return jattach(m_parent->m_env, m_parent->get(m_idx + dist));
-            }
+                { return jattach(m_parent->m_env, m_parent->get(m_idx + dist)); }
             const_iterator & operator++() noexcept
             {
                 ++m_idx;
@@ -290,43 +273,27 @@ namespace smjni
                 --m_idx;
                 return ret;
             }
-            const_iterator operator+(jsize dist) const noexcept
-            {
-                return const_iterator(m_parent, m_idx + dist);
-            }
-            const_iterator operator-(jsize dist) const noexcept
-            {
-                return const_iterator(m_parent, m_idx - dist);
-            }
-            jsize operator-(const const_iterator & rhs) const noexcept
-            {
-                return m_idx - rhs.m_idx;
-            }
+            friend const_iterator operator+(const const_iterator & me, jsize dist) noexcept
+                { return const_iterator(*me.m_parent, me.m_idx + dist); }
+            friend const_iterator operator+(jsize dist, const const_iterator & me) noexcept
+                { return const_iterator(*me.m_parent, me.m_idx + dist); }
+            friend const_iterator operator-(const const_iterator & me, jsize dist) noexcept
+                { return const_iterator(*me.m_parent, me.m_idx - dist); }
+            friend jsize operator-(const const_iterator & lhs, const const_iterator & rhs) noexcept
+                { return lhs.m_idx - rhs.m_idx; }
 
             bool operator==(const const_iterator & rhs) const noexcept
-            {
-                return m_idx == rhs.m_idx;
-            }
+                { return m_idx == rhs.m_idx; }
             bool operator!=(const const_iterator & rhs) const noexcept
-            {
-                return !(*this == rhs);
-            }
+                { return !(*this == rhs); }
             bool operator<(const iterator & rhs) const noexcept
-            {
-                return m_idx < rhs.m_idx;
-            }
+                { return m_idx < rhs.m_idx; }
             bool operator<=(const iterator & rhs) const noexcept
-            {
-                return m_idx <= rhs.m_idx;
-            }
+                { return m_idx <= rhs.m_idx; }
             bool operator>(const iterator & rhs) const noexcept
-            {
-                return !(*this <= rhs);
-            }
+                { return !(*this <= rhs); }
             bool operator>=(const iterator & rhs) const noexcept
-            {
-                return !(*this < rhs);
-            }
+                { return !(*this < rhs); }
         private:
             const_iterator(const java_array_access & parent, jsize idx) noexcept:
                 m_parent(&parent), 
@@ -351,94 +318,71 @@ namespace smjni
     public:
         java_array_access(JNIEnv * env, const auto_java_ref<T> & array):
             java_array_access_base<T>(env, array)
+        {}
+
+        java_array_access(java_array_access && src) noexcept:
+            java_array_access_base<T>(std::move(src))
+        {}
+
+        java_array_access & operator=(java_array_access && src) noexcept
         {
+            if (this != &src) 
+            {
+                this->~java_array_access();
+                new (this) java_array_access(std::move(src));
+            }
+            return *this;
         }
         
         const_iterator begin() const noexcept
-        {
-            return const_iterator(*this, 0);
-        }
+            { return const_iterator(*this, 0); }
         iterator begin() noexcept
-        {
-            return iterator(*this, 0);
-        }
+            { return iterator(*this, 0); }
         const_iterator cbegin() const noexcept
-        {
-            return const_iterator(*this, 0);
-        }
+            { return const_iterator(*this, 0); }
         const_iterator end() const noexcept
-        {
-            return const_iterator(*this, this->m_length);
-        }
+            { return const_iterator(*this, this->m_length); }
         iterator end() noexcept
-        {
-            return iterator(*this, this->m_length);
-        }
+            { return iterator(*this, this->m_length); }
         const_iterator cend() const noexcept
-        {
-            return const_iterator(*this, this->m_length);
-        }
+            { return const_iterator(*this, this->m_length); }
         const_reverse_iterator rbegin() const noexcept
-        {
-            return const_reverse_iterator(*this, this->m_length);
-        }
+            { return const_reverse_iterator(end()); }
         reverse_iterator rbegin() noexcept
-        {
-            return reverse_iterator(*this, this->m_length);
-        }
+            { return reverse_iterator(end()); }
         const_reverse_iterator crbegin() const noexcept
-        {
-            return const_reverse_iterator(*this, this->m_length);
-        }
+            { return const_reverse_iterator(cend()); }
         const_reverse_iterator rend() const noexcept
-        {
-            return const_reverse_iterator(*this, 0);
-        }
+            { return const_reverse_iterator(begin()); }
         reverse_iterator rend() noexcept
-        {
-            return reverse_iterator(*this, 0);
-        }
+            { return reverse_iterator(begin()); }
         const_reverse_iterator crend() const noexcept
-        {
-            return const_reverse_iterator(*this, 0);
-        }
+            { return const_reverse_iterator(cbegin()); }
         
         local_java_ref<element_type> operator[](jsize idx) const
-        {
-            return jattach(this->m_env, get(idx));
-        }
+            { return jattach(this->m_env, get(idx)); }
         proxy operator[](jsize idx) noexcept
-        {
-            return proxy(*this, idx);
-        }
+            { return proxy(*this, idx); }
         local_java_ref<element_type> at(jsize idx) const
         {
             if (idx < 0 || idx >= this->m_length)
                 throw std::out_of_range("index out of range");
             return (*this)[idx];
         }
-        proxy at(jsize idx) noexcept
+        proxy at(jsize idx)
         {
             if (idx < 0 || idx >= this->m_length)
                 throw std::out_of_range("index out of range");
             return (*this)[idx];
         }
         local_java_ref<element_type> front() const
-        {
-            return (*this)[0];
-        }
+            { return (*this)[0]; }
         proxy front() noexcept
-        {
-            return (*this)[0];
-        }
+            { return (*this)[0]; }
         local_java_ref<element_type> back() const
-        {
-            return (*this)[this->m_length - 1];
-        }
+            { return (*this)[this->m_length - 1]; }
         proxy back() noexcept
-        {
-            return (*this)[this->m_length - 1];
-        }
+            { return (*this)[this->m_length - 1]; }
         
     
     private:
@@ -488,14 +432,21 @@ namespace smjni
             }
         }
         
-        java_array_access(const java_array_access &) = delete;
-        
         java_array_access(java_array_access && src) noexcept:
             java_array_access_base<T>(std::move(src)),
-            m_data(src.m_data)
+            m_data(std::exchange(src.m_data, nullptr))
+        {}
+
+        java_array_access & operator=(java_array_access && src) noexcept
         {
-            src.m_data = nullptr;
+            if (this != &src) 
+            {
+                this->~java_array_access();
+                new (this) java_array_access(std::move(src));
+            }
+            return *this;
         }
+
         ~java_array_access()
         {
             if (this->m_data)
@@ -516,98 +467,58 @@ namespace smjni
         }
         
         const element_type * begin() const noexcept
-        {
-            return this->m_data;
-        }
+            { return this->m_data; }
         element_type * begin() noexcept
-        {
-            return this->m_data;
-        }
+            { return this->m_data; }
         const element_type * cbegin() const noexcept
-        {
-            return this->m_data;
-        }
+            { return this->m_data; }
         const element_type * end() const noexcept
-        {
-            return this->m_data + this->m_length;
-        }
+            { return this->m_data + this->m_length; }
         element_type * end() noexcept
-        {
-            return this->m_data + this->m_length;
-        }
+            { return this->m_data + this->m_length; }
         const element_type * cend() const noexcept
-        {
-            return this->m_data + this->m_length;
-        }
+            { return this->m_data + this->m_length; }
         const_reverse_iterator rbegin() const noexcept
-        {
-            return this->m_data + this->m_length;
-        }
+            { return const_reverse_iterator(this->m_data + this->m_length); }
         reverse_iterator rbegin() noexcept
-        {
-            return this->m_data + this->m_length;
-        }
+            { return reverse_iterator(this->m_data + this->m_length); }
         const_reverse_iterator crbegin() const noexcept
-        {
-            return this->m_data + this->m_length;
-        }
+            { return const_reverse_iterator(this->m_data + this->m_length); }
         const_reverse_iterator rend() const noexcept
-        {
-            return this->m_data;
-        }
+            { return const_reverse_iterator(this->m_data); }
         reverse_iterator rend() noexcept
-        {
-            return this->m_data;
-        }
+            { return reverse_iterator(this->m_data); }
         const_reverse_iterator crend() const noexcept
-        {
-            return this->m_data;
-        }
+            { return const_reverse_iterator(this->m_data);}
         
         const element_type & operator[](jsize idx) const noexcept
-        {
-            return this->m_data[idx];
-        }
+            { return this->m_data[idx]; }
         element_type & operator[](jsize idx) noexcept
-        {
-            return this->m_data[idx];
-        }
-        const element_type & at(jsize idx) const noexcept
+            { return this->m_data[idx]; }
+        const element_type & at(jsize idx) const
         {
             if (idx < 0 || idx >= this->m_length)
                 throw std::out_of_range("index out of range");
             return this->m_data[idx];
         }
-        element_type & at(jsize idx) noexcept
+        element_type & at(jsize idx)
         {
             if (idx < 0 || idx >= this->m_length)
                 throw std::out_of_range("index out of range");
             return this->m_data[idx];
         }
         const element_type & front() const noexcept
-        {
-            return this->m_data[0];
-        }
+            { return this->m_data[0]; }
         element_type & front() noexcept
-        {
-            return this->m_data[0];
-        }
+            { return this->m_data[0]; }
         const element_type & back() const noexcept
-        {
-            return this->m_data[this->m_length - 1];
-        }
+            { return this->m_data[this->m_length - 1]; }
         element_type & back() noexcept
-        {
-            return this->m_data[this->m_length - 1];
-        }
+            { return this->m_data[this->m_length - 1]; }
         const element_type * data() const noexcept
-        {
-            return this->m_data;
-        }
+            { return this->m_data; }
         element_type * data() noexcept
-        {
-            return this->m_data;
-        }
+            { return this->m_data; }
     private:
         element_type * m_data = nullptr;
     };
@@ -637,18 +548,44 @@ namespace smjni
             THROW_JAVA_PROBLEM("cannot create java array");
         }
         return jattach(env, array);
-    }   
-    
-    template<typename T, typename RanIt>  
-    std::enable_if_t<!std::is_convertible<T, jobject>::value,  
-    local_java_ref<java_array_type_of_t<T>>> java_array_create(JNIEnv * env, RanIt first, RanIt last)
-    {
-        auto res = java_array_create<T>(env, size_to_java(last - first));
-        java_array_access<java_array_type_of_t<T>> res_access(env, res.c_ptr());
-        std::copy(first, last, res_access.begin());
-        res_access.commit(env);
-        return res;
     }
+
+    
+
+    #if __cpp_lib_ranges < 201911L
+
+        template<typename T, typename It>  
+        std::enable_if_t<!std::is_convertible<T, jobject>::value,  
+        local_java_ref<java_array_type_of_t<T>>> java_array_create(JNIEnv * env, It first, It last)
+        {
+            auto res = java_array_create<T>(env, size_to_java(last - first));
+            java_array_access<java_array_type_of_t<T>> res_access(env, res.c_ptr());
+            std::copy(first, last, res_access.begin());
+            res_access.commit(env);
+            return res;
+        }
+
+    #else
+        template<typename T, typename It1, std::sentinel_for<It1> It2>  
+        requires(!std::is_convertible_v<T, jobject> &&
+                 std::is_convertible_v<std::iter_reference_t<It1>, T>)
+        local_java_ref<java_array_type_of_t<T>> java_array_create(JNIEnv * env, It1 first, It2 last)
+        {
+            auto res = java_array_create<T>(env, size_to_java(last - first));
+            java_array_access<java_array_type_of_t<T>> res_access(env, res.c_ptr());
+            std::copy(first, last, res_access.begin());
+            res_access.commit(env);
+            return res;
+        }
+
+
+        template<typename T, std::ranges::input_range R>
+        requires(!std::is_convertible_v<T, jobject> &&
+                 std::is_convertible_v<std::ranges::range_reference_t<R>, T>)
+        inline local_java_ref<java_array_type_of_t<T>> java_array_create(JNIEnv * env, const R & range)
+            { return java_array_create<T>(env, std::begin(range), std::end(range)); }
+
+    #endif
 
     template<typename T>
     std::enable_if_t<!std::is_convertible<T, jobject>::value,
@@ -665,6 +602,25 @@ namespace smjni
         java_type_traits<T>::get_array_region(env, array.c_ptr(), start, len, buf);
         java_exception::check(env);
     }
+
+    #if __cpp_lib_ranges >= 201911L
+
+        template<std::ranges::contiguous_range R>
+        requires(!std::is_convertible_v<std::ranges::range_value_t<R>, jobject>)
+        void java_array_set_region(JNIEnv * env, 
+                                   const auto_java_ref<java_array_type_of_t<std::ranges::range_value_t<R>>> & array, 
+                                   jsize start, const R & range)
+            { java_array_set_region(env, array, start, size_to_java(std::size(range)), std::data(range)); }
+
+        template<std::ranges::contiguous_range R>
+        requires(!std::is_convertible_v<std::ranges::range_value_t<R>, jobject> &&
+                 !std::is_const_v<std::remove_reference_t<std::ranges::range_reference_t<R>>>)
+        void java_array_get_region(JNIEnv * env, 
+                                   const auto_java_ref<java_array_type_of_t<std::ranges::range_value_t<R>>> & array, 
+                                   jsize start, R & range)
+            { java_array_get_region(env, array, start, size_to_java(std::size(range)), std::data(range)); }
+
+    #endif
 }
 
 #endif //HEADER_JAVA_ARRAY_H_INCLUDED

@@ -1,7 +1,9 @@
+import com.google.devtools.ksp.gradle.KspTaskJvm
+
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.google.devtools.ksp' version "1.9.23-1.0.20"
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.google.devtools.ksp)
 }
 
 //JniGen settings
@@ -14,27 +16,27 @@ def jniGenProps = new Object() {
 dependencies {
 
     //JNI annotations
-    compileOnly("io.github.gershnik:smjni-jnigen-annotations:${gradle.ext.jniGenVersion}")
+    compileOnly(libs.smjni.jnigen.annotations)
     //JNI code generator
-    ksp("io.github.gershnik:smjni-jnigen-kprocessor:${gradle.ext.jniGenVersion}")
+    ksp(libs.smjni.jnigen.kprocessor)
 
-    implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.12.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.android.material)
+    implementation(libs.androidx.constraintlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 }
 
 android {
-    compileSdk gradle.ext.compileSdk
+    compileSdk libs.versions.compileSdk.get().toInteger()
     namespace 'com.example.myapplication'
 
     defaultConfig {
         applicationId "com.example.myapplication"
-        minSdk gradle.ext.minSdk
-        targetSdk gradle.ext.targetSdk
+        minSdk libs.versions.minSdk.get().toInteger()
+        targetSdk libs.versions.targetSdk.get().toInteger()
         versionCode 1
         versionName "1.0"
 
@@ -64,7 +66,7 @@ android {
     externalNativeBuild {
         cmake {
             path file('../../../cpp/CMakeLists.txt')
-            version gradle.ext.cmakeVersion
+            version libs.versions.cmake.get()
         }
     }
 }
@@ -76,7 +78,7 @@ ksp {
     arg("smjni.jnigen.expose.extra", jniGenProps.additionalClasses.join(";").toString())
 }
 
-tasks.withType(com.google.devtools.ksp.gradle.KspTaskJvm).all {
+tasks.withType(KspTaskJvm).configureEach {
     outputs.upToDateWhen {
 
         def jniGenOutputList = file("${jniGenProps.generatedPath}/${jniGenProps.outputListName}")
@@ -97,13 +99,14 @@ tasks.withType(com.google.devtools.ksp.gradle.KspTaskJvm).all {
 
 
 //Clean generated headers on project clean
-task cleanJNIHeaders(type: Delete) {
+tasks.register('cleanJNIHeaders', Delete) {
+    group = 'build'
     delete file("${jniGenProps.generatedPath}")
 }
 clean.dependsOn cleanJNIHeaders
 
 //Make KSP (and so JniGen code generation) run before CMake build
-tasks.whenTaskAdded { theTask ->
+tasks.configureEach { theTask ->
     def match = theTask.name =~ ~/^buildCMake([^\[]*).*$/
     if (match) {
         def config

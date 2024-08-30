@@ -16,10 +16,8 @@
 */
 
 #include <smjni/java_string.h>
-#include <smjni/java_type_traits.h>
 
 #include <iterator>
-#include <cstring>
 #include <vector>
 
 using namespace smjni;
@@ -43,16 +41,6 @@ local_java_ref<jstring> smjni::java_string_create(JNIEnv * env, const char * str
     }
     
     return ret;
-}
-
-local_java_ref<jstring> smjni::java_string_create(JNIEnv * env, const char * str)
-{
-    return java_string_create(env, str, (str ? strlen(str) : 0));
-}
-
-local_java_ref<jstring> smjni::java_string_create(JNIEnv * env, const std::string & str)
-{
-    return java_string_create(env, str.data(), str.size());
 }
 
 std::string smjni::java_string_to_cpp(JNIEnv * env, const auto_java_ref<jstring> & str)

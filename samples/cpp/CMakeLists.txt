@@ -10,8 +10,8 @@ project("myapplication")
 
 #Fetch SimpleJNI library
 FetchContent_Declare(SimpleJNI
-        GIT_REPOSITORY git@github.com:gershnik/SimpleJNI.git
-        GIT_TAG 3.6
+        GIT_REPOSITORY https://github.com/gershnik/SimpleJNI.git
+        GIT_TAG 3.11
         GIT_SHALLOW TRUE
 )
 FetchContent_MakeAvailable(SimpleJNI)
@@ -32,8 +32,8 @@ find_library(log-lib log)
 
 target_link_libraries(myapplication 
 PRIVATE
-    #Declare dependecy on SimpleJNI (the library name is 'smjni' for backward compatibility)
-    smjni
+    #Declare dependecy on SimpleJNI
+    smjni::smjni
     ${log-lib} 
 )
 

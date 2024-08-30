@@ -15,7 +15,7 @@
 */
 
 plugins {
-    id("org.jetbrains.kotlin.jvm")
+    alias(libs.plugins.kotlin)
     id("maven-publish")
     id("signing")
 }
@@ -24,11 +24,6 @@ val libraryPomName by project.extra("SimpleJNI KSP Code Generator")
 val libraryDescription by project.extra("KSP annotation processor that generates SimpleJNI C++ code from Java annotations")
 val kotlinJvmTarget: Int by project.extra
 val javaTargetCompatibility: JavaVersion by project.extra
-val kotlinVersion: String by (gradle as ExtensionAware).extra
-val kspVersion: String by (gradle as ExtensionAware).extra
-val junitVersion: String by (gradle as ExtensionAware).extra
-val kotlinCompileTestingVersion: String by (gradle as ExtensionAware).extra
-val hamcrestVersion: String by (gradle as ExtensionAware).extra
 
 java {
     targetCompatibility = javaTargetCompatibility
@@ -39,16 +34,17 @@ kotlin {
 }
 
 dependencies {
-    implementation("com.google.devtools.ksp:symbol-processing-api:$kotlinVersion-$kspVersion")
+    implementation(libs.ksp.symbol.processing.api)
 
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing:$kotlinCompileTestingVersion")
-    testImplementation("com.github.tschuchortdev:kotlin-compile-testing-ksp:$kotlinCompileTestingVersion")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:$kotlinVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
-    testImplementation("org.hamcrest:hamcrest:$hamcrestVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
+    testImplementation(libs.kotlin.compile.testing)
+    testImplementation(libs.kotlin.compile.testing.ksp)
+    testImplementation(libs.kotlin.test.junit5)
+    testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.junit.jupiter.params)
+    testImplementation(libs.hamcrest)
     testImplementation(project(":annotations"))
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
+
+    testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {

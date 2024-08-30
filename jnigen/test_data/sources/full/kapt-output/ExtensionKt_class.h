@@ -16,7 +16,7 @@ public:
     void extended(JNIEnv * env, const smjni::auto_java_ref<jExtension> & _this_extended) const
         { m_extended(env, *this, _this_extended); }
 private:
-    static void JNICALL nativeExtended(JNIEnv *, jclass, jExtension _this_nativeExtended);
+    static void JNICALL nativeExtended(JNIEnv *, jclass, jExtension p0);
 
     const smjni::java_static_method<void, jExtensionKt, jExtension> m_extended;
 

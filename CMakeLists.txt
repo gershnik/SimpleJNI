@@ -17,13 +17,22 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-cmake_policy(SET CMP0076 NEW)  #target_sources() command converts relative paths to absolute
+cmake_policy(SET CMP0076 NEW)  # target_sources() command converts relative paths to absolute
 
 if(CMAKE_VERSION VERSION_LESS 3.21)
   get_property(not_top DIRECTORY PROPERTY PARENT_DIRECTORY)
   if(NOT not_top)
     set(PROJECT_IS_TOP_LEVEL true)
   endif()
+endif()
+
+if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
+    # the following only works in top level so there is no need to check
+    # PROJECT_IS_TOP_LEVEL which will not work before project() call anyway
+    cmake_policy(SET CMP0091 NEW) # use MSVC_RUNTIME_LIBRARY property
+    if (NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+    endif()
 endif()
 
 file(READ VERSION SMJNI_VERSION)

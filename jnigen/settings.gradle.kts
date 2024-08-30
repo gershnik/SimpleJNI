@@ -16,15 +16,45 @@
 */
 
 pluginManagement {
-    plugins {
-        val gradleExtra = (gradle as ExtensionAware).extra
-        val kotlinVersion by gradleExtra("1.9.23")
-        val kspVersion by gradleExtra("1.0.20")
-        val junitVersion by gradleExtra("5.10.2")
-        val kotlinCompileTestingVersion by gradleExtra("1.5.0")
-        val hamcrestVersion by gradleExtra("2.2")
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
 
-        id("org.jetbrains.kotlin.jvm") version kotlinVersion
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        mavenCentral()
+    }
+    versionCatalogs {
+        create("libs") {
+            val kotlinVersionStr = "1.9.24"
+            version("kotlin", kotlinVersionStr)
+            version("ksp", "$kotlinVersionStr-1.0.20")
+            version("kotlinCompileTesting", "1.6.0")
+            version("junit", "5.11.0")
+            version("hamcrest", "3.0")
+
+            library("ksp-symbol-processing-api", "com.google.devtools.ksp", "symbol-processing-api").versionRef("ksp")
+            library("kotlin-compile-testing", "com.github.tschuchortdev","kotlin-compile-testing").versionRef("kotlinCompileTesting")
+            library("kotlin-compile-testing-ksp", "com.github.tschuchortdev", "kotlin-compile-testing-ksp").versionRef("kotlinCompileTesting")
+            library("kotlin-test-junit5","org.jetbrains.kotlin", "kotlin-test-junit5").versionRef("kotlin")
+            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
+            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
+            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
+            library("hamcrest", "org.hamcrest", "hamcrest").versionRef("hamcrest")
+
+
+            plugin("kotlin", "org.jetbrains.kotlin.jvm").versionRef("kotlin")
+        }
     }
 }
 

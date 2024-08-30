@@ -22,6 +22,7 @@ import com.tschuchort.compiletesting.symbolProcessorProviders
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is` as Is
 import org.hamcrest.MatcherAssert.assertThat
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Assertions.assertTrue
 import smjni.jnigen.ksp.Provider
 import java.nio.file.Files
@@ -31,6 +32,7 @@ import java.util.stream.Stream
 import kotlin.io.path.div
 import kotlin.io.path.exists
 
+@OptIn(ExperimentalCompilerApi::class)
 @KspExperimental
 fun compileFiles(workingDir: Path,
                  cppPath: Path,
@@ -79,6 +81,7 @@ fun listFile(path: Path): List<String> {
         emptyList()
 }
 
+@OptIn(ExperimentalCompilerApi::class)
 fun collectOutput(result: KotlinCompilation.Result) : List<String> {
     return result.messages.lines().mapNotNull {
         if (it.startsWith("i: [ksp] JNIGen:"))

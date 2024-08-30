@@ -20,6 +20,10 @@
 
 using namespace smjni;
 
+#if __cpp_lib_ranges >= 201911L
+    static_assert(std::ranges::contiguous_range<java_string_access>);
+#endif
+
 TEST_SUITE_BEGIN("string");
 
 TEST_CASE( "testString" )
@@ -46,6 +50,53 @@ TEST_CASE( "testString" )
 
     CHECK(0 == java_string_get_length(env, nullptr));
     CHECK("" == java_string_to_cpp(env, nullptr));
+
+    {
+        auto str = java_string_create(env, u"abc");
+        CHECK("abc" == java_string_to_cpp(env, str));
+    }
+
+    {
+        auto str = java_string_create(env, u"abc", 2);
+        CHECK("ab" == java_string_to_cpp(env, str));
+    }
+
+    #if __cpp_char8_t >= 201811L
+
+        {
+            auto str = java_string_create(env, u8"abc");
+            CHECK("abc" == java_string_to_cpp(env, str));
+        }
+
+        {
+            auto str = java_string_create(env, u8"abc", 2);
+            CHECK("ab" == java_string_to_cpp(env, str));
+        }
+
+    #endif
+
+    #if __cpp_lib_ranges >= 201911L
+
+        {
+            auto str = java_string_create(env, std::vector{'a', 'b', 'c'});
+            CHECK("abc" == java_string_to_cpp(env, str));
+        }
+
+        {
+            auto str = java_string_create(env, std::vector{u'a', u'b', u'c'});
+            CHECK("abc" == java_string_to_cpp(env, str));
+        }
+
+        #if __cpp_char8_t >= 201811L
+
+            {
+                auto str = java_string_create(env, std::vector{u8'a', u8'b', u8'c'});
+                CHECK("abc" == java_string_to_cpp(env, str));
+            }
+
+        #endif
+
+    #endif
 
     jchar buf[5] = {};
     java_string_get_region(env, str1, 1, 2, buf);
