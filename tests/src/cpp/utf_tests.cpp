@@ -30,9 +30,15 @@ static std::u16string convert(const char * utf8)
     return ret;
 }
 
-static std::string convert(const char16_t * utf16)
+#if __cpp_char8_t >= 201811L
+    using std_u8string = std::u8string;
+#else
+    using std_u8string = std::string;
+#endif
+
+static std_u8string convert(const char16_t * utf16)
 {
-    std::string ret;
+    std_u8string ret;
     utf16_to_utf8(utf16, utf16 + std::char_traits<char16_t>::length(utf16), std::back_inserter(ret));
     return ret;
 }

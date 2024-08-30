@@ -3,6 +3,21 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Native Code
+* `java_string_create` now has overloads that accept `char8_t *`, `(char8_t *, size_t)`, `char16_t *`, `(char16_t *, size_t)` and, under C++20, any contiguous range of these types (e.g. `std::vector`, `std::string_view`, `std::span` etc.)
+* `java_string_access` is now movable
+* `java_string_access` gained more vector-like methods: `cbegin`, `cend`, `rbegin`, `rend`, `crbegin`, `crend`, `data`, `empty`, `at`, `front` and `back`.   
+* `java_array_access` is now properly movable
+* `java_array_access::at()` is no longer erroneously marked `noexcept`
+* Under C++20, `java_array_access` now properly satisfies `std::ranges::contiguous_range` concept for arrays of primitive types and `std::ranges::random_access_range` for arrays of objects.
+* Various bug fixes for `java_array_access` iterator methods
+* Under C++20, `java_array_create` for primitive array types now accepts any input range as source
+* Under C++20, `java_array_get_region` and `java_array_get_region` now accept any contiguous ranges as source/destination
+
+### Annotation processors
+* Kotlin version required updated to 1.9.24
+* KSP code generator now requires KSP version 1.9.24-1.0.20
+
 ## [3.10] - 2024-05-09
 
 ### Native Code

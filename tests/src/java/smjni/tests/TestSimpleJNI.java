@@ -85,7 +85,9 @@ public class TestSimpleJNI  {
     }
 
     public static void main(String[] args) {
-        System.loadLibrary("smjnitests");
+        String cppVerStr = System.getProperty("smjni.cppver", "17");
+        System.out.println("Loading smjnitests-" + cppVerStr);
+        System.loadLibrary("smjnitests-" + cppVerStr);
         System.exit(testMain(args));
     }
 
