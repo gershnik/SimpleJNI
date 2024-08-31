@@ -41,7 +41,7 @@ jobs:
         - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 13 }
         - { os: ubuntu-24.04, java: '8', compiler: 'gcc', compiler_version: 14 }
         - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 14 }
         - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 15 }
         - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 16 }
         - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 17 }
