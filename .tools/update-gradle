@@ -1,0 +1,23 @@
+#! /usr/bin/env -S python3 -u
+
+import subprocess
+
+from pathlib import Path
+
+MYPATH = Path(__file__).parent
+
+rootDir = MYPATH.parent
+
+pathsToUpdate = []
+
+for cur in rootDir.rglob('gradle'):
+    if cur.is_dir() and (cur / 'wrapper').is_dir():
+        gradleDir = cur.parent
+        res = subprocess.run(['git', 'check-ignore', '-q', gradleDir], check=False).returncode
+        if res == 0:
+            continue
+        pathsToUpdate.append(gradleDir)
+
+for pathToUpdate in pathsToUpdate:
+    print(f'Processing {pathToUpdate}')
+    subprocess.run(['./gradlew', 'wrapper', '--gradle-version', 'latest'], check=True, cwd = pathToUpdate)
