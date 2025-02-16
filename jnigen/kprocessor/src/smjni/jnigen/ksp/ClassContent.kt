@@ -251,8 +251,8 @@ internal class ClassContent(classInfo: JavaClassInfo,
 
         val field = JavaEntity(
             JavaEntityType.StaticField,
-            true,
-            false, //meaningless for fields
+            isFinal = true,
+            allowNonVirt = false, //meaningless for fields
             fieldName, templateArguments, returnType, argTypes, argNames
         )
         _javaEntities.add(field)

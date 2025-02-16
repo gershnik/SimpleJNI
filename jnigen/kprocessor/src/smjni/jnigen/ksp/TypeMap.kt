@@ -78,8 +78,7 @@ internal class TypeMap(private val resolver: Resolver, private val logger: KSPLo
 
     fun nativeNameOf(type: KSType): String {
 
-        val starProjection = type.starProjection()
-        return when (starProjection) {
+        return when (val starProjection = type.starProjection()) {
             resolver.builtIns.booleanType    -> "jboolean"
             resolver.builtIns.byteType       -> "jbyte"
             resolver.builtIns.charType       -> "jchar"
@@ -106,7 +105,7 @@ internal class TypeMap(private val resolver: Resolver, private val logger: KSPLo
                 _javaToCppNameMap.computeIfAbsent(javaName) {
                     val typeName = (type.declaration.qualifiedName ?: type.declaration.simpleName).asString()
                     if (!reportedUnmapped.contains(typeName)) {
-                        logger.logging("Type ${typeName} is not exposed to SimpleJNI and will be represented as jobject")
+                        logger.logging("Type $typeName is not exposed to SimpleJNI and will be represented as jobject")
                         reportedUnmapped.add(typeName)
                     }
                     "jobject"

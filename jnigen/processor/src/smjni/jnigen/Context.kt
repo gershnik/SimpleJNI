@@ -73,7 +73,7 @@ internal class Context(env: ProcessingEnvironment) {
 
     internal fun getSupportedOptions(): MutableSet<String> {
 
-        return Options.values().map{it.externalName}.toMutableSet()
+        return Options.entries.map{it.externalName}.toMutableSet()
     }
 
     fun print(message: String) {

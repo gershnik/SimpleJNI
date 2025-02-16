@@ -44,18 +44,19 @@ internal class JavaEntity(val type: JavaEntityType,
                           val argTypes: List<String>,
                           val argNames: List<String>)
 
-internal class ClassContent(val classElement: TypeElement,
-                            val binaryName: String,
-                            val cppClassName: String,
-                            val convertsTo: Set<String>,
-                            typeMap: TypeMap,
-                            ctxt: Context) {
+internal class ClassContent(
+    private val classElement: TypeElement,
+    val binaryName: String,
+    val cppClassName: String,
+    val convertsTo: Set<String>,
+    typeMap: TypeMap,
+    ctxt: Context) {
 
-    private val m_nativeMethods = ArrayList<NativeMethod>()
-    private val m_javaEntities = ArrayList<JavaEntity>()
+    private val _nativeMethods = ArrayList<NativeMethod>()
+    private val _javaEntities = ArrayList<JavaEntity>()
 
-    private val CALLED_BY_NATIVE = ctxt.calledByNativeAnnotation
-    private val CTOR_NAME = ctxt.ctorName
+    private val calledByNativeAnnotationName = ctxt.calledByNativeAnnotation
+    private val ctorName = ctxt.ctorName
 
     internal val cppName = typeMap.nativeNameOf(classElement.qualifiedName)
 
@@ -77,7 +78,7 @@ internal class ClassContent(val classElement: TypeElement,
 
                         val annotation = childElement.annotationMirrors.find {
                             val annotationType = it.annotationType.asElement() as TypeElement
-                            annotationType.qualifiedName.contentEquals(CALLED_BY_NATIVE)
+                            annotationType.qualifiedName.contentEquals(calledByNativeAnnotationName)
                         }
                         if (annotation != null) {
                             var allowNonVirt = false
@@ -98,7 +99,7 @@ internal class ClassContent(val classElement: TypeElement,
 
                         if (childElement.annotationMirrors.any {
                                     val annotationType = it.annotationType.asElement() as TypeElement
-                                    annotationType.qualifiedName.contentEquals(CALLED_BY_NATIVE)
+                                    annotationType.qualifiedName.contentEquals(calledByNativeAnnotationName)
                                 }) {
                             addJavaField(fieldElement, names, typeMap)
                         }
@@ -109,7 +110,7 @@ internal class ClassContent(val classElement: TypeElement,
 
                         if (childElement.annotationMirrors.any {
                                     val annotationType = it.annotationType.asElement() as TypeElement
-                                    annotationType.qualifiedName.contentEquals(CALLED_BY_NATIVE)
+                                    annotationType.qualifiedName.contentEquals(calledByNativeAnnotationName)
                                 }) {
                             addJavaConstructor(constructorElement, names, typeMap)
                         }
@@ -126,13 +127,13 @@ internal class ClassContent(val classElement: TypeElement,
     }
 
     internal val nativeMethods: List<NativeMethod>
-        get() = m_nativeMethods
+        get() = _nativeMethods
 
     internal val javaEntities: List<JavaEntity>
-        get() = m_javaEntities
+        get() = _javaEntities
 
     internal val hasCppClass: Boolean
-        get() = javaEntities.isNotEmpty() || nativeMethods.isNotEmpty()
+        get() = _javaEntities.isNotEmpty() || _nativeMethods.isNotEmpty()
 
 
     private fun isPrimitiveReturnType(type: TypeMirror): Boolean {
@@ -165,7 +166,7 @@ internal class ClassContent(val classElement: TypeElement,
             Pair(typeMap.nativeNameOf(it.asType()), it.simpleName.toString())
         }
         val method = NativeMethod(isStatic, isNameNonUnique, returnType, methodName, arguments)
-        m_nativeMethods.add(method)
+        _nativeMethods.add(method)
         previousNameUsers[methodName] = method
     }
 
@@ -199,7 +200,7 @@ internal class ClassContent(val classElement: TypeElement,
                 methodElement.modifiers.contains(Modifier.FINAL),
                 if (isStatic) false else allowNonVirt,
                 methodName, templateArguments, returnType, argTypes, argNames)
-        m_javaEntities.add(method)
+        _javaEntities.add(method)
     }
 
     private fun addJavaField(fieldElement: VariableElement, names: NameTable, typeMap: TypeMap) {
@@ -226,12 +227,12 @@ internal class ClassContent(val classElement: TypeElement,
                 fieldElement.modifiers.contains(Modifier.FINAL),
                 false,
                 fieldName, templateArguments, returnType, argTypes, argNames)
-        m_javaEntities.add(field)
+        _javaEntities.add(field)
     }
 
     private fun addJavaConstructor(constructorElement: ExecutableElement, names: NameTable, typeMap: TypeMap) {
 
-        val name = names.allocateName(CTOR_NAME)
+        val name = names.allocateName(ctorName)
 
         val templateArguments = ArrayList<String>()
         val argTypes = ArrayList<String>()
@@ -246,8 +247,9 @@ internal class ClassContent(val classElement: TypeElement,
             argNames.add(param.simpleName.toString())
         }
 
-        val ctor = JavaEntity(JavaEntityType.Constructor, false, false, name, templateArguments, returnType, argTypes, argNames)
-        m_javaEntities.add(ctor)
+        val ctor = JavaEntity(JavaEntityType.Constructor,
+            isFinal = false, allowNonVirt = false, name, templateArguments, returnType, argTypes, argNames)
+        _javaEntities.add(ctor)
     }
 
 }

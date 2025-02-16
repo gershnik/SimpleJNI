@@ -203,17 +203,17 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
 
         val derivedStem = stem.ifEmpty { classInfo.getShortName() }
 
-        val derivedCppName = if (cppName == null || cppName.isEmpty())
+        val derivedCppName = if (cppName.isNullOrEmpty())
             "j$derivedStem"
         else
             cppName
 
-        val derivedCppClassName = if (cppClassName == null || cppClassName.isEmpty())
+        val derivedCppClassName = if (cppClassName.isNullOrEmpty())
             "${derivedStem}_class"
         else
             cppClassName
 
-        val derivedHeader = if (header == null || header.isEmpty())
+        val derivedHeader = if (header.isNullOrEmpty())
             "$derivedCppClassName.h"
         else
             header

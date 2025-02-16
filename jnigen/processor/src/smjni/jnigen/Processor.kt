@@ -27,12 +27,12 @@ import javax.tools.Diagnostic
 class Processor: javax.annotation.processing.Processor  {
 
     override fun init(processingEnv: ProcessingEnvironment?) {
-        m_env = processingEnv
+        _env = processingEnv
     }
 
     override fun getSupportedOptions(): MutableSet<String> {
 
-        return m_context.getSupportedOptions()
+        return _context.getSupportedOptions()
     }
 
     override fun getSupportedSourceVersion(): SourceVersion {
@@ -40,7 +40,7 @@ class Processor: javax.annotation.processing.Processor  {
     }
 
     override fun getSupportedAnnotationTypes(): MutableSet<String> {
-        return mutableSetOf(m_context.exposedAnnotation)
+        return mutableSetOf(_context.exposedAnnotation)
     }
 
     override fun getCompletions(element: Element?, annotation: AnnotationMirror?, member: ExecutableElement?, userText: String?): MutableIterable<Completion> {
@@ -53,23 +53,23 @@ class Processor: javax.annotation.processing.Processor  {
             return true
 
         try {
-            val typeMap = TypeMap(m_context, env!!)
+            val typeMap = TypeMap(_context, env!!)
 
             val generator = Generator()
 
-            generator.generate(typeMap, m_context)
+            generator.generate(typeMap, _context)
 
         } catch (ex: ProcessingException) {
 
-            m_context.messager.printMessage(Diagnostic.Kind.ERROR, ex.message, ex.element)
+            _context.messager.printMessage(Diagnostic.Kind.ERROR, ex.message, ex.element)
         }
 
         return true
     }
 
-    private var m_env: ProcessingEnvironment? = null
+    private var _env: ProcessingEnvironment? = null
 
-    private val m_context: Context by lazy(LazyThreadSafetyMode.NONE) {
-        Context(m_env!!)
+    private val _context: Context by lazy(LazyThreadSafetyMode.NONE) {
+        Context(_env!!)
     }
 }

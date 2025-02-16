@@ -25,24 +25,24 @@ import javax.tools.Diagnostic
 
 internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
 
-    private val m_exposedClasses = HashMap<TypeElement, ClassContent>()
-    private val m_javaToCppNameMap = HashMap<String, String>()
-    private val m_exposedArrays = HashSet<String>()
-    private val m_byFile = HashMap<String, MutableList<TypeElement>>()
+    private val _exposedClasses = HashMap<TypeElement, ClassContent>()
+    private val _javaToCppNameMap = HashMap<String, String>()
+    private val _exposedArrays = HashSet<String>()
+    private val _byFile = HashMap<String, MutableList<TypeElement>>()
 
-    private val EXPOSED_TO_NATIVE = ctxt.exposedAnnotation
+    private val exposedToNativeAnnotationName = ctxt.exposedAnnotation
 
     private class ExposedData(val cppName: String, val cppClassName: String, val header: String)
 
     init {
 
-        m_javaToCppNameMap["java.lang.Object"] = "jobject"
-        m_javaToCppNameMap["java.lang.String"] = "jstring"
-        m_javaToCppNameMap["java.lang.Throwable"] = "jthrowable"
-        m_javaToCppNameMap["java.lang.Class"] = "jclass"
-        m_javaToCppNameMap["java.nio.ByteBuffer"] = "jByteBuffer"
+        _javaToCppNameMap["java.lang.Object"] = "jobject"
+        _javaToCppNameMap["java.lang.String"] = "jstring"
+        _javaToCppNameMap["java.lang.Throwable"] = "jthrowable"
+        _javaToCppNameMap["java.lang.Class"] = "jclass"
+        _javaToCppNameMap["java.nio.ByteBuffer"] = "jByteBuffer"
 
-        val exposedToNative = ctxt.elementUtils.getTypeElement(EXPOSED_TO_NATIVE)
+        val exposedToNative = ctxt.elementUtils.getTypeElement(exposedToNativeAnnotationName)
 
         val cppNames = HashMap<String, CharSequence>()
         val cppClassNames = HashMap<String, CharSequence>()
@@ -59,7 +59,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
 
             if (kind != ElementKind.CLASS && kind != ElementKind.INTERFACE && kind != ElementKind.ENUM) {
                 ctxt.messager.printMessage(Diagnostic.Kind.ERROR,
-                        "Only classes can be annotated with $EXPOSED_TO_NATIVE",
+                        "Only classes can be annotated with $exposedToNativeAnnotationName",
                         exposedElement)
                 continue
             }
@@ -70,7 +70,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             knownClasses[exposedElement] = exposedData
             cppNames[exposedData.cppName] = exposedElement.qualifiedName
             cppClassNames[exposedData.cppClassName] = exposedElement.qualifiedName
-            m_javaToCppNameMap[exposedElement.qualifiedName.toString()] = exposedData.cppName
+            _javaToCppNameMap[exposedElement.qualifiedName.toString()] = exposedData.cppName
         }
 
         for (annotatedElement in env.getElementsAnnotatedWith(exposedToNative)){
@@ -79,7 +79,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
 
             if (kind != ElementKind.CLASS && kind != ElementKind.INTERFACE && kind != ElementKind.ENUM) {
                 ctxt.messager.printMessage(Diagnostic.Kind.ERROR,
-                                     "Only classes can be annotated with $EXPOSED_TO_NATIVE",
+                                     "Only classes can be annotated with $exposedToNativeAnnotationName",
                                            annotatedElement)
                 continue
             }
@@ -92,11 +92,11 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             knownClasses[classElement] = exposedData
             cppNames[exposedData.cppName] = classElement.qualifiedName
             cppClassNames[exposedData.cppClassName] = classElement.qualifiedName
-            m_javaToCppNameMap[classElement.qualifiedName.toString()] = exposedData.cppName
+            _javaToCppNameMap[classElement.qualifiedName.toString()] = exposedData.cppName
 
-            val byHeaderList = m_byFile[exposedData.header] ?: ArrayList()
+            val byHeaderList = _byFile[exposedData.header] ?: ArrayList()
             byHeaderList.add(classElement)
-            m_byFile[exposedData.header] = byHeaderList
+            _byFile[exposedData.header] = byHeaderList
         }
 
         for ((classElement, exposedData) in knownClasses) {
@@ -105,22 +105,22 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             collectConvertsTo(classElement, knownClasses, convertsTo)
             val binaryName = ctxt.elementUtils.getBinaryName(classElement).toString()
             val content = ClassContent(classElement, binaryName, exposedData.cppClassName, convertsTo, this, ctxt)
-            m_exposedClasses[classElement] = content
+            _exposedClasses[classElement] = content
         }
     }
 
     internal val exposedClasses: Map<TypeElement, ClassContent>
-        get() = m_exposedClasses
+        get() = _exposedClasses
 
     internal val exposedArrays: Set<String>
-        get() = m_exposedArrays
+        get() = _exposedArrays
 
     internal val classHeaders: Collection<String>
-        get() = m_byFile.keys
+        get() = _byFile.keys
 
     internal fun classesInHeader(header: String) : Sequence<ClassContent> {
 
-        return (m_byFile[header] ?: emptyList<TypeElement>()).asSequence().map { m_exposedClasses[it]!! }
+        return (_byFile[header] ?: emptyList()).asSequence().map { _exposedClasses[it]!! }
     }
 
     internal fun nativeNameOf(type: TypeMirror): String {
@@ -151,7 +151,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
                 val itemTypeName = nativeNameOf(itemType)
                 val arrayTypeName = "${itemTypeName}Array"
                 if (!itemType.kind.isPrimitive && itemTypeName != "jobject") {
-                    m_exposedArrays.add(itemTypeName)
+                    _exposedArrays.add(itemTypeName)
                 }
                 arrayTypeName
             }
@@ -163,7 +163,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
 
     internal fun nativeNameOf(javaName: CharSequence): String? {
 
-        return m_javaToCppNameMap[javaName.toString()]
+        return _javaToCppNameMap[javaName.toString()]
     }
 
     internal fun wrapperNameOf(type: TypeMirror, isArgument: Boolean) : String {
@@ -189,9 +189,8 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
 
     private fun nativeNameOf(el: TypeElement): String {
 
-        val ret = m_javaToCppNameMap[el.qualifiedName.toString()]
-        if (ret == null)
-            throw ProcessingException("${el.qualifiedName} is not exposed to C++ via annotation or command line", el)
+        val ret = _javaToCppNameMap[el.qualifiedName.toString()]
+            ?: throw ProcessingException("${el.qualifiedName} is not exposed to C++ via annotation or command line", el)
         return ret
     }
 
@@ -207,17 +206,17 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
                                              cppClassNames: Map<String, CharSequence>,
                                              ctxt: Context) : ExposedData? {
 
-        val annotation = getAnnotation(classElement, EXPOSED_TO_NATIVE)
+        val annotation = getAnnotation(classElement, exposedToNativeAnnotationName)
         if (annotation == null) {
             ctxt.messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Annotation $EXPOSED_TO_NATIVE is not configured correctly",
+                    "Annotation $exposedToNativeAnnotationName is not configured correctly",
                     classElement)
             return null
         }
         val exposedData = getExposedData(annotation, classElement, ctxt.elementUtils)
         if (exposedData == null) {
             ctxt.messager.printMessage(Diagnostic.Kind.ERROR,
-                    "Annotation $EXPOSED_TO_NATIVE is not configured correctly",
+                    "Annotation $exposedToNativeAnnotationName is not configured correctly",
                     classElement,
                     annotation)
             return null
@@ -279,7 +278,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             val superClassName = superClass.qualifiedName.toString()
 
             if (!superClassName.contentEquals("java.lang.Object")) {
-                if (m_javaToCppNameMap.containsKey(superClassName))
+                if (_javaToCppNameMap.containsKey(superClassName))
                     convertsTo.add(superClassName)
             }
 
@@ -291,7 +290,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             val superInterface = (item as DeclaredType).asElement() as TypeElement
             val superInterfaceName = superInterface.qualifiedName.toString()
 
-            if (m_javaToCppNameMap.containsKey(superInterfaceName))
+            if (_javaToCppNameMap.containsKey(superInterfaceName))
                 convertsTo.add(superInterfaceName)
 
             collectConvertsTo(superInterface, knownClasses, convertsTo)
@@ -337,22 +336,19 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
                                 header: String? = null): ExposedData
     {
 
-        val derivedStem = if (stem.isNotEmpty())
-            stem
-        else
-            getStemName(classElement) 
+        val derivedStem = stem.ifEmpty { getStemName(classElement) }
 
-        val derivedCppName = if (cppName == null || !cppName.isNotEmpty())
+        val derivedCppName = if (cppName.isNullOrEmpty())
             "j$derivedStem"
         else
             cppName
 
-        val derivedCppClassName = if (cppClassName == null || !cppClassName.isNotEmpty())
+        val derivedCppClassName = if (cppClassName.isNullOrEmpty())
             "${derivedStem}_class"
         else
             cppClassName
 
-        val derivedHeader = if (header == null || !header.isNotEmpty())
+        val derivedHeader = if (header.isNullOrEmpty())
             "$derivedCppClassName.h"
         else
             header
