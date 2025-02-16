@@ -70,7 +70,7 @@ tasks.test {
     testLogging.setExceptionFormat("full")
 }
 
-tasks.create<Test>("generateTestData"){
+tasks.register<Test>("generateTestData", fun Test.() {
     group = "verification"
     val test by sourceSets
     testClassesDirs = test.output.classesDirs
@@ -88,7 +88,7 @@ tasks.create<Test>("generateTestData"){
         html.required.set(false)
         junitXml.required.set(false)
     }
-}
+})
 
 
 tasks.jar {
