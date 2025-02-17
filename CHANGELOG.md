@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.12] - 2025-02-16
+
 ### Native Code
 * CMake build now support installation (`cmake --install ...`)
 * Test targets are no longer part of default ('all') target
@@ -102,3 +104,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.9]: https://github.com/gershnik/SimpleJNI/releases/3.9
 [3.10]: https://github.com/gershnik/SimpleJNI/releases/3.10
 [3.11]: https://github.com/gershnik/SimpleJNI/releases/3.11
+[3.12]: https://github.com/gershnik/SimpleJNI/releases/3.12
