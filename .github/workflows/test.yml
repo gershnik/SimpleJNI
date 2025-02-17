@@ -40,30 +40,30 @@ jobs:
         - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 12 }
         - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 13 }
         - { os: ubuntu-24.04, java: '8', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 16 }
+        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 14 }
+        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 15 }
+        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 16 }
         - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 17 }
         - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 18 }
         - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 11 }
         - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 12 }
         - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 13 }
         - { os: ubuntu-24.04, java: '17', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 16 }
+        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 14 }
+        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 15 }
+        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 16 }
         - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 17 }
         - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 18 }
         - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 11 }
         - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 12 }
         - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 13 }
         - { os: ubuntu-24.04, java: '21', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 16 }
+        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 13 }
+        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 14 }
+        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 15 }
+        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 16 }
         - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 17 }
         - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 18 }
 
