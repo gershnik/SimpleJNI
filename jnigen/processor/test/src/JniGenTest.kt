@@ -128,7 +128,7 @@ class JniGenTest {
     }
 
     companion object {
-        val testDataLocation = Path(System.getProperty("test.data.location")!!)
+        private val testDataLocation = Path(System.getProperty("test.data.location")!!)
 
         @JvmStatic
         fun inputDirectories(): Stream<Arguments> {
