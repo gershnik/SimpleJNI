@@ -27,15 +27,21 @@ jobs:
         run: ./gradlew -PbuildDir=build bundleCpp bundleJava
 
       - name: Publish to OSSRH
+        env:
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+          GPG_KEY_PASSWD: ${{ secrets.GPG_KEY_PASSWD }}
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
         working-directory: ${{github.workspace}}/jnigen
         shell: bash
         run: |
           ./gradlew -PbuildDir=build \
-              -Psigning.keyId=${{ secrets.GPG_KEY_ID }} \
-              -Psigning.password=${{ secrets.GPG_KEY_PASSWD }} \
-              -Psigning.armoredKey=${{ secrets.GPG_KEY }} \
-              -PossrhUsername=${{ secrets.OSSRH_USERNAME }} \
-              -PossrhPassword=${{ secrets.OSSRH_PASSWORD }} \
+              -Psigning.keyId=$GPG_KEY_ID \
+              -Psigning.password=$GPG_KEY_PASSWD \
+              -Psigning.armoredKey=$GPG_KEY \
+              -PossrhUsername=$OSSRH_USERNAME \
+              -PossrhPassword=$OSSRH_PASSWORD \
             publishAllPublicationsToOssrhRepository
 
       - name: Make release
