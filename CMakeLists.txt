@@ -74,6 +74,7 @@ set(SMJNI_HEADERS
     config.h
     ct_string.h
     java_array.h
+    java_cast.h
     java_class_table.h
     java_class.h
     java_direct_buffer.h
