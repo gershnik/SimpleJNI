@@ -3,6 +3,15 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Native Code
+* CMake build now support installation (`cmake --install ...`)
+* Test targets are no longer part of default ('all') target
+* There is a new Cmake option `SMJNI_NO_TESTS` that suppresses all test related functionality
+
+### Annotation processors
+* Kotlin version required updated to 1.9.25
+* KSP code generator now requires KSP version 1.9.25-1.0.20
+
 ## [3.11] - 2024-08-30
 
 ### Native Code
