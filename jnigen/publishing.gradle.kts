@@ -85,8 +85,6 @@ if (!(project.version as String).endsWith("SNAPSHOT")) {
             val signingKeyId = project.property("signing.keyId") as String
             val signingKey = project.property("signing.armoredKey") as String
             val signingPassword = project.property("signing.password") as String
-            println(signingKey)
-            println(signingPassword)
             useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
         }
         sign(the<PublishingExtension>().publications["thePublication"])

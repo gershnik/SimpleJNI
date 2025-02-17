@@ -39,7 +39,7 @@ jobs:
           ./gradlew -PbuildDir=build \
               -Psigning.keyId=$GPG_KEY_ID \
               -Psigning.password=$GPG_KEY_PASSWD \
-              -Psigning.armoredKey=$GPG_KEY \
+              "-Psigning.armoredKey=$GPG_KEY" \
               -PossrhUsername=$OSSRH_USERNAME \
               -PossrhPassword=$OSSRH_PASSWORD \
             publishAllPublicationsToOssrhRepository
