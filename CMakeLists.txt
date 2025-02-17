@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16)
 
 cmake_policy(SET CMP0076 NEW)  # target_sources() command converts relative paths to absolute
 
@@ -26,13 +26,11 @@ if(CMAKE_VERSION VERSION_LESS 3.21)
   endif()
 endif()
 
-if(CMAKE_VERSION VERSION_GREATER_EQUAL 3.15)
-    # the following only works in top level so there is no need to check
-    # PROJECT_IS_TOP_LEVEL which will not work before project() call anyway
-    cmake_policy(SET CMP0091 NEW) # use MSVC_RUNTIME_LIBRARY property
-    if (NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
-        set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    endif()
+# the following only works in top level so there is no need to check
+# PROJECT_IS_TOP_LEVEL which will not work before project() call anyway
+cmake_policy(SET CMP0091 NEW) # use MSVC_RUNTIME_LIBRARY property
+if (NOT DEFINED CMAKE_MSVC_RUNTIME_LIBRARY)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
 file(READ VERSION SMJNI_VERSION)
@@ -42,6 +40,8 @@ endif()
 string(STRIP ${SMJNI_VERSION} SMJNI_VERSION)
 
 project(smjni VERSION ${SMJNI_VERSION} LANGUAGES CXX)
+
+option(SMJNI_NO_TESTS "disable test targets" OFF)
 
 if(NOT DEFINED JNI_INCLUDE_DIRS)
     if (NOT ANDROID)
@@ -70,38 +70,57 @@ PUBLIC
     cxx_std_17
 )
 
+set(SMJNI_HEADERS
+    config.h
+    ct_string.h
+    java_array.h
+    java_class_table.h
+    java_class.h
+    java_direct_buffer.h
+    java_exception.h
+    java_externals.h
+    java_field.h
+    java_frame.h
+    java_method.h
+    java_ref.h
+    java_runtime.h
+    java_string.h
+    java_type_traits.h
+    java_types.h
+    jni_provider.h
+    smjni.h
+    utf_util.h
+)
+
+set(SMJNI_SOURCES
+    java_exception.cpp
+    java_externals.cpp
+    java_field.cpp
+    java_method.cpp
+    java_runtime.cpp
+    java_string.cpp
+    jni_provider.cpp
+)
+
+foreach(header ${SMJNI_HEADERS})
+    list(APPEND SMJNI_BUILD_HEADERS $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc/smjni/${header}>)
+    list(APPEND SMJNI_INSTALL_HEADERS $<INSTALL_INTERFACE:include/smjni/${header}>)
+    list(APPEND SMJNI_PROP_PUBLIC_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/inc/smjni/${header})    
+endforeach()
+
+foreach(source ${SMJNI_SOURCES})
+    list(APPEND SMJNI_BUILD_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/${source})
+endforeach()
 
 target_sources(smjni
 PUBLIC
-    inc/smjni/config.h
-    inc/smjni/ct_string.h
-    inc/smjni/java_array.h
-    inc/smjni/java_class_table.h
-    inc/smjni/java_class.h
-    inc/smjni/java_direct_buffer.h
-    inc/smjni/java_exception.h
-    inc/smjni/java_externals.h
-    inc/smjni/java_field.h
-    inc/smjni/java_frame.h
-    inc/smjni/java_method.h
-    inc/smjni/java_ref.h
-    inc/smjni/java_runtime.h
-    inc/smjni/java_string.h
-    inc/smjni/java_type_traits.h
-    inc/smjni/java_types.h
-    inc/smjni/jni_provider.h
-    inc/smjni/smjni.h
-    inc/smjni/utf_util.h
+    ${SMJNI_BUILD_HEADERS}
+    ${SMJNI_INSTALL_HEADERS}
 PRIVATE
-    src/java_exception.cpp
-    src/java_externals.cpp
-    src/java_field.cpp
-    src/java_method.cpp
-    src/java_runtime.cpp
-    src/java_string.cpp
-    src/jni_provider.cpp
+    ${SMJNI_BUILD_SOURCES}
 )
 
+set_target_properties(smjni PROPERTIES PUBLIC_HEADER "${SMJNI_PROP_PUBLIC_HEADERS}")
 
 target_compile_options(smjni 
 PUBLIC 
@@ -116,12 +135,18 @@ PRIVATE
 
 target_include_directories(smjni 
 PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}/inc
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+    $<INSTALL_INTERFACE:include>  # <prefix>/include
     ${JNI_INCLUDE_DIRS}
 )
 
 
-if (PROJECT_IS_TOP_LEVEL AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests)
+include(cmake/install.cmake)
+
+if (PROJECT_IS_TOP_LEVEL 
+        AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests
+        AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/jnigen
+        AND NOT SMJNI_NO_TESTS)
 
     add_subdirectory(tests)
 

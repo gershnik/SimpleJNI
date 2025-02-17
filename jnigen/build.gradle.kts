@@ -71,6 +71,11 @@ tasks.register<Zip>("bundleCpp") {
         include("**/*.h")
         into("inc")
     }
+    from("../cmake") {
+        include("**/*.cmake")
+        include("**/*.in")
+        into("cmake")
+    }
     from("../CMakeLists.txt",
          "../VERSION",
          "../LICENSE",

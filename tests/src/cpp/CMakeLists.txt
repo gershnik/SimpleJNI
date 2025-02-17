@@ -29,7 +29,7 @@ FetchContent_Declare(doctest
 
 FetchContent_MakeAvailable(doctest)
 
-add_custom_target(test-native ALL)
+add_custom_target(test-native)
 
 set (TEST_SUFFIXES
     17
