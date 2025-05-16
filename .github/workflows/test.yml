@@ -40,8 +40,8 @@ jobs:
           javas = [8, 11, 17, 21, 22, 23, 24]
 
           macos_map = {
-            'macos-13': {'xcode': "14.3.1", 'max_standard': 20}
-            'macos-14': {'xcode': "15.4",   'max_standard': 20}
+            'macos-13': {'xcode': "14.3.1", 'max_standard': 20},
+            'macos-14': {'xcode': "15.4",   'max_standard': 20},
             'macos-15': {'xcode': "16.2",   'max_standard': 23}
           }
 
