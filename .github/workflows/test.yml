@@ -22,50 +22,107 @@ env:
   NDK_API: 29
 
 jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      hosts: ${{ steps.matrix.outputs.hosts }}
+      containers: ${{ steps.matrix.outputs.containers }}
+
+    steps:
+      - name: Define Matrix
+        id: matrix
+        shell: python
+        run: |
+          import json
+          import os
+
+          javas = [8, 11, 17, 21, 22, 23, 24]
+
+          macos_map = {
+            'macos-13': {'xcode': "14.3.1", 'max_standard': 20}
+            'macos-14': {'xcode': "15.4",   'max_standard': 20}
+            'macos-15': {'xcode': "16.2",   'max_standard': 23}
+          }
+
+          gcc_map = {
+            11: 'ubuntu-latest', 
+            12: 'ubuntu-latest', 
+            13: 'ubuntu-latest',
+            14: 'ubuntu-24.04'
+          }
+          gcc_cont_map = {
+            15: 'gcc:15.1'
+          }
+          clang_map = {
+            13: 'ubuntu-22.04', 
+            14: 'ubuntu-22.04', 
+            15: 'ubuntu-22.04', 
+            16: 'ubuntu-22.04',
+            17: 'ubuntu-latest', 
+            18: 'ubuntu-latest', 
+            19: 'ubuntu-latest', 
+            20: 'ubuntu-latest'
+          }
+          
+          hosts = []
+          containers = []
+          
+          #macOS
+          for runon, config in macos_map.items():
+            xcode = config['xcode']
+            max_standard = config['max_standard']
+            for java in javas:
+              hosts.append({'os': runon, 'version': xcode, 'max_cxx_standard': max_standard, 'java': java, 'jobname': f'macOS - Xcode{xcode} - JDK{java}'})
+          
+          #windows
+          for java in javas:
+            hosts.append({'os': 'windows-latest', 'jobname': f'Windows - JDK{java}'})
+          
+          #gcc hosts
+          for gcc, runon in gcc_map.items():
+            if gcc < 13:
+              max_standard = 20
+            else:
+              max_standard = 23
+            for java in javas:
+              hosts.append({'os': runon, 'compiler': 'gcc', 'version': gcc, 'max_cxx_standard': max_standard, 'java': java,
+                            'jobname': f'Linux - GCC{gcc} - JDK{java}'})
+
+          #gcc containers
+          for gcc, container in gcc_cont_map.items():
+            if gcc < 13:
+              max_standard = 20
+            else:
+              max_standard = 23
+            for java in javas:
+              containers.append({'container': container, 'max_cxx_standard': max_standard, 'java': java,
+                                 'jobname': f'Linux - GCC{gcc} - JDK{java}'})
+
+
+          #clang
+          for clang, runon in clang_map.items():
+            for cxx_standard in cxx_standards:
+              if clang < 18:
+                max_standard = 20
+              else:
+                max_standard = 23
+              for java in javas:
+                hosts.append({'os': runon, 'compiler': 'clang', 'version': clang, 'max_cxx_standard': max_standard, 'java': java,
+                              'jobname': f'Linux - Clang{clang} - JDK{java}'})
+
+          with open(os.environ['GITHUB_OUTPUT'], 'w') as env:
+            print('hosts=' + json.dumps(hosts), file=env) 
+            print('containers=' + json.dumps(containers), file=env) 
+  
   desktop:
+    needs: define-matrix
+    name: ${{ matrix.jobname }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-        - { os: macos-13, java: '8' }
-        - { os: macos-13, java: '11' }
-        - { os: macos-13, java: '17' }
-        - { os: macos-13, java: '21' }
-        - { os: windows-latest, java: '8' }
-        - { os: windows-latest, java: '11' }
-        - { os: windows-latest, java: '17' }
-        - { os: windows-latest, java: '21' }
-        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 11 }
-        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 12 }
-        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 13 }
-        - { os: ubuntu-24.04, java: '8', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 16 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 17 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 18 }
-        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 11 }
-        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 12 }
-        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 13 }
-        - { os: ubuntu-24.04, java: '17', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 16 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 17 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 18 }
-        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 11 }
-        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 12 }
-        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 13 }
-        - { os: ubuntu-24.04, java: '21', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 16 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 17 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 18 }
+        include: ${{ fromJSON(needs.define-matrix.outputs.hosts) }}
 
     steps:
     - uses: actions/checkout@v4
@@ -92,6 +149,10 @@ jobs:
           fi
         fi
 
+        if [[ '${{ matrix.os }}' == macos-* ]]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_${{ matrix.version }}.app" >> $GITHUB_ENV
+        fi
+
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
@@ -102,15 +163,15 @@ jobs:
 
     - name: Configure CMake
       shell: bash
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=${{matrix.max_cxx_standard}}
 
     - name: Build and Test Native
       shell: bash
-      run: cmake --build build --config $BUILD_TYPE --target test-native
+      run: cmake --build build --config RelWithDebInfo --target test-native
 
     - name: Build and Test JniGen
       shell: bash
-      run: cmake --build build --config $BUILD_TYPE --target test-jnigen
+      run: cmake --build build --config RelWithDebInfo --target test-jnigen
 
     - name: Upload JDK crashes
       if: failure() && matrix.os == 'windows-latest'
@@ -122,6 +183,46 @@ jobs:
           tests/build/hs_*.log
           tests/build/hs_*.mdmp
 
+  container:
+    needs: define-matrix
+    name: ${{ matrix.jobname }}
+    runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix: 
+        include: ${{ fromJSON(needs.define-matrix.outputs.containers) }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: System Setup
+      shell: bash
+      run: |
+        apt-get update 
+        apt-get install -y ninja-build cmake
+
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: |
+          8
+          ${{ matrix.java }}
+        distribution: 'temurin'
+
+    - name: Configure CMake
+      shell: bash
+      run: cmake -GNinja -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=${{matrix.max_cxx_standard}}
+
+    - name: Build and Test Native
+      shell: bash
+      run: cmake --build build --config RelWithDebInfo --target test-native
+
+    - name: Build and Test JniGen
+      shell: bash
+      run: cmake --build build --config RelWithDebInfo --target test-jnigen
+        
   android:
     runs-on: ubuntu-latest
 
@@ -176,13 +277,13 @@ jobs:
         disable-animations: true
         script: |
             echo "::group::Configure"
-            cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
+            cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
             echo "::endgroup::"
             echo "::group::Build and Test Native"
-            cmake --build build --config $BUILD_TYPE --target test-native
+            cmake --build build --config RelWithDebInfo --target test-native
             echo "::endgroup::"
             echo "::group::Build and Test JniGen"
-            cmake --build build --config $BUILD_TYPE --target test-jnigen
+            cmake --build build --config RelWithDebInfo --target test-jnigen
             echo "::endgroup::"
 
     

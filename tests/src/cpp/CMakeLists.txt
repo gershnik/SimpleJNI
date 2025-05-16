@@ -31,15 +31,17 @@ FetchContent_MakeAvailable(doctest)
 
 add_custom_target(test-native)
 
-set (TEST_SUFFIXES
+set (CXX_STANDARDS
     17
     20
 )
+if (NOT DEFINED TEST_MAX_CXX_STANDARD OR "${TEST_MAX_CXX_STANDARD}" GREATER_EQUAL 23)
+    list(APPEND CXX_STANDARDS 23)
+endif()
 
-set(CXX_STANDARD_17 17)
-set(CXX_STANDARD_20 20)
+foreach(CXX_STANDARD ${CXX_STANDARDS})
 
-foreach(TEST_SUFFIX ${TEST_SUFFIXES})
+    set(TEST_SUFFIX ${CXX_STANDARD})
 
     set(TEST_TARGET_NAME smjnitests-${TEST_SUFFIX})
 
@@ -53,7 +55,7 @@ foreach(TEST_SUFFIX ${TEST_SUFFIXES})
     )
 
     set_target_properties(${TEST_TARGET_NAME} PROPERTIES
-        CXX_STANDARD ${CXX_STANDARD_${TEST_SUFFIX}}
+        CXX_STANDARD ${CXX_STANDARD}
         CXX_STANDARD_REQUIRED ON
         CXX_EXTENSIONS OFF
         CXX_VISIBILITY_PRESET hidden
