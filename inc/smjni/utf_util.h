@@ -41,6 +41,8 @@
 #ifndef HEADER_UTF_UTIL_INCLUDED
 #define HEADER_UTF_UTIL_INCLUDED
 
+#include <cstdint>
+
 namespace smjni
 {
     template<typename InIt, typename Out>
