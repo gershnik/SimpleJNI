@@ -81,20 +81,14 @@ jobs:
           
           #gcc hosts
           for gcc, runon in gcc_map.items():
-            if gcc < 13:
-              max_standard = 20
-            else:
-              max_standard = 23
+            max_standard = 20 if gcc < 13 else 23
             for java in javas:
               hosts.append({'os': runon, 'compiler': 'gcc', 'version': gcc, 'max_cxx_standard': max_standard, 'java': java,
                             'jobname': f'Linux - GCC{gcc} - JDK{java}'})
 
           #gcc containers
           for gcc, container in gcc_cont_map.items():
-            if gcc < 13:
-              max_standard = 20
-            else:
-              max_standard = 23
+            max_standard = 20 if gcc < 13 else 23
             for java in javas:
               containers.append({'container': container, 'max_cxx_standard': max_standard, 'java': java,
                                  'jobname': f'Linux - GCC{gcc} - JDK{java}'})
@@ -102,14 +96,10 @@ jobs:
 
           #clang
           for clang, runon in clang_map.items():
-            for cxx_standard in cxx_standards:
-              if clang < 18:
-                max_standard = 20
-              else:
-                max_standard = 23
-              for java in javas:
-                hosts.append({'os': runon, 'compiler': 'clang', 'version': clang, 'max_cxx_standard': max_standard, 'java': java,
-                              'jobname': f'Linux - Clang{clang} - JDK{java}'})
+            max_standard = 20 if clang < 18 else 23
+            for java in javas:
+              hosts.append({'os': runon, 'compiler': 'clang', 'version': clang, 'max_cxx_standard': max_standard, 'java': java,
+                            'jobname': f'Linux - Clang{clang} - JDK{java}'})
 
           with open(os.environ['GITHUB_OUTPUT'], 'w') as env:
             print('hosts=' + json.dumps(hosts), file=env) 
@@ -224,6 +214,7 @@ jobs:
       run: cmake --build build --config RelWithDebInfo --target test-jnigen
         
   android:
+    needs: define-matrix
     runs-on: ubuntu-latest
 
     steps:
