@@ -15,57 +15,120 @@ on:
       - '.tools/create-release'
       - '.github/workflows/publish.yml'
 
-env:
-  BUILD_TYPE: Release
-  NDK_VER: 21.3.6528147
-  NDK_ARCH: x86_64
-  NDK_API: 29
-
 jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+
+    outputs:
+      hosts: ${{ steps.matrix.outputs.hosts }}
+      containers: ${{ steps.matrix.outputs.containers }}
+      androids: ${{ steps.matrix.outputs.androids }}
+
+    steps:
+      - name: Define Matrix
+        id: matrix
+        shell: python
+        run: |
+          import json
+          import os
+
+          javas = [8, 11, 17, 21, 22, 23, 24]
+
+          android_abis = ['x86_64']
+
+          android_apis = [29, 30, 35]
+
+          ndks = {
+            '21.3.6528147': 30,
+            '27.2.12479018': 35,
+            '29.0.13113456': 35
+          }
+
+          macos_map = {
+            'macos-13': {'xcode': "14.3.1", 'max_standard': 20},
+            'macos-14': {'xcode': "15.4",   'max_standard': 20},
+            'macos-15': {'xcode': "16.2",   'max_standard': 23}
+          }
+
+          gcc_map = {
+            11: 'ubuntu-latest', 
+            12: 'ubuntu-latest', 
+            13: 'ubuntu-latest',
+            14: 'ubuntu-24.04'
+          }
+          gcc_cont_map = {
+            15: 'gcc:15.1'
+          }
+          clang_map = {
+            13: 'ubuntu-22.04', 
+            14: 'ubuntu-22.04', 
+            15: 'ubuntu-22.04', 
+            16: 'ubuntu-22.04',
+            17: 'ubuntu-latest', 
+            18: 'ubuntu-latest', 
+            19: 'ubuntu-latest', 
+            20: 'ubuntu-latest'
+          }
+          
+          hosts = []
+          containers = []
+          androids = []
+          
+          #macOS
+          for runon, config in macos_map.items():
+            xcode = config['xcode']
+            max_standard = config['max_standard']
+            for java in javas:
+              hosts.append({'os': runon, 'version': xcode, 'max_cxx_standard': max_standard, 'java': java, 'jobname': f'macOS - Xcode{xcode} - JDK{java}'})
+          
+          #windows
+          for java in javas:
+            hosts.append({'os': 'windows-latest', 'max_cxx_standard': 23, 'java': java, 'jobname': f'Windows - JDK{java}'})
+          
+          #gcc hosts
+          for gcc, runon in gcc_map.items():
+            max_standard = 20 if gcc < 13 else 23
+            for java in javas:
+              hosts.append({'os': runon, 'compiler': 'gcc', 'version': gcc, 'max_cxx_standard': max_standard, 'java': java,
+                            'jobname': f'Linux - GCC{gcc} - JDK{java}'})
+
+          #gcc containers
+          for gcc, container in gcc_cont_map.items():
+            max_standard = 20 if gcc < 13 else 23
+            for java in javas:
+              containers.append({'container': container, 'max_cxx_standard': max_standard, 'java': java,
+                                 'jobname': f'Linux - GCC{gcc} - JDK{java}'})
+
+
+          #clang
+          for clang, runon in clang_map.items():
+            max_standard = 20 if clang < 18 else 23
+            for java in javas:
+              hosts.append({'os': runon, 'compiler': 'clang', 'version': clang, 'max_cxx_standard': max_standard, 'java': java,
+                            'jobname': f'Linux - Clang{clang} - JDK{java}'})
+
+          #androids
+          for ndk, max_api in ndks.items():
+            for api in android_apis:
+              if api > max_api:
+                continue
+              for abi in android_abis:
+                androids.append({'version': ndk, 'api': api, 'arch': abi, 'jobname': f'NDK {ndk} - API{api} - {abi}'})
+
+
+          with open(os.environ['GITHUB_OUTPUT'], 'w') as env:
+            print('hosts=' + json.dumps(hosts), file=env) 
+            print('containers=' + json.dumps(containers), file=env) 
+            print('androids=' + json.dumps(androids), file=env) 
+  
   desktop:
+    needs: define-matrix
+    name: ${{ matrix.jobname }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        include:
-        - { os: macos-13, java: '8' }
-        - { os: macos-13, java: '11' }
-        - { os: macos-13, java: '17' }
-        - { os: macos-13, java: '21' }
-        - { os: windows-latest, java: '8' }
-        - { os: windows-latest, java: '11' }
-        - { os: windows-latest, java: '17' }
-        - { os: windows-latest, java: '21' }
-        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 11 }
-        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 12 }
-        - { os: ubuntu-latest, java: '8', compiler: 'gcc', compiler_version: 13 }
-        - { os: ubuntu-24.04, java: '8', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-22.04, java: '8', compiler: 'clang', compiler_version: 16 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 17 }
-        - { os: ubuntu-latest, java: '8', compiler: 'clang', compiler_version: 18 }
-        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 11 }
-        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 12 }
-        - { os: ubuntu-latest, java: '17', compiler: 'gcc', compiler_version: 13 }
-        - { os: ubuntu-24.04, java: '17', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-22.04, java: '17', compiler: 'clang', compiler_version: 16 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 17 }
-        - { os: ubuntu-latest, java: '17', compiler: 'clang', compiler_version: 18 }
-        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 11 }
-        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 12 }
-        - { os: ubuntu-latest, java: '21', compiler: 'gcc', compiler_version: 13 }
-        - { os: ubuntu-24.04, java: '21', compiler: 'gcc', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 13 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 14 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 15 }
-        - { os: ubuntu-22.04, java: '21', compiler: 'clang', compiler_version: 16 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 17 }
-        - { os: ubuntu-latest, java: '21', compiler: 'clang', compiler_version: 18 }
+        include: ${{ fromJSON(needs.define-matrix.outputs.hosts) }}
 
     steps:
     - uses: actions/checkout@v4
@@ -77,40 +140,49 @@ jobs:
           if [[ '${{ matrix.compiler }}' == 'clang' ]]; then
             wget https://apt.llvm.org/llvm.sh
             chmod u+x llvm.sh
-            sudo ./llvm.sh ${{ matrix.compiler_version }} 
-            sudo apt-get install -y clang-tools-${{ matrix.compiler_version }}
-            echo "CC=clang-${{ matrix.compiler_version }}" >> $GITHUB_ENV
-            echo "CXX=clang++-${{ matrix.compiler_version }}" >> $GITHUB_ENV
+            sudo ./llvm.sh ${{ matrix.version }} 
+            sudo apt-get install -y clang-tools-${{ matrix.version }}
+            echo "CC=clang-${{ matrix.version }}" >> $GITHUB_ENV
+            echo "CXX=clang++-${{ matrix.version }}" >> $GITHUB_ENV
           fi
 
           if [[ '${{ matrix.compiler }}' == 'gcc' ]]; then
             sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
             sudo apt-get update
-            sudo apt-get install -y gcc-${{ matrix.compiler_version }} g++-${{ matrix.compiler_version }}
-            echo "CC=gcc-${{ matrix.compiler_version }}" >> $GITHUB_ENV
-            echo "CXX=g++-${{ matrix.compiler_version }}" >> $GITHUB_ENV
+            sudo apt-get install -y gcc-${{ matrix.version }} g++-${{ matrix.version }}
+            echo "CC=gcc-${{ matrix.version }}" >> $GITHUB_ENV
+            echo "CXX=g++-${{ matrix.version }}" >> $GITHUB_ENV
           fi
         fi
 
-    - name: Set up JDK
+        if [[ '${{ matrix.os }}' == macos-* ]]; then
+            echo "DEVELOPER_DIR=/Applications/Xcode_${{ matrix.version }}.app" >> $GITHUB_ENV
+        fi
+
+    - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
-        java-version: |
-          8
-          ${{ matrix.java }}
+        java-version: 8
+        distribution: 'corretto'
+
+    - name: Set up JDK${{ matrix.java }}
+      if: matrix.java != 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
         distribution: 'temurin'
 
     - name: Configure CMake
       shell: bash
-      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=$BUILD_TYPE 
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=${{matrix.max_cxx_standard}}
 
     - name: Build and Test Native
       shell: bash
-      run: cmake --build build --config $BUILD_TYPE --target test-native
+      run: cmake --build build --config RelWithDebInfo --target test-native
 
     - name: Build and Test JniGen
       shell: bash
-      run: cmake --build build --config $BUILD_TYPE --target test-jnigen
+      run: cmake --build build --config RelWithDebInfo --target test-jnigen
 
     - name: Upload JDK crashes
       if: failure() && matrix.os == 'windows-latest'
@@ -122,12 +194,64 @@ jobs:
           tests/build/hs_*.log
           tests/build/hs_*.mdmp
 
-  android:
+  container:
+    needs: define-matrix
+    name: ${{ matrix.jobname }}
     runs-on: ubuntu-latest
+    container: ${{ matrix.container }}
+    strategy:
+      fail-fast: false
+      matrix: 
+        include: ${{ fromJSON(needs.define-matrix.outputs.containers) }}
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
+
+    - name: System Setup
+      shell: bash
+      run: |
+        apt-get update 
+        apt-get install -y ninja-build cmake
+        wget https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.deb
+        apt-get install -y ./amazon-corretto-8-x64-linux-jdk.deb
+        echo "JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto" >> $GITHUB_ENV
+
+    - name: Set up JDK${{ matrix.java }}
+      if: matrix.java != 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
+        distribution: 'temurin'
+
+    - name: Configure CMake
+      shell: bash
+      run: cmake -GNinja -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=${{matrix.max_cxx_standard}}
+
+    - name: Build and Test Native
+      shell: bash
+      run: cmake --build build --config RelWithDebInfo --target test-native
+
+    - name: Build and Test JniGen
+      shell: bash
+      run: cmake --build build --config RelWithDebInfo --target test-jnigen
+        
+  android:
+    needs: define-matrix
+    name: ${{ matrix.jobname }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.define-matrix.outputs.androids) }}
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Setup System
+      run: |
+        sudo apt-get install -y ninja-build
 
     - name: Enable KVM
       run: |
@@ -141,49 +265,65 @@ jobs:
         java-version: 17
         distribution: 'temurin'
 
-    - name: AVD cache
+    - name: Make Build Script
+      shell: bash
+      run: |
+        cat > android-build <<EOF
+        #! /bin/bash
+        set -e
+        echo "::group::Configure"
+        cmake -GNinja -S . -B build \
+          -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo \
+          -DTEST_MAX_CXX_STANDARD=20 \
+          -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/${{ matrix.version }}/build/cmake/android.toolchain.cmake \
+          -DANDROID_ABI:STRING=${{ matrix.arch }} \
+          -DANDROID_PLATFORM:STRING=${{ matrix.api }} \
+          -DANDROID_STL:STRING=c++_static
+        echo "::endgroup::"
+        echo "::group::Build and Test Native"
+        cmake --build build --config RelWithDebInfo --target test-native
+        echo "::endgroup::"
+        echo "::group::Build and Test JniGen"
+        cmake --build build --config RelWithDebInfo --target test-jnigen
+        echo "::endgroup::"
+        killall -INT crashpad_handler || true
+        EOF
+        chmod a+x android-build
+
+    - name: AVD Cache
       uses: actions/cache@v4
       id: avd-cache
       with:
         path: |
           ~/.android/avd/*
           ~/.android/adb*
-        key: avd-${{env.NDK_VER}}-${{env.NDK_ARCH}}-${{env.NDK_API}}  
+        key: avd-${{ matrix.version }}-${{ matrix.arch }}-${{ matrix.api }}  
     
     - name: Create AVD and generate snapshot for caching
       if: steps.avd-cache.outputs.cache-hit != 'true'
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: ${{env.NDK_API}}
-        arch: ${{env.NDK_ARCH}}
+        api-level: ${{ matrix.api }}
+        arch: ${{matrix.arch}}
         target: google_apis
-        ndk: ${{env.NDK_VER}}
+        ndk: ${{ matrix.version }}
         sdcard-path-or-size: 1000M
         force-avd-creation: false
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
         disable-animations: false
         script: echo "Generated AVD snapshot for caching."
 
     - name: Configure, Build and Test
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: ${{env.NDK_API}}
-        arch: ${{env.NDK_ARCH}}
+        api-level: ${{ matrix.api }}
+        arch: ${{matrix.arch}}
         target: google_apis
-        ndk: ${{env.NDK_VER}}
+        ndk: ${{ matrix.version }}
         sdcard-path-or-size: 1000M
-        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
         disable-animations: true
-        script: |
-            echo "::group::Configure"
-            cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=$BUILD_TYPE -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
-            echo "::endgroup::"
-            echo "::group::Build and Test Native"
-            cmake --build build --config $BUILD_TYPE --target test-native
-            echo "::endgroup::"
-            echo "::group::Build and Test JniGen"
-            cmake --build build --config $BUILD_TYPE --target test-jnigen
-            echo "::endgroup::"
+        script: ./android-build
 
     
 
