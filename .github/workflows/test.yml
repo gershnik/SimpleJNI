@@ -296,7 +296,7 @@ jobs:
         #! /bin/bash
         set -e
         echo "::group::Configure"
-        cmake -S . -B build \
+        cmake -GNinja -S . -B build \
           -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo \
           -DTEST_MAX_CXX_STANDARD=20 \
           -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/${{ matrix.version }}/build/cmake/android.toolchain.cmake \
