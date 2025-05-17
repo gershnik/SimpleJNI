@@ -15,10 +15,11 @@
 */
 
 import com.google.devtools.ksp.KspExperimental
+import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
-import com.tschuchort.compiletesting.kspArgs
-import com.tschuchort.compiletesting.symbolProcessorProviders
+import com.tschuchort.compiletesting.configureKsp
+import com.tschuchort.compiletesting.kspProcessorOptions
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.CoreMatchers.`is` as Is
 import org.hamcrest.MatcherAssert.assertThat
@@ -36,15 +37,17 @@ import kotlin.io.path.exists
 fun compileFiles(workingDir: Path,
                  cppPath: Path,
                  sources: List<SourceFile>,
-                 processorArgs: Map<String, String> = emptyMap()) : KotlinCompilation.Result  {
+                 processorArgs: Map<String, String> = emptyMap()) : JvmCompilationResult  {
 
     return KotlinCompilation().apply {
         this.workingDir = workingDir.toFile()
         this.sources = sources
 
-        symbolProcessorProviders = listOf(Provider())
-        kspArgs = processorArgs.toMutableMap().apply {
-            this.putIfAbsent("smjni.jnigen.dest.path", "$cppPath")
+        configureKsp(useKsp2 = true) {
+            symbolProcessorProviders += listOf(Provider())
+            kspProcessorOptions = processorArgs.toMutableMap().apply {
+                this.putIfAbsent("smjni.jnigen.dest.path", "$cppPath")
+            }
         }
 
         inheritClassPath = true
@@ -81,7 +84,7 @@ fun listFile(path: Path): List<String> {
 }
 
 @OptIn(ExperimentalCompilerApi::class)
-fun collectOutput(result: KotlinCompilation.Result) : List<String> {
+fun collectOutput(result: JvmCompilationResult) : List<String> {
     return result.messages.lines().mapNotNull {
         if (it.startsWith("i: [ksp] JNIGen:"))
             it.removePrefix("i: [ksp] ")

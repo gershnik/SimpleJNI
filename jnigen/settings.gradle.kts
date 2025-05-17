@@ -36,16 +36,16 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            val kotlinVersionStr = "1.9.25"
+            val kotlinVersionStr = "2.1.21"
             version("kotlin", kotlinVersionStr)
-            version("ksp", "$kotlinVersionStr-1.0.20")
-            version("kotlinCompileTesting", "1.6.0")
+            version("ksp", "$kotlinVersionStr-2.0.1")
+            version("kotlinCompileTesting", "0.7.1")
             version("junit", "5.12.2")
             version("hamcrest", "3.0")
 
             library("ksp-symbol-processing-api", "com.google.devtools.ksp", "symbol-processing-api").versionRef("ksp")
-            library("kotlin-compile-testing", "com.github.tschuchortdev","kotlin-compile-testing").versionRef("kotlinCompileTesting")
-            library("kotlin-compile-testing-ksp", "com.github.tschuchortdev", "kotlin-compile-testing-ksp").versionRef("kotlinCompileTesting")
+            library("kotlin-compile-testing", "dev.zacsweers.kctfork","core").versionRef("kotlinCompileTesting")
+            library("kotlin-compile-testing-ksp", "dev.zacsweers.kctfork", "ksp").versionRef("kotlinCompileTesting")
             library("kotlin-test-junit5","org.jetbrains.kotlin", "kotlin-test-junit5").versionRef("kotlin")
             library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
             library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")

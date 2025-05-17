@@ -14,6 +14,7 @@
  limitations under the License.
 */
 
+import com.tschuchort.compiletesting.JvmCompilationResult
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.hamcrest.CoreMatchers.equalTo
@@ -22,6 +23,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Assertions.assertTrue
 import smjni.jnigen.Processor
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -32,15 +34,17 @@ import kotlin.io.path.exists
 fun compileFiles(workingDir: Path,
                  cppPath: Path,
                  sources: List<SourceFile>,
-                 processorArgs: Map<String, String> = emptyMap()) : KotlinCompilation.Result  {
+                 processorArgs: Map<String, String> = emptyMap()) : JvmCompilationResult  {
 
     return KotlinCompilation().apply {
         this.workingDir = workingDir.toFile()
         this.sources = sources
 
-        annotationProcessors = listOf(Processor())
+        this.annotationProcessors = listOf(Processor())
 
-        kaptArgs =  processorArgs.toMutableMap().apply {
+        useKapt4 = true
+
+        this.kaptArgs =  processorArgs.toMutableMap().apply {
             this.putIfAbsent("smjni.jnigen.dest.path", "$cppPath")
             this.putIfAbsent("smjni.jnigen.print.to.stdout", "false")
         }
@@ -52,7 +56,7 @@ fun compileFiles(workingDir: Path,
 }
 
 fun assertFileContent(path: Path, content: List<String>) {
-    assertTrue(Files.exists(path))
+    assertTrue(Files.exists(path), "$path doesn't exist")
     assertThat(path.toFile().readLines(), Is(equalTo(content)))
 }
 
@@ -78,7 +82,7 @@ fun listFile(path: Path): List<String> {
 }
 
 @OptIn(ExperimentalCompilerApi::class)
-fun collectOutput(result: KotlinCompilation.Result) : List<String> {
+fun collectOutput(result: JvmCompilationResult) : List<String> {
     return result.messages.lines().mapNotNull {
         if (it.startsWith("i: Note: JNIGen:"))
             it.removePrefix("i: Note: ")

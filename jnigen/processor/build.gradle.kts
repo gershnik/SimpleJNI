@@ -46,6 +46,7 @@ dependencies {
     testImplementation(libs.hamcrest)
     testImplementation(project(":annotations"))
     testRuntimeOnly(libs.junit.jupiter.engine)
+    testRuntimeOnly(files("${System.getProperty("java.home")}/../lib/tools.jar"))
 }
 
 

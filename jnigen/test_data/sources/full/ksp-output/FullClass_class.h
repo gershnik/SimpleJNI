@@ -31,14 +31,14 @@ public:
         { return m_getRegularPropWithGetter(env, self); }
     smjni::local_java_ref<jstring> getRegularPropWithOnlyGetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self) const
         { return m_getRegularPropWithOnlyGetter(env, self); }
-    void setRegularMutablePropWithGetterAndSetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & _set___) const
-        { m_setRegularMutablePropWithGetterAndSetter(env, self, _set___); }
-    void setRegularMutablePropWithOnlyGetterAndSetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & _set___) const
-        { m_setRegularMutablePropWithOnlyGetterAndSetter(env, self, _set___); }
-    void setRegularMutablePropWithOnlySetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & _set___) const
-        { m_setRegularMutablePropWithOnlySetter(env, self, _set___); }
-    void setRegularMutablePropWithSetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & _set___) const
-        { m_setRegularMutablePropWithSetter(env, self, _set___); }
+    void setRegularMutablePropWithGetterAndSetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & value) const
+        { m_setRegularMutablePropWithGetterAndSetter(env, self, value); }
+    void setRegularMutablePropWithOnlyGetterAndSetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & value) const
+        { m_setRegularMutablePropWithOnlyGetterAndSetter(env, self, value); }
+    void setRegularMutablePropWithOnlySetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & value) const
+        { m_setRegularMutablePropWithOnlySetter(env, self, value); }
+    void setRegularMutablePropWithSetter(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const smjni::auto_java_ref<jstring> & value) const
+        { m_setRegularMutablePropWithSetter(env, self, value); }
     void v_irtual(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self) const
         { m_v_irtual(env, self); }
     template<typename ClassType> void v_irtual(JNIEnv * env, const smjni::auto_java_ref<jFullClass> & self, const java_class<ClassType> & classForNonVirtualCall) const
