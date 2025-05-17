@@ -77,6 +77,7 @@ jobs:
           
           hosts = []
           containers = []
+          androids = []
           
           #macOS
           for runon, config in macos_map.items():
