@@ -150,7 +150,7 @@ jobs:
         distribution: 'corretto'
 
     - name: Set up JDK above 8
-      if: ${{ matrix.java }} != 8
+      if: matrix.java != 8
       uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.java }}
@@ -209,8 +209,7 @@ jobs:
     - name: Patch JDK setup
       shell: bash
       run: |
-        mkdir -p ~/.m2
-        cp /github/home/.m2/settings.xml ~/.m2/
+        cat /github/home/.m2/settings.xml
 
     - name: Configure CMake
       shell: bash
