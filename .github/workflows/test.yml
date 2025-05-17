@@ -15,11 +15,6 @@ on:
       - '.tools/create-release'
       - '.github/workflows/publish.yml'
 
-env:
-  NDK_VER: 21.3.6528147
-  NDK_ARCH: x86_64
-  NDK_API: 29
-
 jobs:
   define-matrix:
     runs-on: ubuntu-latest
@@ -118,7 +113,7 @@ jobs:
               if api > max_api:
                 continue
               for abi in android_abis:
-                androids.append({'version': ndk, 'api': api, 'arch': abi, 'jobname': f'NDK{ndk} - API{api} - {abi}'})
+                androids.append({'version': ndk, 'api': api, 'arch': abi, 'jobname': f'NDK {ndk} - API{api} - {abi}'})
 
 
           with open(os.environ['GITHUB_OUTPUT'], 'w') as env:
@@ -254,6 +249,10 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Setup System
+      run: |
+        apt-get install -y ninja-build
+
     - name: Enable KVM
       run: |
         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -266,30 +265,7 @@ jobs:
         java-version: 17
         distribution: 'temurin'
 
-    - name: AVD cache
-      uses: actions/cache@v4
-      id: avd-cache
-      with:
-        path: |
-          ~/.android/avd/*
-          ~/.android/adb*
-        key: avd-${{env.NDK_VER}}-${{env.NDK_ARCH}}-${{env.NDK_API}}  
-    
-    - name: Create AVD and generate snapshot for caching
-      if: steps.avd-cache.outputs.cache-hit != 'true'
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: ${{env.NDK_API}}
-        arch: ${{env.NDK_ARCH}}
-        target: google_apis
-        ndk: ${{env.NDK_VER}}
-        sdcard-path-or-size: 1000M
-        force-avd-creation: false
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
-        disable-animations: false
-        script: echo "Generated AVD snapshot for caching."
-
-    - name: Make build Script
+    - name: Make Build Script
       shell: bash
       run: |
         cat > android-build <<EOF
@@ -314,13 +290,36 @@ jobs:
         EOF
         chmod a+x android-build
 
+    - name: AVD Cache
+      uses: actions/cache@v4
+      id: avd-cache
+      with:
+        path: |
+          ~/.android/avd/*
+          ~/.android/adb*
+        key: avd-${{ matrix.version }}-${{ matrix.arch }}-${{ matrix.api }}  
+    
+    - name: Create AVD and generate snapshot for caching
+      if: steps.avd-cache.outputs.cache-hit != 'true'
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api }}
+        arch: ${{matrix.arch}}
+        target: google_apis
+        ndk: ${{ matrix.version }}
+        sdcard-path-or-size: 1000M
+        force-avd-creation: false
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
+        disable-animations: false
+        script: echo "Generated AVD snapshot for caching."
+
     - name: Configure, Build and Test
       uses: reactivecircus/android-emulator-runner@v2
       with:
-        api-level: ${{env.NDK_API}}
-        arch: ${{env.NDK_ARCH}}
+        api-level: ${{ matrix.api }}
+        arch: ${{matrix.arch}}
         target: google_apis
-        ndk: ${{env.NDK_VER}}
+        ndk: ${{ matrix.version }}
         sdcard-path-or-size: 1000M
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
         disable-animations: true
