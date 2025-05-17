@@ -77,7 +77,7 @@ jobs:
           
           #windows
           for java in javas:
-            hosts.append({'os': 'windows-latest', 'jobname': f'Windows - JDK{java}'})
+            hosts.append({'os': 'windows-latest', 'max_cxx_standard': 23, 'jobname': f'Windows - JDK{java}'})
           
           #gcc hosts
           for gcc, runon in gcc_map.items():
@@ -143,12 +143,17 @@ jobs:
             echo "DEVELOPER_DIR=/Applications/Xcode_${{ matrix.version }}.app" >> $GITHUB_ENV
         fi
 
-    - name: Set up JDK
+    - name: Set up JDK 8
       uses: actions/setup-java@v4
       with:
-        java-version: |
-          8
-          ${{ matrix.java }}
+        java-version: 8
+        distribution: 'corretto'
+
+    - name: Set up JDK above 8
+      if: ${{ matrix.java }} != 8
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ matrix.java }}
         distribution: 'temurin'
 
     - name: Configure CMake
@@ -177,7 +182,10 @@ jobs:
     needs: define-matrix
     name: ${{ matrix.jobname }}
     runs-on: ubuntu-latest
-    container: ${{ matrix.container }}
+    container: 
+      image: ${{ matrix.container }}
+      volumes:
+        - /github/home/.m2:/home_m2
     strategy:
       fail-fast: false
       matrix: 
@@ -200,6 +208,12 @@ jobs:
           8
           ${{ matrix.java }}
         distribution: 'temurin'
+
+    - name: Patch JDK setup
+      shell: bash
+      run: |
+        mkdir -p ~/.m2
+        cp /home_m2/settings.xml ~/.m2/
 
     - name: Configure CMake
       shell: bash
@@ -252,7 +266,7 @@ jobs:
         ndk: ${{env.NDK_VER}}
         sdcard-path-or-size: 1000M
         force-avd-creation: false
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
         disable-animations: false
         script: echo "Generated AVD snapshot for caching."
 
@@ -264,11 +278,11 @@ jobs:
         target: google_apis
         ndk: ${{env.NDK_VER}}
         sdcard-path-or-size: 1000M
-        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
         disable-animations: true
         script: |
             echo "::group::Configure"
-            cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
+            cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=20 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
             echo "::endgroup::"
             echo "::group::Build and Test Native"
             cmake --build build --config RelWithDebInfo --target test-native
@@ -276,6 +290,7 @@ jobs:
             echo "::group::Build and Test JniGen"
             cmake --build build --config RelWithDebInfo --target test-jnigen
             echo "::endgroup::"
+            killall -INT crashpad_handler || true
 
     
 
