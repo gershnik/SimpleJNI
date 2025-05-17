@@ -38,6 +38,10 @@ kotlin {
     jvmToolchain(kotlinJvmTarget)
 }
 
+val toolsJar = javaToolchains.compilerFor{
+    languageVersion = JavaLanguageVersion.of(8)
+}.get().metadata.installationPath.file("lib/tools.jar")
+
 dependencies {
     testImplementation(libs.kotlin.compile.testing)
     testImplementation(libs.kotlin.test.junit5)
@@ -46,7 +50,7 @@ dependencies {
     testImplementation(libs.hamcrest)
     testImplementation(project(":annotations"))
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(files("${System.getProperty("java.home")}/../lib/tools.jar"))
+    testRuntimeOnly(files(toolsJar))
 }
 
 
