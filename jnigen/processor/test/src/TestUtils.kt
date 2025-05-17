@@ -23,7 +23,6 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 import org.junit.jupiter.api.Assertions.assertTrue
 import smjni.jnigen.Processor
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*

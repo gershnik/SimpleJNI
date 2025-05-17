@@ -39,7 +39,7 @@ kotlin {
 }
 
 val toolsJar = javaToolchains.compilerFor{
-    languageVersion = JavaLanguageVersion.of(8)
+    languageVersion = JavaLanguageVersion.of(kotlinJvmTarget)
 }.get().metadata.installationPath.file("lib/tools.jar")
 
 dependencies {
