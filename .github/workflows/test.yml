@@ -77,7 +77,7 @@ jobs:
           
           #windows
           for java in javas:
-            hosts.append({'os': 'windows-latest', 'max_cxx_standard': 23, 'jobname': f'Windows - JDK{java}'})
+            hosts.append({'os': 'windows-latest', 'max_cxx_standard': 23, 'java': java, 'jobname': f'Windows - JDK{java}'})
           
           #gcc hosts
           for gcc, runon in gcc_map.items():
@@ -150,7 +150,7 @@ jobs:
         distribution: 'corretto'
 
     - name: Set up JDK above 8
-      if: ${{ matrix.java }} != '8'
+      if: ${{ matrix.java }} != 8
       uses: actions/setup-java@v4
       with:
         java-version: ${{ matrix.java }}
