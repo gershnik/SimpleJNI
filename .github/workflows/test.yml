@@ -207,11 +207,6 @@ jobs:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
 
-    - name: Patch JDK setup
-      shell: bash
-      run: |
-        cat /github/home/.m2/settings.xml
-
     - name: Configure CMake
       shell: bash
       run: cmake -GNinja -S . -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=${{matrix.max_cxx_standard}}
