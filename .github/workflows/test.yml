@@ -198,7 +198,7 @@ jobs:
         apt-get update 
         apt-get install -y ninja-build cmake
         wget https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.deb
-        sudo apt install ./amazon-corretto-8-x64-linux-jdk.deb
+        apt-get install -y ./amazon-corretto-8-x64-linux-jdk.deb
 
     - name: Set up JDK${{ matrix.java }}
       if: matrix.java != 8
