@@ -16,7 +16,6 @@ on:
       - '.github/workflows/publish.yml'
 
 env:
-  BUILD_TYPE: Release
   NDK_VER: 21.3.6528147
   NDK_ARCH: x86_64
   NDK_API: 29
@@ -28,6 +27,7 @@ jobs:
     outputs:
       hosts: ${{ steps.matrix.outputs.hosts }}
       containers: ${{ steps.matrix.outputs.containers }}
+      androids: ${{ steps.matrix.outputs.androids }}
 
     steps:
       - name: Define Matrix
@@ -38,6 +38,16 @@ jobs:
           import os
 
           javas = [8, 11, 17, 21, 22, 23, 24]
+
+          android_abis = ['x86_64']
+
+          android_apis = [29, 30, 35]
+
+          ndks = {
+            '21.3.6528147': 30,
+            '27.2.12479018': 35,
+            '29.0.13113456': 35
+          }
 
           macos_map = {
             'macos-13': {'xcode': "14.3.1", 'max_standard': 20},
@@ -101,9 +111,19 @@ jobs:
               hosts.append({'os': runon, 'compiler': 'clang', 'version': clang, 'max_cxx_standard': max_standard, 'java': java,
                             'jobname': f'Linux - Clang{clang} - JDK{java}'})
 
+          #androids
+          for ndk, max_api in ndks.items():
+            for api in android_apis:
+              if api > max_api:
+                continue
+              for abi in android_abis:
+                androids.append({'version': ndk, 'api': api, 'arch': abi, 'jobname': f'NDK{ndk} - API{api} - {abi}'})
+
+
           with open(os.environ['GITHUB_OUTPUT'], 'w') as env:
             print('hosts=' + json.dumps(hosts), file=env) 
             print('containers=' + json.dumps(containers), file=env) 
+            print('androids=' + json.dumps(androids), file=env) 
   
   desktop:
     needs: define-matrix
@@ -199,6 +219,7 @@ jobs:
         apt-get install -y ninja-build cmake
         wget https://corretto.aws/downloads/latest/amazon-corretto-8-x64-linux-jdk.deb
         apt-get install -y ./amazon-corretto-8-x64-linux-jdk.deb
+        echo "JAVA_HOME=/usr/lib/jvm/java-1.8.0-amazon-corretto" >> $GITHUB_ENV
 
     - name: Set up JDK${{ matrix.java }}
       if: matrix.java != 8
@@ -221,7 +242,12 @@ jobs:
         
   android:
     needs: define-matrix
+    name: ${{ matrix.jobname }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.define-matrix.outputs.androids) }}
 
     steps:
     - name: Checkout
@@ -262,6 +288,31 @@ jobs:
         disable-animations: false
         script: echo "Generated AVD snapshot for caching."
 
+    - name: Make build Script
+      shell: bash
+      run: |
+        cat > android-build <<EOF
+        #! /bin/bash
+        set -e
+        echo "::group::Configure"
+        cmake -S . -B build \
+          -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo \
+          -DTEST_MAX_CXX_STANDARD=20 \
+          -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/${{ matrix.version }}/build/cmake/android.toolchain.cmake \
+          -DANDROID_ABI:STRING=${{ matrix.arch }} \
+          -DANDROID_PLATFORM:STRING=${{ matrix.api }} \
+          -DANDROID_STL:STRING=c++_static
+        echo "::endgroup::"
+        echo "::group::Build and Test Native"
+        cmake --build build --config RelWithDebInfo --target test-native
+        echo "::endgroup::"
+        echo "::group::Build and Test JniGen"
+        cmake --build build --config RelWithDebInfo --target test-jnigen
+        echo "::endgroup::"
+        killall -INT crashpad_handler || true
+        EOF
+        chmod a+x android-build
+
     - name: Configure, Build and Test
       uses: reactivecircus/android-emulator-runner@v2
       with:
@@ -272,17 +323,7 @@ jobs:
         sdcard-path-or-size: 1000M
         emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -no-metrics
         disable-animations: true
-        script: |
-            echo "::group::Configure"
-            cmake -S . -B build -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo -DTEST_MAX_CXX_STANDARD=20 -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/$NDK_VER/build/cmake/android.toolchain.cmake -DANDROID_ABI:STRING=$NDK_ARCH -DANDROID_PLATFORM:STRING=19 -DANDROID_STL:STRING=c++_static
-            echo "::endgroup::"
-            echo "::group::Build and Test Native"
-            cmake --build build --config RelWithDebInfo --target test-native
-            echo "::endgroup::"
-            echo "::group::Build and Test JniGen"
-            cmake --build build --config RelWithDebInfo --target test-jnigen
-            echo "::endgroup::"
-            killall -INT crashpad_handler || true
+        script: ./android-build
 
     
 
