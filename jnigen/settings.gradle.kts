@@ -29,6 +29,10 @@ pluginManagement {
     }
 }
 
+val ver_props = java.util.Properties()
+ver_props.load(java.io.FileInputStream(file("versions.properties")))
+
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -36,12 +40,11 @@ dependencyResolutionManagement {
     }
     versionCatalogs {
         create("libs") {
-            val kotlinVersionStr = "2.1.21"
-            version("kotlin", kotlinVersionStr)
-            version("ksp", "$kotlinVersionStr-2.0.1")
-            version("kotlinCompileTesting", "0.7.1")
-            version("junit", "5.12.2")
-            version("hamcrest", "3.0")
+            version("kotlin", "${ver_props["kotlin"]}")
+            version("ksp", "${ver_props["kotlin"]}-${ver_props["ksp"]}")
+            version("kotlinCompileTesting", "${ver_props["kotlinCompileTesting"]}")
+            version("junit", "${ver_props["junit"]}")
+            version("hamcrest", "${ver_props["hamcrest"]}")
 
             library("ksp-symbol-processing-api", "com.google.devtools.ksp", "symbol-processing-api").versionRef("ksp")
             library("kotlin-compile-testing", "dev.zacsweers.kctfork","core").versionRef("kotlinCompileTesting")
