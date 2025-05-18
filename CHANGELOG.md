@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.13] - 2025-05-18
+
 ### Native Code
 * Added missing header when compiling with GCC is C++23 mode
 * CMake minimum required version is now 3.10
@@ -115,3 +117,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.10]: https://github.com/gershnik/SimpleJNI/releases/3.10
 [3.11]: https://github.com/gershnik/SimpleJNI/releases/3.11
 [3.12]: https://github.com/gershnik/SimpleJNI/releases/3.12
+[3.13]: https://github.com/gershnik/SimpleJNI/releases/3.13
