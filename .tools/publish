@@ -25,9 +25,11 @@ def publish(dry_run: bool, username: str, password: str, key_id: str, key_passwo
     mvn_repo = workdir / 'repo'
     mvn_repo.mkdir(parents=True, exist_ok=False)
 
+    output_type = 'verbose' if os.isatty(sys.stdout.fileno()) else 'plain'
+
     build_command = [
         './gradlew',
-        '--console=verbose',
+        f'--console={output_type}',
         '-PbuildDir=build', 
         f'-PcustomRepo=file://{mvn_repo}',
         f'-Psigning.keyId={key_id}'
