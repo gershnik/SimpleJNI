@@ -19,25 +19,10 @@
 */
 configure<PublishingExtension> {
     repositories {
-        if (project.hasProperty("localRepo")) {
+        if (project.hasProperty("customRepo")) {
             maven {
-                name = "localRepo"
-                url = java.net.URI(project.property("localRepo") as String)
-            }
-        }
-        if (project.hasProperty("ossrhUsername") && project.hasProperty("ossrhPassword")) {
-            maven {
-                name = "ossrh"
-                url = java.net.URI(
-                        if ((project.version as String).endsWith("SNAPSHOT"))
-                            "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-                        else
-                            "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
-                )
-                credentials {
-                    username = project.property("ossrhUsername") as String
-                    password = project.property("ossrhPassword") as String
-                }
+                name = "customRepo"
+                url = java.net.URI(project.property("customRepo") as String)
             }
         }
     }

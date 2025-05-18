@@ -1,0 +1,110 @@
+#! /usr/bin/env -S python3 -u
+
+# pylint: disable=missing-function-docstring, missing-module-docstring, line-too-long, trailing-whitespace
+
+import sys
+import os
+import argparse
+import shlex
+import subprocess
+import shutil
+import base64
+
+from pathlib import Path
+from typing import Optional
+
+MYDIR = Path(__file__).parent
+
+def publish(dry_run: bool, username: str, password: str, key_id: str, key_password: Optional[str], armored_key: Optional[str]):
+    jnigendir = (MYDIR.parent / 'jnigen').absolute()
+    builddir = jnigendir / 'build'
+    workdir = builddir / 'upload'
+
+    if workdir.exists():
+        shutil.rmtree(workdir)
+    mvn_repo = workdir / 'repo'
+    mvn_repo.mkdir(parents=True, exist_ok=False)
+
+    build_command = [
+        './gradlew',
+        '--console=verbose',
+        '-PbuildDir=build', 
+        f'-PcustomRepo=file://{mvn_repo}',
+        f'-Psigning.keyId={key_id}'
+    ]
+    if key_password is not None:
+        build_command.append(f'-Psigning.password={key_password}')
+    if armored_key is not None:
+        build_command.append(f'-Psigning.armoredKey={armored_key}')
+
+    build_command.append('publishAllPublicationsToCustomRepoRepository')
+
+    proc = subprocess.run(build_command, check=False, cwd=jnigendir)
+    if proc.returncode != 0:
+        return 1
+    
+    for extra in mvn_repo.rglob('maven-metadata*'):
+        extra.unlink()
+    
+    bundle_path = shutil.make_archive(workdir / 'bundle', 'zip', root_dir=mvn_repo, base_dir='.')
+    
+    auth = f'{username}:{password}'.encode('utf-8')
+    auth_str = base64.b64encode(auth).decode('utf-8')
+
+    if not dry_run:
+        proc = subprocess.run(['curl', '--request', 'POST', '--http1.1',
+                               '--header', f'Authorization: Bearer {auth_str}',
+                               '--form', f'bundle=@{bundle_path}',
+                               'https://central.sonatype.com/api/v1/publisher/upload?publishingType=USER_MANAGED'], check=False)
+        print('\n')
+        
+    if proc.returncode != 0:
+        return 1
+    return 0
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--dry-run', action='store_true', dest='dry_run', default=False)
+    args = parser.parse_args()
+    dry_run: bool = args.dry_run
+
+    config: dict[str, str] = {}
+    rcfile = MYDIR.parent / '.publishrc'
+    if rcfile.is_file():
+        with open(rcfile, 'r', encoding='utf-8') as rcf:
+            lexer = shlex.shlex(rcf, posix=True)
+            lexer.wordchars += '.-+' 
+            while True:
+                try:
+                    key = lexer.get_token()
+                    if key is None:
+                        break
+                    equal = lexer.get_token()
+                    if equal != '=':
+                        raise ValueError(f"Expected '=' after key '{key}'")
+                    value = lexer.get_token()
+                    config[key] = value
+                except ValueError as e:
+                    print(f"Error parsing .publishrc, line {lexer.lineno}: {e}")
+                    return 1
+
+    
+    if (username := config.get('username', os.environ.get('MAVEN_CENTRAL_USERNAME'))) is None:
+        print('Username must be specified either in .publishrc or in MAVEN_CENTRAL_USERNAME environment variable\n', file=sys.stderr)
+        return 1
+    
+    if (password := config.get('password', os.environ.get('MAVEN_CENTRAL_PASSWORD'))) is None:
+        print('Password must be specified either in .publishrc or in MAVEN_CENTRAL_PASSWORD environment variable\n', file=sys.stderr)
+        return 1
+    
+    if (key_id := config.get('signing.keyId', os.environ.get('GPG_KEY_ID'))) is None:
+        print('Signing key ID must be specified either in .publishrc or in GPG_KEY_ID environment variable\n', file=sys.stderr)
+
+    key_password = config.get('signing.password', os.environ.get('GPG_KEY_PASSWD'))
+    armored_key = config.get('signing.armoredKey', os.environ.get('GPG_KEY'))
+
+    return publish(dry_run, username, password, key_id, key_password, armored_key)
+    
+    
+if __name__ == "__main__":
+    sys.exit(main())

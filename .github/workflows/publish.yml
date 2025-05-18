@@ -11,6 +11,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Get Release Name
+        id: get_release 
         shell: python
         run: |
           import os
@@ -18,39 +19,33 @@ jobs:
           #name = ref[ref.rfind('/') + 1:]
           with open('VERSION', 'r') as verFile:
             name = verFile.read().strip()
-          with open(os.environ['GITHUB_ENV'], 'w') as env:
-            print('RELEASE_NAME=' + name, file=env)
+          with open(os.environ['GITHUB_OUTPUT'], 'w') as env:
+            print('name=' + name, file=env)
 
       - name: Bundle Code
-        working-directory: ${{github.workspace}}/jnigen
         shell: bash
-        run: ./gradlew -PbuildDir=build bundleCpp bundleJava
+        run: |
+          cd jnigen
+          ./gradlew -PbuildDir=build bundleCpp bundleJava
 
-      - name: Publish to OSSRH
+      - name: Publish to Maven Central
         env:
           GPG_KEY: ${{ secrets.GPG_KEY }}
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_KEY_PASSWD: ${{ secrets.GPG_KEY_PASSWD }}
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-        working-directory: ${{github.workspace}}/jnigen
+          MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
+          MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
         shell: bash
         run: |
-          ./gradlew -PbuildDir=build \
-              -Psigning.keyId=$GPG_KEY_ID \
-              -Psigning.password=$GPG_KEY_PASSWD \
-              "-Psigning.armoredKey=$GPG_KEY" \
-              -PossrhUsername=$OSSRH_USERNAME \
-              -PossrhPassword=$OSSRH_PASSWORD \
-            publishAllPublicationsToOssrhRepository
+          .tools/publish
 
       - name: Make release
         uses: softprops/action-gh-release@v2
         with:
           draft: true
           prerelease: false
-          name: ${{ env.RELEASE_NAME }}
+          name: ${{ steps.get_release.outputs.name }}
           body: ...edit me...
           files: |
-            jnigen/build/SimpleJNI-${{ env.RELEASE_NAME }}-cpp-only.zip
-            jnigen/build/SimpleJNI-${{ env.RELEASE_NAME }}-jnigen.zip
+            jnigen/build/SimpleJNI-${{ steps.get_release.outputs.name }}-cpp-only.zip
+            jnigen/build/SimpleJNI-${{ steps.get_release.outputs.name }}-jnigen.zip
