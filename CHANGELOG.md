@@ -3,12 +3,22 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Native Code
+* Added missing header when compiling with GCC is C++23 mode
+* CMake minimum required version is now 3.10
+
+### Annotation processors
+* Updated dependencies
+* KSP code generator is now built with KSP 2.1.21-2.0.1. This *seems*
+  to work fine with older Kotlin/KSP versions but if you experience any 
+  issues upgrading KSP might be necessary.
+
 ## [3.12] - 2025-02-16
 
 ### Native Code
 * CMake build now support installation (`cmake --install ...`)
 * Test targets are no longer part of default ('all') target
-* There is a new Cmake option `SMJNI_NO_TESTS` that suppresses all test related functionality
+* There is a new CMake option `SMJNI_NO_TESTS` that suppresses all test related functionality
 
 ### Annotation processors
 * Kotlin version required updated to 1.9.25
