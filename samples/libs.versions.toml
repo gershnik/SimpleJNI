@@ -1,11 +1,11 @@
 [versions]
-jniGen = '3.12'
-cmake = '3.22.1'
+jniGen = '3.13'
+cmake = '3.31.6'
 compileSdk = '35'
 minSdk = '21'
 targetSdk = '35'
 kotlin = '1.9.25'
-agp = '8.8.1'
+agp = '8.10.0'
 
 [libraries]
 smjni-jnigen-annotations = { group = "io.github.gershnik", name = "smjni-jnigen-annotations", version.ref = "jniGen" }
@@ -14,10 +14,10 @@ smjni-jnigen-kprocessor = { group = "io.github.gershnik", name="smjni-jnigen-kpr
 
 androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0'
 android-material = 'com.google.android.material:material:1.12.0'
-androidx-constraintlayout = 'androidx.constraintlayout:constraintlayout:2.2.0'
+androidx-constraintlayout = 'androidx.constraintlayout:constraintlayout:2.2.1'
 androidx-junit = 'androidx.test.ext:junit:1.2.1'
 androidx-espresso-core = 'androidx.test.espresso:espresso-core:3.6.1'
-androidx-core-ktx = 'androidx.core:core-ktx:1.15.0'
+androidx-core-ktx = 'androidx.core:core-ktx:1.16.0'
 
 junit = 'junit:junit:4.13.2'
 
