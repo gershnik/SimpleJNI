@@ -3,6 +3,14 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Native Code
+* Made CMake machinery survive (with a warning) invalid directories passed in `JNI_INCLUDE_DIRS` from outside (#3)
+* Made CMake installed package not hardcode JNI headers paths used at buildtime but rather detect them in the same way
+  subdirectory build does.
+
+### Annotation processors
+* No changes
+
 ## [3.13] - 2025-05-18
 
 ### Native Code

@@ -53,7 +53,23 @@ if(NOT DEFINED JNI_INCLUDE_DIRS)
     else()
         set(JNI_INCLUDE_DIRS "")
     endif()
+else()
+    set (SANTIZED_JNI_INCLUDE_DIRS "")
+    foreach(dir ${JNI_INCLUDE_DIRS})
+        if(EXISTS ${dir})
+            list(APPEND SANTIZED_JNI_INCLUDE_DIRS ${dir})
+        else()
+            message(WARNING "Directory `${dir}` specified as part of JNI_INCLUDE_DIRS does not exist, ignoring")
+        endif()
+    endforeach()
+    set(JNI_INCLUDE_DIRS ${SANTIZED_JNI_INCLUDE_DIRS})
 endif()
+
+add_library(smjni::jniheaders INTERFACE IMPORTED)
+target_include_directories(smjni::jniheaders
+INTERFACE
+    ${JNI_INCLUDE_DIRS}
+)
 
 
 add_library(smjni STATIC)
@@ -134,11 +150,15 @@ PRIVATE
     $<$<CXX_COMPILER_ID:GNU>:-Wall;-Wextra;-Wno-unused-parameter>
 )
 
+target_link_libraries(smjni
+PUBLIC
+    smjni::jniheaders
+)
+
 target_include_directories(smjni 
 PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
     $<INSTALL_INTERFACE:include>  # <prefix>/include
-    ${JNI_INCLUDE_DIRS}
 )
 
 
