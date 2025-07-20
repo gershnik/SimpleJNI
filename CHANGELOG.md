@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.14] - 2025-07-19
+
 ### Native Code
 * Made CMake machinery survive (with a warning) invalid directories passed in `JNI_INCLUDE_DIRS` from outside (#3)
 * Made CMake installed package not hardcode JNI headers paths used at buildtime but rather detect them in the same way
@@ -127,3 +129,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.11]: https://github.com/gershnik/SimpleJNI/releases/3.11
 [3.12]: https://github.com/gershnik/SimpleJNI/releases/3.12
 [3.13]: https://github.com/gershnik/SimpleJNI/releases/3.13
+[3.14]: https://github.com/gershnik/SimpleJNI/releases/3.14
