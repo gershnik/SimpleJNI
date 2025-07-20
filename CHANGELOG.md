@@ -10,9 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Annotation processors
 * Updated dependencies
-* KSP code generator is now built with KSP 2.2.0-2.0.2. This *seems*
-  to work fine with older Kotlin/KSP versions but if you experience any 
-  issues upgrading KSP might be necessary.
+* KSP code generator is now built with KSP 2.2.0-2.0.2. 
 
 ## [3.13] - 2025-05-18
 
