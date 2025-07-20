@@ -109,7 +109,7 @@ clean.dependsOn cleanJNIHeaders
 
 //Make Java compilation (and JniGen code generation) run before CMake build
 tasks.configureEach { theTask ->
-    def match = theTask.name =~ ~/^buildCMake([^\[]*).*$/
+    def match = theTask.name =~ ~/^(?:build|configure)CMake([^\[]*).*$/
     if (match) {
         def config
         switch(match.group(1)) {

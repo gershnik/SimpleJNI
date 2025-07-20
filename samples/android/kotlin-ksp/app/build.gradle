@@ -107,7 +107,7 @@ clean.dependsOn cleanJNIHeaders
 
 //Make KSP (and so JniGen code generation) run before CMake build
 tasks.configureEach { theTask ->
-    def match = theTask.name =~ ~/^buildCMake([^\[]*).*$/
+    def match = theTask.name =~ ~/^(?:build|configure)CMake([^\[]*).*$/
     if (match) {
         def config
         switch(match.group(1)) {

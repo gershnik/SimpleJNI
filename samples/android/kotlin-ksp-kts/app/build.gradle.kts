@@ -109,7 +109,7 @@ tasks.named("clean") {
 
 //Make KSP (and so JniGen code generation) run before CMake build
 tasks.whenTaskAdded {
-    val match = Regex("""^buildCMake([^\[]*).*$""").matchEntire(name)
+    val match = Regex("""^(?:build|configure)CMake([^\[]*).*$""").matchEntire(name)
     if (match != null) {
         val config = when(match.groupValues[1]) {
             "RelWithDebInfo" -> "Release"

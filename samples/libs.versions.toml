@@ -1,18 +1,18 @@
 [versions]
-jniGen = '3.13'
-cmake = '3.31.6'
-compileSdk = '35'
+jniGen = '3.14'
+cmake = '4.0.2'
+compileSdk = '36'
 minSdk = '21'
-targetSdk = '35'
-kotlin = '1.9.25'
-agp = '8.10.0'
+targetSdk = '36'
+kotlin = '2.2.0'
+agp = '8.11.1'
 
 [libraries]
 smjni-jnigen-annotations = { group = "io.github.gershnik", name = "smjni-jnigen-annotations", version.ref = "jniGen" }
 smjni-jnigen-processor = { group = "io.github.gershnik", name="smjni-jnigen-processor", version.ref = "jniGen" }
 smjni-jnigen-kprocessor = { group = "io.github.gershnik", name="smjni-jnigen-kprocessor", version.ref = "jniGen" }
 
-androidx-appcompat = 'androidx.appcompat:appcompat:1.7.0'
+androidx-appcompat = 'androidx.appcompat:appcompat:1.7.1'
 android-material = 'com.google.android.material:material:1.12.0'
 androidx-constraintlayout = 'androidx.constraintlayout:constraintlayout:2.2.1'
 androidx-junit = 'androidx.test.ext:junit:1.2.1'
@@ -25,4 +25,4 @@ junit = 'junit:junit:4.13.2'
 android-application = { id = 'com.android.application', version.ref = 'agp' }
 jetbrains-kotlin-android = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 jetbrains-kotlin-kapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }
-google-devtools-ksp = { id = 'com.google.devtools.ksp', version = '1.9.25-1.0.20' }
+google-devtools-ksp = { id = 'com.google.devtools.ksp', version = '2.2.0-2.0.2' }
