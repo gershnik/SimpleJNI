@@ -32,7 +32,7 @@ jobs:
           import json
           import os
 
-          javas = [8, 11, 17, 21, 22, 23, 24]
+          javas = [17, 21, 22, 23, 24]
 
           android_abis = ['x86_64']
 
@@ -262,7 +262,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v4
       with:
-        java-version: 17
+        java-version: 24
         distribution: 'temurin'
 
     - name: Make Build Script
