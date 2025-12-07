@@ -6,6 +6,7 @@ minSdk = '21'
 targetSdk = '36'
 kotlin = '2.2.21'
 agp = '8.13.1'
+ksp = '2.3.3'
 
 [libraries]
 smjni-jnigen-annotations = { group = "io.github.gershnik", name = "smjni-jnigen-annotations", version.ref = "jniGen" }
@@ -25,4 +26,4 @@ junit = 'junit:junit:4.13.2'
 android-application = { id = 'com.android.application', version.ref = 'agp' }
 jetbrains-kotlin-android = { id = 'org.jetbrains.kotlin.android', version.ref = 'kotlin' }
 jetbrains-kotlin-kapt = { id = 'org.jetbrains.kotlin.kapt', version.ref = 'kotlin' }
-google-devtools-ksp = { id = 'com.google.devtools.ksp', version = '2.3.3' }
+google-devtools-ksp = { id = 'com.google.devtools.ksp', version.ref = 'ksp' }
