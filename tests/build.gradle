@@ -84,14 +84,57 @@ jar {
     setDestinationDirectory(rootProject.layout.buildDirectory.get())
 }
 
+interface InjectedExecOps {
+    @javax.inject.Inject
+    ExecOperations getExecOps()
+}
+
+def compareVersion(a, b) {
+    def commonIndices = Math.min(a.size(), b.size())
+
+    for (int i = 0; i < commonIndices; ++i) {
+        def numA = a[i]
+        def numB = b[i]
+
+        if (numA != numB) {
+            return numA <=> numB
+        }
+    }
+    return a.size() <=> b.size()
+}
+
 if (project.hasProperty('android.sdk')) {
 
     def ANDROID_SDK = project.property('android.sdk')
-    def ANDROID_BUILD_TOOLS_VER = "34.0.0"
-    def ANDROID_VER = "34"
+
+    def latestBuildToolsParts = []
+    new File("${ANDROID_SDK}/build-tools").listFiles().each {
+        if (it.isDirectory() && it.name ==~ /\d+(\.\d+)*/) {
+            def parts = it.name.toString().tokenize(".")*.toInteger()
+            if (compareVersion(parts, latestBuildToolsParts) > 0) {
+                latestBuildToolsParts = parts
+            }
+        }
+    }
+
+    def ANDROID_BUILD_TOOLS_VER = latestBuildToolsParts*.toString().join(".")
+
+    def latestPlatform = 0
+    new File("${ANDROID_SDK}/platforms").listFiles().each {
+        if (it.isDirectory() && it.name ==~ /android-\d+/) {
+            def val = it.name[8..-1].toInteger()
+            if (val > latestPlatform) {
+                latestPlatform = val
+            }
+        }
+    }
+
+    def ANDROID_PLATFORM = "android-" + latestPlatform.toString()
 
     def d8 = "${ANDROID_SDK}/build-tools/${ANDROID_BUILD_TOOLS_VER}/d8"
-    def android_jar = "${ANDROID_SDK}/platforms/android-${ANDROID_VER}/android.jar"
+    def android_jar = "${ANDROID_SDK}/platforms/${ANDROID_PLATFORM}/android.jar"
+
+    def injected = project.objects.newInstance(InjectedExecOps)
 
     tasks.register('dex') {
         dependsOn("jar")
@@ -102,7 +145,7 @@ if (project.hasProperty('android.sdk')) {
         outputs.file(layout.buildDirectory.file(jar.archiveFileName.get().dropRight(4) + ".dex"))
 
         doLast {
-            exec {
+            injected.execOps.exec {
                 workingDir layout.buildDirectory.get()
                 executable d8
                 args += ['--debug', '--lib', android_jar]

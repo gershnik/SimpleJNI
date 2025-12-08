@@ -32,7 +32,7 @@ jobs:
           import json
           import os
 
-          javas = [8, 11, 17, 21, 22, 23, 24]
+          javas = [17, 21, 22, 23, 24]
 
           android_abis = ['x86_64']
 
@@ -277,7 +277,7 @@ jobs:
           -DTEST_MAX_CXX_STANDARD=20 \
           -DCMAKE_TOOLCHAIN_FILE:FILEPATH=$ANDROID_SDK_ROOT/ndk/${{ matrix.version }}/build/cmake/android.toolchain.cmake \
           -DANDROID_ABI:STRING=${{ matrix.arch }} \
-          -DANDROID_PLATFORM:STRING=${{ matrix.api }} \
+          -DANDROID_PLATFORM:STRING=android-${{ matrix.api }} \
           -DANDROID_STL:STRING=c++_static
         echo "::endgroup::"
         echo "::group::Build and Test Native"

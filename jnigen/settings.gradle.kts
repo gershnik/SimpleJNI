@@ -41,7 +41,7 @@ dependencyResolutionManagement {
     versionCatalogs {
         create("libs") {
             version("kotlin", "${ver_props["kotlin"]}")
-            version("ksp", "${ver_props["kotlin"]}-${ver_props["ksp"]}")
+            version("ksp", "${ver_props["ksp"]}")
             version("kotlinCompileTesting", "${ver_props["kotlinCompileTesting"]}")
             version("junit", "${ver_props["junit"]}")
             version("hamcrest", "${ver_props["hamcrest"]}")

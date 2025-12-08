@@ -1,4 +1,4 @@
-import com.google.devtools.ksp.gradle.KspTaskJvm
+import com.google.devtools.ksp.gradle.KspAATask
 
 plugins {
     alias(libs.plugins.android.application)
@@ -78,7 +78,7 @@ ksp {
     arg("smjni.jnigen.expose.extra", jniGenProps.additionalClasses.join(";").toString())
 }
 
-tasks.withType(KspTaskJvm).configureEach {
+tasks.withType(KspAATask).configureEach {
     outputs.upToDateWhen {
 
         def jniGenOutputList = file("${jniGenProps.generatedPath}/${jniGenProps.outputListName}")

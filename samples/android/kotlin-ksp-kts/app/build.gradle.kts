@@ -77,7 +77,7 @@ ksp {
     arg("smjni.jnigen.expose.extra", jniGenProps.additionalClasses.joinToString(";"))
 }
 
-tasks.withType<com.google.devtools.ksp.gradle.KspTaskJvm> {
+tasks.withType<com.google.devtools.ksp.gradle.KspAATask> {
     outputs.upToDateWhen utd@{
 
         val jniGenOutputList = file("${jniGenProps.generatedPath}/${jniGenProps.outputListName}")
