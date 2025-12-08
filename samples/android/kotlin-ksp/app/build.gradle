@@ -1,3 +1,4 @@
+//Use com.google.devtools.ksp.gradle.KspTaskJvm for older KSP
 import com.google.devtools.ksp.gradle.KspAATask
 
 plugins {
@@ -78,6 +79,7 @@ ksp {
     arg("smjni.jnigen.expose.extra", jniGenProps.additionalClasses.join(";").toString())
 }
 
+//Use KspTaskJvm for older KSP
 tasks.withType(KspAATask).configureEach {
     outputs.upToDateWhen {
 

@@ -77,6 +77,7 @@ ksp {
     arg("smjni.jnigen.expose.extra", jniGenProps.additionalClasses.joinToString(";"))
 }
 
+//Use com.google.devtools.ksp.gradle.KspTaskJvm for older KSP
 tasks.withType<com.google.devtools.ksp.gradle.KspAATask> {
     outputs.upToDateWhen utd@{
 

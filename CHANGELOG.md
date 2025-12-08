@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Annotation processors
+* Updated dependencies
+* KSP code generator is now built with KSP 2.3.3
+
 ## [3.14] - 2025-07-19
 
 ### Native Code
