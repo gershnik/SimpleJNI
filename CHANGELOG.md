@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.15] - 2025-12-07
+
 ### Annotation processors
 * Updated dependencies
 * KSP code generator is now built with KSP 2.3.3
@@ -134,3 +136,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.12]: https://github.com/gershnik/SimpleJNI/releases/3.12
 [3.13]: https://github.com/gershnik/SimpleJNI/releases/3.13
 [3.14]: https://github.com/gershnik/SimpleJNI/releases/3.14
+[3.15]: https://github.com/gershnik/SimpleJNI/releases/3.15
