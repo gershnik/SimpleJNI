@@ -67,7 +67,9 @@ jobs:
             17: 'ubuntu-latest', 
             18: 'ubuntu-latest', 
             19: 'ubuntu-latest', 
-            20: 'ubuntu-latest'
+            20: 'ubuntu-latest',
+            21: 'ubuntu-latest',
+            22: 'ubuntu-latest'
           }
           
           hosts = []
@@ -131,7 +133,7 @@ jobs:
         include: ${{ fromJSON(needs.define-matrix.outputs.hosts) }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
 
     - name: System Setup
       shell: bash
@@ -160,14 +162,14 @@ jobs:
         fi
 
     - name: Set up JDK 8
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: 8
         distribution: 'corretto'
 
     - name: Set up JDK${{ matrix.java }}
       if: matrix.java != 8
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
@@ -186,7 +188,7 @@ jobs:
 
     - name: Upload JDK crashes
       if: failure() && matrix.os == 'windows-latest'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         if-no-files-found: ignore
         name: JNI_Crash_Logs_${{ matrix.os }}_${{ matrix.java }}
@@ -206,7 +208,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: System Setup
       shell: bash
@@ -219,7 +221,7 @@ jobs:
 
     - name: Set up JDK${{ matrix.java }}
       if: matrix.java != 8
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v5
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
@@ -247,7 +249,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Setup System
       run: |
@@ -291,7 +293,7 @@ jobs:
         chmod a+x android-build
 
     - name: AVD Cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       id: avd-cache
       with:
         path: |
