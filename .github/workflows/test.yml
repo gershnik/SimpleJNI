@@ -45,9 +45,9 @@ jobs:
           }
 
           macos_map = {
-            'macos-13': {'xcode': "14.3.1", 'max_standard': 20},
-            'macos-14': {'xcode': "15.4",   'max_standard': 20},
-            'macos-15': {'xcode': "16.2",   'max_standard': 23}
+            'macos-14': {'xcode': "15.4", 'max_standard': 20},
+            'macos-15': {'xcode': "16.4", 'max_standard': 23},
+            'macos-26': {'xcode': "26.4", 'max_standard': 23}
           }
 
           gcc_map = {
