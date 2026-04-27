@@ -27,7 +27,7 @@ dependencies {
 
 android {
     compileSdk libs.versions.compileSdk.get().toInteger()
-    namespace 'com.example.myapplication'
+    namespace = 'com.example.myapplication'
 
     defaultConfig {
         applicationId "com.example.myapplication"
@@ -71,7 +71,7 @@ android {
     externalNativeBuild {
         cmake {
             path file('../../../cpp/CMakeLists.txt')
-            version libs.versions.cmake.get()
+            version = libs.versions.cmake.get()
         }
     }
 }
@@ -80,22 +80,26 @@ android {
 //This makes Gradle rebuild Java compilation (and so run annotation processor)
 //when any of the generated files are missing
 //Use libraryVariants if you are building a library
-android.applicationVariants.configureEach { variant ->
+androidComponents {
+    onVariants(selector().all()) { variant ->
+        def variantName = variant.name[0].toUpperCase() + variant.name[1..-1]
+        tasks.matching { it.name == "compile${variantName}JavaWithJavac" }.configureEach {
+            outputs.upToDateWhen {
 
-    variant.javaCompileProvider.get().outputs.upToDateWhen {
+                def jniGenOutputList = file("${jniGenProps.generatedPath}/${jniGenProps.outputListName}")
 
-        def jniGenOutputList = file("${jniGenProps.generatedPath}/${jniGenProps.outputListName}")
+                if (!jniGenOutputList.exists()) {
+                    return false
+                }
 
-        if (!jniGenOutputList.exists()) {
-            return false
-        }
-
-        for(line in jniGenOutputList) {
-            if (!file("${jniGenProps.generatedPath}/$line").exists()) {
-                return false
+                for (line in jniGenOutputList) {
+                    if (!file("${jniGenProps.generatedPath}/$line").exists()) {
+                        return false
+                    }
+                }
+                return true
             }
         }
-        return true
     }
 }
 

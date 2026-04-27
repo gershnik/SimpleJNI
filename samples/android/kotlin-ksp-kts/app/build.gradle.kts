@@ -1,6 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.devtools.ksp)
 }
 
@@ -8,7 +8,7 @@ plugins {
 class JniGenProps{
     val generatedPath: String = file("src/main/cpp/generated").absolutePath
     val outputListName = "outputs.txt"
-    val additionalClasses = arrayOf("java.lang.Byte")
+    val additionalClasses = arrayOf("java.lang.Byte", "java.lang.Double")
 }
 val jniGenProps = JniGenProps()
 
@@ -19,13 +19,21 @@ dependencies {
     //JNI code generator
     ksp(libs.smjni.jnigen.kprocessor)
 
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.android.material)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    debugImplementation(libs.androidx.compose.ui.tooling)
 }
 
 android {
@@ -61,6 +69,9 @@ android {
     }
     kotlin {
         jvmToolchain(8)
+    }
+    buildFeatures {
+        compose = true
     }
     externalNativeBuild {
         cmake {
