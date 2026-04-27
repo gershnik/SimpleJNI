@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.16] - 2026-04-27
+
 ### Annotation processors
 * KSP processor no longer generates bogus native stubs for classes passed via expose.extra parameter. See [#4](https://github.com/gershnik/SimpleJNI/issues/4)
 * Updated dependencies
@@ -142,3 +144,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.13]: https://github.com/gershnik/SimpleJNI/releases/3.13
 [3.14]: https://github.com/gershnik/SimpleJNI/releases/3.14
 [3.15]: https://github.com/gershnik/SimpleJNI/releases/3.15
+[3.16]: https://github.com/gershnik/SimpleJNI/releases/3.16
