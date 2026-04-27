@@ -28,8 +28,9 @@ val libraryPomName by project.extra("SimpleJNI Code Generation Annotations")
 val libraryDescription by project.extra("Annotations used by SimpleJNI JniGen annotation processor to generate C++ code")
 val jvmTarget: Int by project.extra
 
-tasks.withType<JavaCompile> {
-    options.release.set(jvmTarget)
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(8)
+    options.compilerArgs.add("-Xlint:-options")
 }
 
 sourceSets {
