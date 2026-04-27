@@ -28,11 +28,6 @@ plugins {
 val libraryPomName by project.extra("SimpleJNI Code Generator")
 val libraryDescription by project.extra("Annotation processor that generates SimpleJNI C++ code from Java annotations")
 val kotlinJvmTarget: Int by project.extra
-val javaTargetCompatibility: JavaVersion by project.extra
-
-java {
-    targetCompatibility = javaTargetCompatibility
-}
 
 kotlin {
     jvmToolchain(kotlinJvmTarget)
