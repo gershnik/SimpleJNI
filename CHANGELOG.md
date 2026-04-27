@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Annotation processors
+* KSP processor no longer generates bogus native stubs for classes passed via expose.extra parameter. See [#4](https://github.com/gershnik/SimpleJNI/issues/4)
+* Updated dependencies
+* KSP code generator is now built with KSP 2.3.7
+
 ## [3.15] - 2025-12-07
 
 ### Annotation processors

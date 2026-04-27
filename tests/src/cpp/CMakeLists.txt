@@ -112,7 +112,7 @@ foreach(CXX_STANDARD ${CXX_STANDARDS})
 
         if (Java_VERSION VERSION_GREATER_EQUAL 9)
 
-            set(SMJNITEST_JAVA_ARGS "-XX:+CreateCoredumpOnCrash")
+            set(SMJNITEST_JAVA_ARGS "-XX:+CreateCoredumpOnCrash" "--enable-native-access=ALL-UNNAMED")
 
         endif()
 

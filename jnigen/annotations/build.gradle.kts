@@ -26,11 +26,11 @@ plugins {
 
 val libraryPomName by project.extra("SimpleJNI Code Generation Annotations")
 val libraryDescription by project.extra("Annotations used by SimpleJNI JniGen annotation processor to generate C++ code")
-val javaTargetCompatibility: JavaVersion by project.extra
+val jvmTarget: Int by project.extra
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = javaTargetCompatibility
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(8)
+    options.compilerArgs.add("-Xlint:-options")
 }
 
 sourceSets {

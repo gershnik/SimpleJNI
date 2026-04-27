@@ -49,8 +49,7 @@ allprojects {
         "developerEmail" to "gershnik-maven@gershnik.info"
     ))
 
-    val kotlinJvmTarget by project.extra(8)
-    val javaTargetCompatibility by project.extra(JavaVersion.VERSION_1_8)
+    val jvmTarget by project.extra(8)
 
     tasks.withType<Javadoc> {
         options {
