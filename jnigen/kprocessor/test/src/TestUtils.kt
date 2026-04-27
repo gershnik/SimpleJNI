@@ -43,7 +43,7 @@ fun compileFiles(workingDir: Path,
         this.workingDir = workingDir.toFile()
         this.sources = sources
 
-        configureKsp(useKsp2 = true) {
+        configureKsp {
             symbolProcessorProviders += listOf(Provider())
             kspProcessorOptions = processorArgs.toMutableMap().apply {
                 this.putIfAbsent("smjni.jnigen.dest.path", "$cppPath")
