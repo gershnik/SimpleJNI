@@ -20,6 +20,7 @@ import com.google.devtools.ksp.KspExperimental
 
 @KspExperimental
 internal class ClassContent(classInfo: JavaClassInfo,
+                            external: Boolean,
                             val cppClassName: String,
                             context: Context) {
 
@@ -83,26 +84,28 @@ internal class ClassContent(classInfo: JavaClassInfo,
     val convertsTo = classInfo.convertsTo
 
     init {
+        if (!external) {
+            val previousNativeNameUsers = mutableMapOf<String, NativeMethod>()
 
-        val previousNativeNameUsers = mutableMapOf<String, NativeMethod>()
-
-        classInfo.getExposed(context).forEach {
-            when (it) {
-                is JavaClassInfo.NativeFunction -> addNativeMethod(it, previousNativeNameUsers, context)
-                is JavaClassInfo.Function -> if (it.isConstructor) {
+            classInfo.getExposed(context).forEach {
+                when (it) {
+                    is JavaClassInfo.NativeFunction -> addNativeMethod(it, previousNativeNameUsers, context)
+                    is JavaClassInfo.Function -> if (it.isConstructor) {
                         addJavaConstructor(it, context)
                     } else {
                         addJavaMethod(it, context)
                     }
-                is JavaClassInfo.Getter -> addJavaGetter(it, context)
-                is JavaClassInfo.Setter -> addJavaSetter(it, context)
-                is JavaClassInfo.Field  -> addJavaField(it, context)
-                is JavaClassInfo.EnumEntry -> addJavaEnumEntry(it, context)
-            }
-        }
 
-        _javaEntities.sort()
-        _nativeMethods.sort()
+                    is JavaClassInfo.Getter -> addJavaGetter(it, context)
+                    is JavaClassInfo.Setter -> addJavaSetter(it, context)
+                    is JavaClassInfo.Field -> addJavaField(it, context)
+                    is JavaClassInfo.EnumEntry -> addJavaEnumEntry(it, context)
+                }
+            }
+
+            _javaEntities.sort()
+            _nativeMethods.sort()
+        }
     }
 
     private fun addNativeMethod(functionInfo: JavaClassInfo.NativeFunction,

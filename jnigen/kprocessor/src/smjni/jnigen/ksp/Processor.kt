@@ -25,7 +25,8 @@ import com.google.devtools.ksp.symbol.*
 @KspExperimental
 internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolProcessor {
 
-    private class ExposedData(val cppName: String, val cppClassName: String, val header: String)
+    private class ExposedData(val cppName: String, val cppClassName: String, val header: String,
+        val external: Boolean)
 
     override fun process(resolver: Resolver) : List<KSAnnotated>{
         try {
@@ -48,7 +49,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
 
             for ((classInfo, exposedData) in knownClasses) {
 
-                val content = ClassContent(classInfo, exposedData.cppClassName, context)
+                val content = ClassContent(classInfo, exposedData.external, exposedData.cppClassName, context)
                 context.typeMap.addExposedClass(classInfo, content, exposedData.header)
             }
 
@@ -144,7 +145,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
                                               cppNames: Map<String, CharSequence>,
                                               cppClassNames: Map<String, CharSequence>) : ExposedData? {
 
-        val exposedData = makeExposedData(classInfo, stem)
+        val exposedData = makeExposedData(classInfo, stem, true)
 
         var existing = cppNames[exposedData.cppName]
         if (existing != null) {
@@ -190,12 +191,13 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
         if (stem == null)
             return null
 
-        return makeExposedData(classInfo, stem, cppName, cppClassName, header)
+        return makeExposedData(classInfo, stem, false, cppName, cppClassName, header)
 
     }
 
     private fun makeExposedData(classInfo: JavaClassInfo,
                                 stem: String,
+                                external: Boolean,
                                 cppName: String? = null,
                                 cppClassName: String? = null,
                                 header: String? = null): ExposedData
@@ -218,7 +220,7 @@ internal class Processor(private val env: SymbolProcessorEnvironment) : SymbolPr
         else
             header
 
-        return ExposedData(derivedCppName, derivedCppClassName, derivedHeader)
+        return ExposedData(derivedCppName, derivedCppClassName, derivedHeader, external)
     }
 
 
