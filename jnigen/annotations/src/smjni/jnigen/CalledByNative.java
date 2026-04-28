@@ -27,7 +27,7 @@ import static java.lang.annotation.ElementType.METHOD;
 
 /**
  * Marks class element that will be made callable by native code
- *
+ * <p>
  * Putting this annotation on a class element will cause JniGen
  * annotation processor to emit bridging C++ code to access the
  * element from native code.

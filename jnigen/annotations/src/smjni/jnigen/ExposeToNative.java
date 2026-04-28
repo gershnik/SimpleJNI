@@ -25,7 +25,7 @@ import static java.lang.annotation.ElementType.TYPE;
 
 /**
  * Marks a class element that will be made accessible from native code
- *
+ * <p>
  * Putting this annotation on a class will make JniGen processor to
  * <ul>
  * <li>Define a C++ strong type (e.g. jSomeClass) to represent objects
