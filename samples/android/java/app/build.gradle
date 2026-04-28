@@ -79,7 +79,6 @@ android {
 
 //This makes Gradle rebuild Java compilation (and so run annotation processor)
 //when any of the generated files are missing
-//Use libraryVariants if you are building a library
 androidComponents {
     onVariants(selector().all()) { variant ->
         def variantName = variant.name[0].toUpperCase() + variant.name[1..-1]

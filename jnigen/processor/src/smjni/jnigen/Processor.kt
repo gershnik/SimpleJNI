@@ -23,7 +23,6 @@ import javax.lang.model.SourceVersion
 import javax.lang.model.element.*
 import javax.tools.Diagnostic
 
-@Suppress("unused")
 class Processor: javax.annotation.processing.Processor  {
 
     override fun init(processingEnv: ProcessingEnvironment?) {
@@ -49,7 +48,7 @@ class Processor: javax.annotation.processing.Processor  {
 
     override fun process(annotations: MutableSet<out TypeElement>?, env: RoundEnvironment?): Boolean {
 
-        if (annotations == null || annotations.size == 0)
+        if (annotations == null || annotations.isEmpty())
             return true
 
         try {

@@ -20,16 +20,16 @@
 
 plugins {
     id("java")
-    id("maven-publish")
-    id("signing")
+    id("common-publishing")
 }
 
-val libraryPomName by project.extra("SimpleJNI Code Generation Annotations")
-val libraryDescription by project.extra("Annotations used by SimpleJNI JniGen annotation processor to generate C++ code")
-val jvmTarget: Int by project.extra
+commonPublishing {
+    libraryPomName.set("SimpleJNI Code Generation Annotations")
+    libraryDescription.set("Annotations used by SimpleJNI JniGen annotation processor to generate C++ code")
+}
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release.set(8)
+    options.release.set(JVM_TARGET)
     options.compilerArgs.add("-Xlint:-options")
 }
 
@@ -39,11 +39,6 @@ sourceSets {
 }
 
 tasks.jar {
-    manifest {
-        attributes["Implementation-Title"] = libraryPomName
-        attributes["Implementation-Version"] = project.version
-    }
-
     archiveFileName.set("jnigen-annotations.jar")
     destinationDirectory.set(rootProject.layout.buildDirectory)
 }
@@ -58,7 +53,5 @@ tasks.register<Jar>("javadocJar") {
     from(tasks.javadoc)
     archiveClassifier.set("javadoc")
 }
-
-apply(plugin="common-publishing")
 
 

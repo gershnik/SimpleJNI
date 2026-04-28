@@ -21,20 +21,20 @@
 
 plugins {
     alias(libs.plugins.kotlin)
-    id("maven-publish")
-    id("signing")
+    id("common-publishing")
 }
 
-val libraryPomName by project.extra("SimpleJNI Code Generator")
-val libraryDescription by project.extra("Annotation processor that generates SimpleJNI C++ code from Java annotations")
-val jvmTarget: Int by project.extra
+commonPublishing {
+    libraryPomName = "SimpleJNI Code Generator"
+    libraryDescription = "Annotation processor that generates SimpleJNI C++ code from Java annotations"
+}
 
 kotlin {
-    jvmToolchain(jvmTarget)
+    jvmToolchain(JVM_TARGET)
 }
 
 val toolsJar = javaToolchains.compilerFor{
-    languageVersion = JavaLanguageVersion.of(jvmTarget)
+    languageVersion = JavaLanguageVersion.of(JVM_TARGET)
 }.get().metadata.installationPath.file("lib/tools.jar")
 
 dependencies {
@@ -93,8 +93,6 @@ tasks.register<Test>("generateTestData", fun Test.() {
 
 tasks.jar {
     manifest {
-        attributes["Implementation-Title"] = libraryPomName
-        attributes["Implementation-Version"] = project.version
         attributes["Main-Class"] = "smjni.jnigen.Runner"
     }
     metaInf { from("META-INF") }
@@ -113,10 +111,6 @@ tasks.register<Jar>("javadocJar") {
     from(tasks.javadoc)
     archiveClassifier.set("javadoc")
 }
-
-apply(plugin="common-publishing")
-
-
 
 
 

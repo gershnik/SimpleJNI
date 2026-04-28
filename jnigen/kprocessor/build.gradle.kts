@@ -16,16 +16,16 @@
 
 plugins {
     alias(libs.plugins.kotlin)
-    id("maven-publish")
-    id("signing")
+    id("common-publishing")
 }
 
-val libraryPomName by project.extra("SimpleJNI KSP Code Generator")
-val libraryDescription by project.extra("KSP annotation processor that generates SimpleJNI C++ code from Java annotations")
-val jvmTarget: Int by project.extra
+commonPublishing {
+    libraryPomName = "SimpleJNI KSP Code Generator"
+    libraryDescription = "KSP annotation processor that generates SimpleJNI C++ code from Java annotations"
+}
 
 kotlin {
-    jvmToolchain(jvmTarget)
+    jvmToolchain(JVM_TARGET)
 }
 
 dependencies {
@@ -84,10 +84,6 @@ tasks.register<Test>("generateTestData", fun Test.() {
 })
 
 tasks.jar {
-    manifest {
-        attributes["Implementation-Title"] = libraryPomName
-        attributes["Implementation-Version"] = project.version
-    }
     metaInf { from("META-INF") }
 
     archiveFileName.set("kjnigen.jar")
@@ -104,5 +100,3 @@ tasks.register<Jar>("javadocJar") {
     from(tasks.javadoc)
     archiveClassifier.set("javadoc")
 }
-
-apply(plugin="common-publishing")

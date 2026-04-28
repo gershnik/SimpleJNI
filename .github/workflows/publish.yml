@@ -25,8 +25,7 @@ jobs:
       - name: Bundle Code
         shell: bash
         run: |
-          cd jnigen
-          ./gradlew -PbuildDir=build bundleCpp bundleJava
+          .tools/bundle -d build
 
       - name: Publish to Maven Central
         env:
@@ -47,5 +46,5 @@ jobs:
           name: ${{ steps.get_release.outputs.name }}
           body: ...edit me...
           files: |
-            jnigen/build/SimpleJNI-${{ steps.get_release.outputs.name }}-cpp-only.zip
-            jnigen/build/SimpleJNI-${{ steps.get_release.outputs.name }}-jnigen.zip
+            build/SimpleJNI-${{ steps.get_release.outputs.name }}-cpp-only.zip
+            build/SimpleJNI-${{ steps.get_release.outputs.name }}-jnigen.zip
