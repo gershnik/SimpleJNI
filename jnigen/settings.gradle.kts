@@ -29,35 +29,10 @@ pluginManagement {
     }
 }
 
-val ver_props = java.util.Properties()
-ver_props.load(java.io.FileInputStream(file("versions.properties")))
-
-
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         mavenCentral()
-    }
-    versionCatalogs {
-        create("libs") {
-            version("kotlin", "${ver_props["kotlin"]}")
-            version("ksp", "${ver_props["ksp"]}")
-            version("kotlinCompileTesting", "${ver_props["kotlinCompileTesting"]}")
-            version("junit", "${ver_props["junit"]}")
-            version("hamcrest", "${ver_props["hamcrest"]}")
-
-            library("ksp-symbol-processing-api", "com.google.devtools.ksp", "symbol-processing-api").versionRef("ksp")
-            library("kotlin-compile-testing", "dev.zacsweers.kctfork","core").versionRef("kotlinCompileTesting")
-            library("kotlin-compile-testing-ksp", "dev.zacsweers.kctfork", "ksp").versionRef("kotlinCompileTesting")
-            library("kotlin-test-junit5","org.jetbrains.kotlin", "kotlin-test-junit5").versionRef("kotlin")
-            library("junit-jupiter-api", "org.junit.jupiter", "junit-jupiter-api").versionRef("junit")
-            library("junit-jupiter-params", "org.junit.jupiter", "junit-jupiter-params").versionRef("junit")
-            library("junit-jupiter-engine", "org.junit.jupiter", "junit-jupiter-engine").versionRef("junit")
-            library("hamcrest", "org.hamcrest", "hamcrest").versionRef("hamcrest")
-
-
-            plugin("kotlin", "org.jetbrains.kotlin.jvm").versionRef("kotlin")
-        }
     }
 }
 
