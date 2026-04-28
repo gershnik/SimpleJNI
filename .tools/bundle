@@ -1,0 +1,66 @@
+#! /usr/bin/env python3
+
+import sys
+import zipfile
+import subprocess
+import argparse
+
+from pathlib import Path
+
+MYDIR = Path(__file__).parent
+ROOT = MYDIR.parent
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--ver', type=str, dest='ver', help='force version instead of using the one in VERSION file')
+    parser.add_argument('-d', '--dir', type=Path, dest='destdir', help='destination dir for archives')
+    args = parser.parse_args()
+
+    if args.ver is None:
+        ver = (ROOT / "VERSION").read_text(encoding='utf-8').strip()
+    else:
+        ver: str = args.ver
+
+    if args.destdir is None:
+        destdir = Path.cwd()
+    else:
+        destdir: Path = args.destdir
+
+    destdir.mkdir(parents=True, exist_ok=True)
+
+    cppitems = ["CMakeLists.txt",
+                "LICENSE",
+                "NOTICE",
+                "README.md",
+                "CHANGELOG.md"]
+    if args.ver is None:
+        cppitems.append('VERSION')
+
+    for item in (ROOT / 'cmake').rglob('*'):
+        if item.is_file() and item.suffix in ('.cmake', '.in'):
+            cppitems.append(str(item.relative_to(ROOT)))
+    for item in (ROOT / 'inc').rglob('*'):
+        if item.is_file() and item.suffix in ('.h'):
+            cppitems.append(str(item.relative_to(ROOT)))
+    for item in (ROOT / 'src').rglob('*'):
+        if item.is_file() and item.suffix in ('.cpp'):
+            cppitems.append(str(item.relative_to(ROOT)))
+    
+    with zipfile.ZipFile(destdir / f'SimpleJNI-{ver}-cpp-only.zip', 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zip:
+        if args.ver is not None:
+            zip.writestr('VERSION', f'{ver}\n')
+        for item in cppitems:
+            zip.write(ROOT / item, item)
+
+
+    subprocess.run(['./gradlew', '-PbuildDir=build', f'-Pcode.version={ver}',
+                    'annotations:assemble', 'processor:assemble', 'kprocessor:assemble'], 
+                   check=True, cwd = ROOT / 'jnigen')
+
+    with zipfile.ZipFile(destdir / f'SimpleJNI-{ver}-jnigen.zip', 'w', compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zip:
+        for item in ('jnigen-annotations.jar', 'jnigen.jar', 'kjnigen.jar'):
+            zip.write(ROOT / 'jnigen' / 'build' / item, item)
+            
+
+if __name__ == "__main__":
+    sys.exit(main())
