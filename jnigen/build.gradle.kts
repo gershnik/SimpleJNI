@@ -27,6 +27,13 @@ allprojects {
         } else {
             throw RuntimeException("version cannot be obtained from properties or ../VERSION")
         }
+
+    tasks.withType<Javadoc>().configureEach {
+        options {
+            this as StandardJavadocDocletOptions
+            addStringOption("Xdoclint:none", "-quiet")
+        }
+    }
 }
 
 

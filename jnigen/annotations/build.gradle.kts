@@ -20,7 +20,6 @@
 
 plugins {
     id("java")
-    id("common-settings")
     id("common-publishing")
 }
 
@@ -30,7 +29,7 @@ commonPublishing {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release.set(commonSettings.jvmTarget)
+    options.release.set(JVM_TARGET)
     options.compilerArgs.add("-Xlint:-options")
 }
 

@@ -16,7 +16,6 @@
 
 plugins {
     alias(libs.plugins.kotlin)
-    id("common-settings")
     id("common-publishing")
 }
 
@@ -26,7 +25,7 @@ commonPublishing {
 }
 
 kotlin {
-    jvmToolchain(commonSettings.jvmTarget)
+    jvmToolchain(JVM_TARGET)
 }
 
 dependencies {

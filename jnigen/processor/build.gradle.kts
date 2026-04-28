@@ -21,7 +21,6 @@
 
 plugins {
     alias(libs.plugins.kotlin)
-    id("common-settings")
     id("common-publishing")
 }
 
@@ -31,11 +30,11 @@ commonPublishing {
 }
 
 kotlin {
-    jvmToolchain(commonSettings.jvmTarget)
+    jvmToolchain(JVM_TARGET)
 }
 
 val toolsJar = javaToolchains.compilerFor{
-    languageVersion = JavaLanguageVersion.of(commonSettings.jvmTarget)
+    languageVersion = JavaLanguageVersion.of(JVM_TARGET)
 }.get().metadata.installationPath.file("lib/tools.jar")
 
 dependencies {
