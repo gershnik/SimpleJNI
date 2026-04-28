@@ -1,7 +1,11 @@
+buildscript {
+    dependencies {
+        classpath(libs.builtin.kotlin.android)
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
-    alias(libs.plugins.kotlin.compose) apply false
-    alias(libs.plugins.jetbrains.kotlin.kapt) apply false
 }
 
 tasks.register('clean', Delete) {
