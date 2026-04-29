@@ -136,19 +136,22 @@ foreach(CXX_STANDARD ${CXX_STANDARDS})
 
     else()
 
-        if (Java_VERSION VERSION_GREATER_EQUAL 9)
+        set(SMJNITEST_JAVA_ARGS)
 
-            set(SMJNITEST_JAVA_ARGS "-XX:+CreateCoredumpOnCrash" "--enable-native-access=ALL-UNNAMED")
+        if (Java_VERSION VERSION_GREATER_EQUAL 9 AND WIN32)
 
-            if (UNIX)
-                set(ENABLE_CORE_DUMPS COMMAND ulimit -c unlimited)
-            endif()
+            list(APPEND SMJNITEST_JAVA_ARGS "-XX:+CreateCoredumpOnCrash" )
+
+        endif()
+
+        if (Java_VERSION VERSION_GREATER_EQUAL 21)
+
+            list(APPEND SMJNITEST_JAVA_ARGS "--enable-native-access=ALL-UNNAMED")
 
         endif()
 
         add_custom_target(test-native-${TEST_SUFFIX}
             DEPENDS ${TEST_TARGET_NAME}
-            ${ENABLE_CORE_DUMPS}
             COMMAND ${Java_JAVA_EXECUTABLE} ${SMJNITEST_JAVA_ARGS}
                             -Djava.library.path=$<TARGET_FILE_DIR:${TEST_TARGET_NAME}>
                             -Dsmjni.cppver=${TEST_SUFFIX}
