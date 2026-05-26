@@ -561,7 +561,7 @@ namespace smjni
             auto res = java_array_create<T>(env, size_to_java(last - first));
             java_array_access<java_array_type_of_t<T>> res_access(env, res.c_ptr());
             std::copy(first, last, res_access.begin());
-            res_access.commit(env);
+            res_access.commit(true);
             return res;
         }
 
@@ -574,7 +574,7 @@ namespace smjni
             auto res = java_array_create<T>(env, size_to_java(last - first));
             java_array_access<java_array_type_of_t<T>> res_access(env, res.c_ptr());
             std::copy(first, last, res_access.begin());
-            res_access.commit(env);
+            res_access.commit(true);
             return res;
         }
 
