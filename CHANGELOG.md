@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Native Code
-* Fixed broken `java_string_access` move constructor
+* `java_string_access` move constructor now actually works.
+* `java_direct_buffer::at()` is no longer erroneously marked noexcept.
+
 
 
 ## [3.16] - 2026-04-27

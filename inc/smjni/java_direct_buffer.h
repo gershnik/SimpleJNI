@@ -144,13 +144,13 @@ namespace smjni
         {
             return this->m_ptr[idx];
         }
-        constexpr const value_type & at(jsize idx) const noexcept
+        constexpr const value_type & at(jsize idx) const
         {
             if (idx < 0 || idx >= this->m_size)
                 throw std::out_of_range("index out of range");
             return this->m_ptr[idx];
         }
-        constexpr value_type & at(jsize idx) noexcept
+        constexpr value_type & at(jsize idx)
         {
             if (idx < 0 || idx >= this->m_size)
                 throw std::out_of_range("index out of range");
