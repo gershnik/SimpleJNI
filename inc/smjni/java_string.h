@@ -138,7 +138,8 @@ namespace smjni
         java_string_access(java_string_access && src) noexcept:
             m_env(src.m_env),
             m_str(std::exchange(src.m_str, nullptr)),
-            m_length(std::exchange(src.m_length, 0))
+            m_length(std::exchange(src.m_length, 0)),
+            m_data(std::exchange(src.m_data, nullptr))
         {}
 
         java_string_access & operator=(java_string_access && src) noexcept

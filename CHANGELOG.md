@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Native Code
+* Fixed broken `java_string_access` move constructor
+
+
 ## [3.16] - 2026-04-27
 
 ### Annotation processors
