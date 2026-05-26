@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 ### Native Code
 * `java_string_access` move constructor now actually works.
 * `java_direct_buffer::at()` is no longer erroneously marked noexcept.
+* Comparison operators on `java_array::const_iterator` now actually work.
+
 
 
 

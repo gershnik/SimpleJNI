@@ -286,13 +286,13 @@ namespace smjni
                 { return m_idx == rhs.m_idx; }
             bool operator!=(const const_iterator & rhs) const noexcept
                 { return !(*this == rhs); }
-            bool operator<(const iterator & rhs) const noexcept
+            bool operator<(const const_iterator & rhs) const noexcept
                 { return m_idx < rhs.m_idx; }
-            bool operator<=(const iterator & rhs) const noexcept
+            bool operator<=(const const_iterator & rhs) const noexcept
                 { return m_idx <= rhs.m_idx; }
-            bool operator>(const iterator & rhs) const noexcept
+            bool operator>(const const_iterator & rhs) const noexcept
                 { return !(*this <= rhs); }
-            bool operator>=(const iterator & rhs) const noexcept
+            bool operator>=(const const_iterator & rhs) const noexcept
                 { return !(*this < rhs); }
         private:
             const_iterator(const java_array_access & parent, jsize idx) noexcept:
