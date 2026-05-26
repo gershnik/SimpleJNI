@@ -15,8 +15,8 @@
  limitations under the License.
 */
 
-#ifndef HEADER_CT_StRING_H_INCLUDED
-#define HEADER_CT_StRING_H_INCLUDED
+#ifndef HEADER_CT_STRING_H_INCLUDED
+#define HEADER_CT_STRING_H_INCLUDED
 
 #include <utility>
 #include <cassert>

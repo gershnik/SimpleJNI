@@ -15,8 +15,8 @@
  limitations under the License.
 */
 
-#ifndef HEADER_HAVA_RUNTIME_H_INCLUDED
-#define HEADER_HAVA_RUNTIME_H_INCLUDED
+#ifndef HEADER_JAVA_RUNTIME_H_INCLUDED
+#define HEADER_JAVA_RUNTIME_H_INCLUDED
 
 #include <smjni/java_class.h>
 #include <smjni/java_method.h>
@@ -141,4 +141,4 @@ namespace smjni
     
 }
 
-#endif //HEADER_HAVA_RUNTIME_H_INCLUDED
+#endif //HEADER_JAVA_RUNTIME_H_INCLUDED
