@@ -7,7 +7,8 @@ All notable changes to this project will be documented in this file.
 * `java_string_access` move constructor now actually works.
 * `java_direct_buffer::at()` is no longer erroneously marked noexcept.
 * Comparison operators on `java_array::const_iterator` now actually work.
-
+* `va_list` handling when logging exceptions is now pedantically correct. (Unlikely
+  to have been an issue anywhere.)
 
 
 

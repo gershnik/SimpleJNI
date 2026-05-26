@@ -40,14 +40,14 @@ void smjni::set_externals(void (*thrower)(const char *, const char *, va_list),
 
 static std::string print_to_string(const char * format, va_list vl)
 {
-    va_list vlOrig;
-    va_copy(vlOrig, vl);
-    auto size = vsnprintf(nullptr, 0, format, vl);
+    va_list try_vl;
+    va_copy(try_vl, vl);
+    auto size = vsnprintf(nullptr, 0, format, try_vl);
+    va_end(try_vl);
     if (size <= 0)
         return std::string();
     std::string buf(size + 1, '\0');
-    size = vsnprintf(&buf[0], buf.size(), format, vlOrig);
-    va_end(vlOrig);
+    size = vsnprintf(&buf[0], buf.size(), format, vl);
     if (size <= 0)
         return std::string();
     buf.resize(size);
@@ -59,10 +59,15 @@ static std::string print_to_string(const char * format, va_list vl)
     va_list vl;
     va_start(vl, format);
     
-    if (g_throw_problem)
+    if (g_throw_problem) {
         g_throw_problem(file_line, format, vl);
+        //if we returned rather than throwing we need to re-init vl
+        va_end(vl);
+        va_start(vl, format);
+    }
     
     std::string message = print_to_string(format, vl);
+    va_end(vl);
     message += "at ";
     message += file_line;
     throw std::runtime_error(message);
