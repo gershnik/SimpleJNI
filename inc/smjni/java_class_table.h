@@ -73,6 +73,7 @@ namespace smjni
         static void term()
         {
             delete s_instance;
+            s_instance = nullptr;
         }
 
         template<typename T>

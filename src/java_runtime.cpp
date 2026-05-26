@@ -33,6 +33,7 @@ void java_runtime::init(JNIEnv * env)
 void java_runtime::term()
 {
     delete s_instance;
+    s_instance = nullptr;
 }
 
 
