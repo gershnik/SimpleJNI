@@ -18,6 +18,8 @@ All notable changes to this project will be documented in this file.
 
 ### Annotation processors
 * Fixed garbled generated class name for Kotlin files under certain rare conditions.
+* Updated dependencies
+* KSP code generator is now built with KSP 2.3.9
 
 
 ## [3.16] - 2026-04-27
