@@ -5,12 +5,11 @@ plugins {
 }
 
 //JniGen settings
-class JniGenProps{
+private val jniGenProps = object {
     val generatedPath: String = file("src/main/cpp/generated").absolutePath
     val outputListName = "outputs.txt"
-    val additionalClasses = arrayOf("java.lang.Byte", "java.lang.Double")
+    val additionalClasses = listOf("java.lang.Byte", "java.lang.Double")
 }
-val jniGenProps = JniGenProps()
 
 dependencies {
 
