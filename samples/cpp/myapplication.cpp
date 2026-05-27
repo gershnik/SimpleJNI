@@ -16,7 +16,7 @@ using namespace smjni;
 
 using java_classes = smjni::java_class_table<JNIGEN_ALL_GENERATED_CLASSES>;
 
-JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved)
 {
     try
     {
