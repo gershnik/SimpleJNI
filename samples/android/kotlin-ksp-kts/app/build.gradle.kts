@@ -35,6 +35,10 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 }
 
+kotlin {
+    jvmToolchain(8)
+}
+
 android {
     compileSdk = libs.versions.compileSdk.get().toInt()
     namespace = "com.example.myapplication"
@@ -66,9 +70,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlin {
-        jvmToolchain(8)
-    }
+
     buildFeatures {
         compose = true
     }
