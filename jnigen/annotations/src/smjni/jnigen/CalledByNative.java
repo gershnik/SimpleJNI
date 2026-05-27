@@ -43,7 +43,7 @@ public @interface CalledByNative
      * to class methods. If this argument is set to true JniGen
      * will generate additional wrappers to allow non-virtual
      * call.
-     * This has no effect of constructors, fields and static methods
+     * This has no effect on constructors, fields and static methods
      */
     boolean allowNonVirtualCall() default false;
 }
