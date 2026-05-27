@@ -5,8 +5,8 @@ compileSdk = '36'
 minSdk = '23'
 targetSdk = '36'
 kotlin = '2.3.21'
-agp = "9.2.0"
-ksp = '2.3.7'
+agp = "9.2.1"
+ksp = '2.3.9'
 
 [libraries]
 smjni-jnigen-annotations = { group = "io.github.gershnik", name = "smjni-jnigen-annotations", version.ref = "jniGen" }
