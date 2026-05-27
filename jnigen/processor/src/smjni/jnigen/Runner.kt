@@ -32,7 +32,7 @@ object Runner {
             val javacArgs = ArrayList<String>()
             javacArgs.add("-proc:only")
             javacArgs.add("-processor")
-            javacArgs.add(Processor::javaClass.name)
+            javacArgs.add(Processor::class.java.name)
 
             val files = ArrayList<String>()
             for(i in args.indices) {
