@@ -1,6 +1,6 @@
 [versions]
 kotlin = "2.3.21"
-ksp = "2.3.7"
+ksp = "2.3.9"
 kotlinCompileTesting = "0.12.1"
 junit = "5.14.3"
 hamcrest = "3.0"
