@@ -27,8 +27,7 @@ namespace smjni
         template <typename Func, typename... T>
         void tuple_for_each(std::tuple<T...> &ts, Func func) 
         {
-            int unused[] = {(func(std::get<T>(ts)),0)...};
-            (void)unused;
+            (func(std::get<T>(ts)), ...);
         }
         
         template<typename X, typename... T>
