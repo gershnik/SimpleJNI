@@ -102,7 +102,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
         for ((classElement, exposedData) in knownClasses) {
 
             val convertsTo = HashSet<String>()
-            collectConvertsTo(classElement, knownClasses, convertsTo)
+            collectConvertsTo(classElement, convertsTo)
             val binaryName = ctxt.elementUtils.getBinaryName(classElement).toString()
             val content = ClassContent(classElement, binaryName, exposedData.cppClassName, convertsTo, this, ctxt)
             _exposedClasses[classElement] = content
@@ -270,7 +270,6 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
     }
 
     private fun collectConvertsTo(classElement: TypeElement,
-                                  knownClasses: Map<TypeElement, ExposedData>,
                                   convertsTo: MutableSet<String>) {
 
         if (classElement.superclass.kind != TypeKind.NONE) {
@@ -282,7 +281,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
                     convertsTo.add(superClassName)
             }
 
-            collectConvertsTo(superClass, knownClasses, convertsTo)
+            collectConvertsTo(superClass, convertsTo)
         }
 
         for (item in classElement.interfaces) {
@@ -293,7 +292,7 @@ internal class TypeMap(ctxt: Context, env: RoundEnvironment) {
             if (_javaToCppNameMap.containsKey(superInterfaceName))
                 convertsTo.add(superInterfaceName)
 
-            collectConvertsTo(superInterface, knownClasses, convertsTo)
+            collectConvertsTo(superInterface, convertsTo)
         }
     }
 
