@@ -10,10 +10,6 @@
 
 #define NATIVE_PROLOG  try {
 #define NATIVE_EPILOG  } \
-                       catch(java_exception & ex) \
-                       { \
-                           ex.raise(env);\
-                       }\
                        catch(std::exception & ex)\
                        {\
                            java_exception::translate(env, ex);\

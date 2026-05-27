@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Native Code
+* `java_exception::translate` now actually properly passes through `java_exception`
+  itself. It was always promised on the wiki but wasn't actually implemented. If your
+  code relies on `catch(java_exception &)` to just re-raise it, you can safely rely on
+  `java_exception::translate` to do it now.
 * `java_string_get_region` now works with C++20 ranges as its destination. (This was
   promised in the wiki but never actually implemented).
 * `java_string_access` move constructor now actually works.

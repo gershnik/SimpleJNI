@@ -62,6 +62,10 @@ std::string java_exception::do_what() const
 
 void java_exception::translate(JNIEnv * env, const std::exception & ex)
 {
+    if (auto * jex = dynamic_cast<const java_exception *>(&ex)) {
+        jex->raise(env);
+        return;
+    }
     const char * message = ex.what();
     auto java_message = java_string_create(env, message);
     auto exception = java_runtime::throwable().ctor(env, java_message);
