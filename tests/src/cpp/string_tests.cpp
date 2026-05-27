@@ -98,11 +98,21 @@ TEST_CASE( "testString" )
 
     #endif
 
-    jchar buf[5] = {};
-    java_string_get_region(env, str1, 1, 2, buf);
-    CHECK(u'e' == buf[0]);
-    CHECK(u'l' == buf[1]);
-    CHECK(0 == buf[2]);
+    {
+        jchar buf[5] = {};
+        java_string_get_region(env, str1, 1, 2, buf);
+        CHECK(u'e' == buf[0]);
+        CHECK(u'l' == buf[1]);
+        CHECK(0 == buf[2]);
+    }
+    #if __cpp_lib_ranges >= 201911L
+    {
+        std::vector<jchar> buf(2);
+        java_string_get_region(env, str1, 1, buf);
+        CHECK(u'e' == buf[0]);
+        CHECK(u'l' == buf[1]);
+    }
+    #endif
 
     java_string_access access(env, str2);
     CHECK(5 == access.size());

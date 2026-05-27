@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Native Code
+* `java_string_get_region` now works with C++20 ranges as its destination. (This was
+  promised in the wiki but never actually implemented).
 * `java_string_access` move constructor now actually works.
 * `java_direct_buffer::at()` is no longer erroneously marked noexcept.
 * Comparison operators on `java_array::const_iterator` now actually work.

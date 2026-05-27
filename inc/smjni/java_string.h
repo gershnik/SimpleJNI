@@ -104,6 +104,18 @@ namespace smjni
         java_exception::check(env);
     }
 
+    #if __cpp_lib_ranges >= 201911L
+
+        template<std::ranges::contiguous_range R>
+        requires(std::is_same_v<std::ranges::range_value_t<R>, jchar> &&
+                 !std::is_const_v<std::remove_reference_t<std::ranges::range_reference_t<R>>>)
+        void java_string_get_region(JNIEnv * env, 
+                                    const auto_java_ref<jstring> & str, 
+                                    jsize start, R & range)
+            { java_string_get_region(env, str, start, size_to_java(std::size(range)), std::data(range)); }
+
+    #endif
+
     std::string java_string_to_cpp(JNIEnv * env, const auto_java_ref<jstring> & str);
 
     class java_string_access
