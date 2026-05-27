@@ -117,7 +117,7 @@ internal class JavaClassInfo private constructor(val qualifiedJavaClassName: Str
 
         fun from(file: KSFile, context: Context) : JavaClassInfo? {
             val anyDecl = file.declarations.find {
-                it.parentDeclaration == null && it is KSFunctionDeclaration || it is KSPropertyDeclaration
+                it.parentDeclaration == null && (it is KSFunctionDeclaration || it is KSPropertyDeclaration)
             } ?: return null
             val javaClassName = when (anyDecl) {
                 is KSFunctionDeclaration -> context.getOwnerJvmClassName(anyDecl)

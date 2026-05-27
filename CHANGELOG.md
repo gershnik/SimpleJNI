@@ -16,6 +16,8 @@ All notable changes to this project will be documented in this file.
 * `va_list` handling when logging exceptions is now pedantically correct. (Unlikely
   to have been an issue anywhere.)
 
+### Annotation processors
+* Fixed garbled generated class name for Kotlin files under certain rare conditions.
 
 
 ## [3.16] - 2026-04-27
