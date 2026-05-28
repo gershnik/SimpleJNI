@@ -4,13 +4,17 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Native Code
+* `java_string_create` in C++17 mode now accepts `std::basic_string_view` of compatible
+  char types, not just `std::string`. (In C++20 mode it continues to accept any 
+  contiguous range)
+* `java_string_get_region` now supports `char16_t` destination in addition to `jchar`
+* `java_string_get_region` now works with C++20 ranges as its destination. (This was
+  promised in the wiki but never actually implemented).
 * `java_exception::translate` now actually properly passes through `java_exception`
   itself. It was always promised on the wiki but wasn't actually implemented. If your
   code currently relies on `catch(java_exception &)` to just re-raise it, you can 
   drop that `catch` and safely rely on `java_exception::translate` of a general 
   `std::exception` to do it now.
-* `java_string_get_region` now works with C++20 ranges as its destination. (This was
-  promised in the wiki but never actually implemented).
 * `java_string_access` move constructor now actually works.
 * `java_direct_buffer::at()` is no longer erroneously marked noexcept.
 * Comparison operators on `java_array::const_iterator` now actually work.
@@ -18,7 +22,7 @@ All notable changes to this project will be documented in this file.
   to have been an issue anywhere.)
 
 ### Annotation processors
-* Fixed garbled generated class name for Kotlin files under certain rare conditions.
+* KSP processor: fixed garbled generated class name for Kotlin files under certain rare conditions.
 * Updated dependencies
 * KSP code generator is now built with KSP 2.3.9
 

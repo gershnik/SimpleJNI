@@ -65,23 +65,26 @@ namespace smjni
     #endif
 
     #if __cpp_lib_ranges < 201911L
-        inline local_java_ref<jstring> java_string_create(JNIEnv * env, const std::string & str)
+        inline local_java_ref<jstring> java_string_create(JNIEnv * env, std::string_view str)
             { return java_string_create(env, str.data(), str.size()); }
+        inline local_java_ref<jstring> java_string_create(JNIEnv * env, std::u16string_view str)
+            { return java_string_create(env, str.data(), str.size()); }
+        #if __cpp_char8_t >= 201811L
+            inline local_java_ref<jstring> java_string_create(JNIEnv * env, std::u8string_view str)
+                { return java_string_create(env, str.data(), str.size()); }
+        #endif
     #else
         template<std::ranges::contiguous_range R>
         requires(std::is_same_v<std::ranges::range_value_t<R>, jchar> ||
-                 std::is_same_v<std::ranges::range_value_t<R>, char16_t>)
-        inline local_java_ref<jstring> java_string_create(JNIEnv * env, const R & str)
-            { return java_string_create(env, std::data(str), std::size(str)); }
-
-        template<std::ranges::contiguous_range R>
-        requires(std::is_same_v<std::ranges::range_value_t<R>, char> 
+                 std::is_same_v<std::ranges::range_value_t<R>, char16_t> ||
+                 std::is_same_v<std::ranges::range_value_t<R>, char> 
         #if __cpp_char8_t >= 201811L
                 || std::is_same_v<std::ranges::range_value_t<R>, char8_t>
         #endif
         )
         inline local_java_ref<jstring> java_string_create(JNIEnv * env, const R & str)
             { return java_string_create(env, std::data(str), std::size(str)); }
+
     #endif
         
         
@@ -98,16 +101,20 @@ namespace smjni
         return ret;
     }
 
-    inline void java_string_get_region(JNIEnv * env, const auto_java_ref<jstring> & str, jsize start, jsize len, jchar * buf)
+    template<class Char>
+    inline
+    std::enable_if_t<std::is_same_v<Char, jchar> || std::is_same_v<Char, char16_t>,
+    void> java_string_get_region(JNIEnv * env, const auto_java_ref<jstring> & str, jsize start, jsize len, Char * buf)
     {
-        env->GetStringRegion(str.c_ptr(), start, len, buf);
+        env->GetStringRegion(str.c_ptr(), start, len, (jchar *)buf);
         java_exception::check(env);
     }
 
     #if __cpp_lib_ranges >= 201911L
 
         template<std::ranges::contiguous_range R>
-        requires(std::is_same_v<std::ranges::range_value_t<R>, jchar> &&
+        requires((std::is_same_v<std::ranges::range_value_t<R>, jchar> ||
+                    std::is_same_v<std::ranges::range_value_t<R>, char16_t>) &&
                  !std::is_const_v<std::remove_reference_t<std::ranges::range_reference_t<R>>>)
         void java_string_get_region(JNIEnv * env, 
                                     const auto_java_ref<jstring> & str, 
@@ -164,7 +171,7 @@ namespace smjni
             return *this;
         }
 
-        ~java_string_access()
+        ~java_string_access() noexcept
         {
             if (m_data)
                 m_env->ReleaseStringChars(m_str, m_data);
