@@ -42,10 +42,11 @@ class JniGenTest {
     @ParameterizedTest(name = "generateOutput: {0}")
     @MethodSource("inputDirectories")
     fun generateOutput(name: String, dir: Path) {
-        val sources = Files.list(dir / "input")
-            .filter { setOf("kt", "java").contains(it.extension)}
+        val sources = withFilesAtPath(dir / "input") { files ->
+            files.filter { setOf("kt", "java").contains(it.extension) }
             .sorted(compareBy { it.fileName.toString() })
             .map { SourceFile.fromPath(it.toFile()) }.toList()
+        }
 
         val args = loadArguments(dir / "args.properties")
         val workingDir = Path(System.getProperty("test.working.dir")!!) / "generateOutput" / name
@@ -70,9 +71,10 @@ class JniGenTest {
     @ParameterizedTest(name = "cleanRun: {0}")
     @MethodSource("inputDirectories")
     fun cleanRun(name: String, dir: Path) {
-        val sources = Files.list(dir / "input")
-            .filter { setOf("kt", "java").contains(it.extension)}
+        val sources = withFilesAtPath(dir / "input") { files ->
+            files.filter { setOf("kt", "java").contains(it.extension) }
             .map { SourceFile.fromPath(it.toFile()) }.toList()
+        }
 
         val args = loadArguments(dir / "args.properties")
         val workingDir = Path(System.getProperty("test.working.dir")!!) / "cleanRun" / name
@@ -109,9 +111,10 @@ class JniGenTest {
     @ParameterizedTest(name = "incremental: {0}")
     @MethodSource("inputDirectories")
     fun incremental(name: String, dir: Path) {
-        val sources = Files.list(dir / "input")
-            .filter { setOf("kt", "java").contains(it.extension)}
+        val sources = withFilesAtPath(dir / "input") { files ->
+            files.filter { setOf("kt", "java").contains(it.extension) }
             .map { SourceFile.fromPath(it.toFile()) }.toList()
+        }
 
         val args = loadArguments(dir / "args.properties")
         val workingDir = Path(System.getProperty("test.working.dir")!!) / "cleanRun" / name
