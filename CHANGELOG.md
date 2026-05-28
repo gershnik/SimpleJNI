@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.17] - 2026-05-28
+
 ### Native Code
 * `java_string_create` in C++17 mode now accepts `std::basic_string_view` of compatible
   char types, not just `std::string`. (In C++20 mode it continues to accept any 
@@ -169,3 +171,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.14]: https://github.com/gershnik/SimpleJNI/releases/3.14
 [3.15]: https://github.com/gershnik/SimpleJNI/releases/3.15
 [3.16]: https://github.com/gershnik/SimpleJNI/releases/3.16
+[3.17]: https://github.com/gershnik/SimpleJNI/releases/3.17
