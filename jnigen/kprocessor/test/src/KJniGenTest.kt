@@ -59,13 +59,14 @@ class KJniGenTest {
         assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
 
         val expectedDir = dir / "ksp-output"
-        listPath(expectedDir).forEach { it.toFile().deleteRecursively() }
-        listPath(cppPath)
-            .filter {setOf("h", "cpp", "txt").contains(it.extension) }
+        withFilesAtPath(expectedDir){ it.forEach { it.toFile().deleteRecursively() } }
+        withFilesAtPath(cppPath) { files ->
+            files.filter { setOf("h", "cpp", "txt").contains(it.extension) }
             .forEach {
                 Files.createDirectories(expectedDir)
                 Files.copy(it, expectedDir / it.fileName)
             }
+        }
 
         val outputLines = collectOutput(result)
         Files.write(dir / "ksp-output.txt", outputLines)
@@ -87,16 +88,18 @@ class KJniGenTest {
         assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
 
         val expectedDir = dir / "ksp-output"
-        listPath(expectedDir)
-            .filter {setOf("h", "cpp", "txt").contains(it.extension) }
+        withFilesAtPath(expectedDir) { files->
+            files.filter { setOf("h", "cpp", "txt").contains(it.extension) }
             .forEach {
-                assertFileContent(cppPath/it.fileName, it.toFile().readLines())
+                assertFileContent(cppPath / it.fileName, it.toFile().readLines())
             }
-        listPath(cppPath)
-            .filter {setOf("h", "cpp", "txt").contains(it.extension) }
+        }
+        withFilesAtPath(cppPath) { files ->
+            files.filter { setOf("h", "cpp", "txt").contains(it.extension) }
             .forEach {
                 assertTrue(Files.exists(expectedDir / it))
             }
+        }
 
         val outputLines = collectOutput(result)
         val outputSet = outputLines.toSet()

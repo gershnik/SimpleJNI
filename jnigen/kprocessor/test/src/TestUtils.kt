@@ -69,11 +69,11 @@ fun loadArguments(argsPath: Path) : Map<String, String> {
     } ?: emptyMap()
 }
 
-fun listPath(path: Path): Stream<Path> {
-    return if (Files.exists(path))
-        Files.list(path)
+fun <R> withFilesAtPath(path: Path, block: (Stream<Path>) -> R): R {
+    if (Files.exists(path))
+        return Files.list(path).use(block)
     else
-        Stream.empty()
+        return Stream.empty<Path>().use(block)
 }
 
 fun listFile(path: Path): List<String> {
