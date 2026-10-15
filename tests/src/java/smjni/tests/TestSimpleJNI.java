@@ -178,5 +178,11 @@ public class TestSimpleJNI  {
         }
     }
 
+    // See https://github.com/gershnik/SimpleJNI/issues/5
+    @CalledByNative
+    private static double testFloatExceptionReturn() {
+        throw new RuntimeException("not a double");
+    }
+
     private static native void doTestExceptionPassthrough();
 }

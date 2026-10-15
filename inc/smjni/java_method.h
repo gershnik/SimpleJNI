@@ -108,8 +108,7 @@ namespace smjni
                                            object.c_ptr(),
                                            this->m_id.get(),
                                            argument_to_java(params)...);
-            if (!ret)
-                java_exception::check(jenv);
+            java_exception::check(jenv);
             return return_value_from_java(jenv, ret);
         }
         
@@ -123,8 +122,7 @@ namespace smjni
                                                        clazz.c_ptr(),
                                                        this->m_id.get(),
                                                        argument_to_java(params)...);
-            if (!ret)
-                java_exception::check(jenv);
+            java_exception::check(jenv);
             return return_value_from_java(jenv, ret);
         }
         
@@ -154,8 +152,7 @@ namespace smjni
                                                   clazz.c_ptr(),
                                                   this->m_id.get(),
                                                   argument_to_java(params)...);
-            if (!ret)
-                java_exception::check(jenv);
+            java_exception::check(jenv);
             return return_value_from_java(jenv, ret);
         }
     private:

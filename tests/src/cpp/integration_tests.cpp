@@ -271,5 +271,11 @@ void JNICALL TestSimpleJNI::doTestExceptionPassthrough(JNIEnv * env, jclass)
     NATIVE_EPILOG
 }
 
+TEST_CASE( "testFloatExceptionReturn" )
+{
+    JNIEnv * env = jni_provider::get_jni();
+    CHECK_THROWS_WITH((java_classes::get<TestSimpleJNI>().testFloatExceptionReturn(env)), "smjni::java_exception: java.lang.RuntimeException: not a double");
+}
+
 
 TEST_SUITE_END();

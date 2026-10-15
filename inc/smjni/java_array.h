@@ -389,8 +389,7 @@ namespace smjni
         element_type get(jsize index) const
         {
             element_type ret = static_cast<element_type>(this->m_env->GetObjectArrayElement(this->m_array, index));
-            if (!ret)
-                java_exception::check(this->m_env);
+            java_exception::check(this->m_env);
             return ret;
         }
         

@@ -65,11 +65,7 @@ namespace smjni
 
     //Allows uniform handling of void return
     struct VoidResult
-    {
-        //allows uniform handling of if (!ret)
-        operator bool() const noexcept
-        { return false; }
-    };
+    {};
 
     SMJNI_FORCE_INLINE void return_value_from_java(JNIEnv * env, VoidResult val) noexcept
         { }

@@ -94,8 +94,7 @@ namespace smjni
         return_type get(JNIEnv * jenv, typename java_type_traits<ThisType>::arg_type object) const
         {
             Type ret = traits::get_field(jenv, argument_to_java(object), this->m_id.get());
-            if (!ret)
-                java_exception::check(jenv);
+            java_exception::check(jenv);
             return return_value_from_java(jenv, ret);
         }
         
@@ -127,8 +126,7 @@ namespace smjni
         return_type get(JNIEnv * jenv, const java_class<ClassType> & clazz) const
         {
             Type ret = traits::get_static_field(jenv, clazz.c_ptr(), this->m_id.get());
-            if (!ret)
-                java_exception::check(jenv);
+            java_exception::check(jenv);
             return return_value_from_java(jenv, ret);
         }
         
