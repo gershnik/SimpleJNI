@@ -33,10 +33,6 @@ kotlin {
     jvmToolchain(JVM_TARGET)
 }
 
-val toolsJar = javaToolchains.compilerFor{
-    languageVersion = JavaLanguageVersion.of(JVM_TARGET)
-}.get().metadata.installationPath.file("lib/tools.jar")
-
 dependencies {
     testImplementation(libs.kotlin.compile.testing)
     testImplementation(libs.kotlin.test.junit5)
@@ -45,7 +41,6 @@ dependencies {
     testImplementation(libs.hamcrest)
     testImplementation(project(":annotations"))
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(files(toolsJar))
 }
 
 
@@ -56,6 +51,13 @@ sourceSets {
     val test = getByName("test")
     test.kotlin.srcDirs("test/src")
     test.resources.srcDirs("test/res")
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs(listOf("api", "code", "comp", "file", "jvm", "main", "model",
+        "parser", "processing", "tree", "util").map {
+        "--add-opens=jdk.compiler/com.sun.tools.javac.$it=ALL-UNNAMED"
+    })
 }
 
 tasks.test {

@@ -1,3 +1,4 @@
 
 
-const val JVM_TARGET = 8
+const val JVM_TARGET_FOR_ANNOTATIONS = 8
+const val JVM_TARGET = 17

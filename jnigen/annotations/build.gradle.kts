@@ -29,7 +29,7 @@ commonPublishing {
 }
 
 tasks.withType<JavaCompile>().configureEach {
-    options.release.set(JVM_TARGET)
+    options.release.set(JVM_TARGET_FOR_ANNOTATIONS)
     options.compilerArgs.add("-Xlint:-options")
 }
 
