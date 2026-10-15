@@ -34,7 +34,7 @@ tasks.withType<JavaCompile>().configureEach {
 }
 
 sourceSets {
-    val main by getting
+    val main = getByName("main")
     main.java.srcDirs("src")
 }
 
@@ -44,7 +44,7 @@ tasks.jar {
 }
 
 tasks.register<Jar>("sourceJar") {
-    val main by sourceSets
+    val main = sourceSets.getByName("main")
     from(main.allJava)
     archiveClassifier.set("sources")
 }

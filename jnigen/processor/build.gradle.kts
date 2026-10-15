@@ -50,10 +50,10 @@ dependencies {
 
 
 sourceSets {
-    val main by getting
+    val main = getByName("main")
     main.kotlin.srcDirs("src")
     main.resources.srcDirs("res")
-    val test by getting
+    val test = getByName("test")
     test.kotlin.srcDirs("test/src")
     test.resources.srcDirs("test/res")
 }
@@ -72,7 +72,7 @@ tasks.test {
 
 tasks.register<Test>("generateTestData", fun Test.() {
     group = "verification"
-    val test by sourceSets
+    val test = sourceSets.getByName("test")
     testClassesDirs = test.output.classesDirs
     classpath = test.runtimeClasspath
     outputs.upToDateWhen { false }
@@ -102,7 +102,7 @@ tasks.jar {
 }
 
 tasks.register<Jar>("sourceJar") {
-    val main by sourceSets
+    val main = sourceSets.getByName("main")
     from(main.allJava, main.kotlin)
     archiveClassifier.set("sources")
 }
