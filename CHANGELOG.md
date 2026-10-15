@@ -3,6 +3,16 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+### Native Code
+* JNI calls now correctly detect Java exceptions raised by methods returning
+  `double`/`float` on Android (see #5).
+
+### Annotation processors
+* Annotation processors now require at least Java 17 to run (annotations 
+  themselves are still compatible with 8).
+* Updated dependencies.
+* KSP code generator is now built with KSP 2.3.12.
+
 ## [3.17] - 2026-05-28
 
 ### Native Code
