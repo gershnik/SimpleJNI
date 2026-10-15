@@ -32,7 +32,7 @@ jobs:
           import json
           import os
 
-          javas = [17, 21, 24, 25]
+          javas = [17, 21, 25, 27]
 
           android_abis = ['x86_64']
 
@@ -40,14 +40,14 @@ jobs:
 
           ndks = {
             '21.3.6528147': 30,
-            '27.2.12479018': 35,
-            '29.0.13113456': 35
+            '27.3.13750724': 35,
+            '29.0.14206865': 36,
+            '30.0.16248370': 37,
           }
 
           macos_map = {
-            'macos-14': {'xcode': "15.4", 'max_standard': 20},
             'macos-15': {'xcode': "16.4", 'max_standard': 23},
-            'macos-26': {'xcode': "26.4", 'max_standard': 23}
+            'macos-26': {'xcode': "26.6", 'max_standard': 23},
           }
 
           gcc_map = {
@@ -57,7 +57,8 @@ jobs:
             14: 'ubuntu-24.04'
           }
           gcc_cont_map = {
-            15: 'gcc:15.1'
+            15: 'gcc:15',
+            16: 'gcc:16',
           }
           clang_map = {
             13: 'ubuntu-22.04', 
@@ -69,7 +70,8 @@ jobs:
             19: 'ubuntu-latest', 
             20: 'ubuntu-latest',
             21: 'ubuntu-latest',
-            22: 'ubuntu-latest'
+            22: 'ubuntu-latest',
+            23: 'ubuntu-latest',
           }
           
           hosts = []
@@ -86,6 +88,7 @@ jobs:
           #windows
           for java in javas:
             hosts.append({'os': 'windows-latest', 'max_cxx_standard': 23, 'java': java, 'jobname': f'Windows - JDK{java}'})
+            hosts.append({'os': 'windows-2025-vs2026', 'max_cxx_standard': 23, 'java': java, 'jobname': f'Windows - vs26 - JDK{java}'})
           
           #gcc hosts
           for gcc, runon in gcc_map.items():
@@ -133,7 +136,7 @@ jobs:
         include: ${{ fromJSON(needs.define-matrix.outputs.hosts) }}
 
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
 
     - name: System Setup
       shell: bash
@@ -162,14 +165,14 @@ jobs:
         fi
 
     - name: Set up JDK 8
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         java-version: 8
         distribution: 'corretto'
 
     - name: Set up JDK${{ matrix.java }}
       if: matrix.java != 8
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
@@ -208,7 +211,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: System Setup
       shell: bash
@@ -221,7 +224,7 @@ jobs:
 
     - name: Set up JDK${{ matrix.java }}
       if: matrix.java != 8
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v6
       with:
         java-version: ${{ matrix.java }}
         distribution: 'temurin'
@@ -249,7 +252,7 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Setup System
       run: |
@@ -262,7 +265,7 @@ jobs:
         sudo udevadm trigger --name-match=kvm
 
     - name: Set up JDK
-      uses: actions/setup-java@v5
+      uses: actions/setup-java@v7
       with:
         java-version: 17
         distribution: 'temurin'
@@ -293,7 +296,7 @@ jobs:
         chmod a+x android-build
 
     - name: AVD Cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       id: avd-cache
       with:
         path: |
