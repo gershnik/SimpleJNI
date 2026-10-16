@@ -39,10 +39,14 @@ def jniGenProps = new Object() {
     def additionalClasses = ["java.lang.AssertionError"]
 }
 
+configurations {
+    d8Classpath
+}
 
 dependencies {
+    d8Classpath 'org.jetbrains.kotlin:kotlin-stdlib:2.4.10'
     implementation 'io.github.gershnik:smjni-jnigen-annotations:SNAPSHOT'
-    implementation 'org.junit.jupiter:junit-jupiter-api:5.14.3'
+    implementation 'org.junit.jupiter:junit-jupiter-api:6.1.3'
     annotationProcessor("io.github.gershnik:smjni-jnigen-processor:SNAPSHOT")
 }
 
@@ -141,6 +145,7 @@ if (project.hasProperty('android.sdk')) {
         group = 'build'
 
         inputs.files([jar.archiveFile] + configurations.runtimeClasspath.files)
+        inputs.files(configurations.d8Classpath)
 
         outputs.file(layout.buildDirectory.file(jar.archiveFileName.get().dropRight(4) + ".dex"))
 
@@ -149,7 +154,8 @@ if (project.hasProperty('android.sdk')) {
                 workingDir layout.buildDirectory.get()
                 executable d8
                 args += ['--debug', '--lib', android_jar]
-                args += inputs.files.collect { it.path }
+                args += configurations.d8Classpath.files.collectMany { ['--classpath', it.path] }
+                args += [jar.archiveFile.get().asFile.path] + configurations.runtimeClasspath.files.collect { it.path }
             }
 
 
