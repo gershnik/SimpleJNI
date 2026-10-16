@@ -4,8 +4,9 @@ All notable changes to this project will be documented in this file.
 ## Unreleased
 
 ### Native Code
-* JNI calls now correctly detect Java exceptions raised by methods returning
-  `double`/`float` on Android (see #5).
+* JNI calls no longer rely on unspecified return values to detect Java exceptions.
+  This fixes undetected exceptions from methods returning `double`/`float` on
+  Android (see #5).
 
 ### Annotation processors
 * Annotation processors now require at least Java 17 to run (annotations 
