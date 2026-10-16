@@ -1,5 +1,6 @@
 //Use com.google.devtools.ksp.gradle.KspTaskJvm for older KSP
 import com.google.devtools.ksp.gradle.KspAATask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
@@ -39,7 +40,9 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain(8)
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
 }
 
 android {
@@ -70,8 +73,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     externalNativeBuild {
         cmake {

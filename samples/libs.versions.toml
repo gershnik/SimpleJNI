@@ -1,12 +1,12 @@
 [versions]
 jniGen = '3.16'
 cmake = '4.1.2'
-compileSdk = '36'
+compileSdk = '37'
 minSdk = '23'
-targetSdk = '36'
-kotlin = '2.3.21'
-agp = "9.2.1"
-ksp = '2.3.9'
+targetSdk = '37'
+kotlin = '2.4.10'
+agp = "9.4.1"
+ksp = '2.3.12'
 
 [libraries]
 smjni-jnigen-annotations = { group = "io.github.gershnik", name = "smjni-jnigen-annotations", version.ref = "jniGen" }
