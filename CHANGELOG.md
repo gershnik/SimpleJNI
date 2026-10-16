@@ -3,6 +3,8 @@ All notable changes to this project will be documented in this file.
 
 ## Unreleased
 
+## [3.18] - 2026-10-15
+
 ### Native Code
 * JNI calls no longer rely on unspecified return values to detect Java exceptions.
   This fixes undetected exceptions from methods returning `double`/`float` on
@@ -183,3 +185,4 @@ See [Integration](https://github.com/gershnik/SimpleJNI/wiki/Integrating-JniGen)
 [3.15]: https://github.com/gershnik/SimpleJNI/releases/3.15
 [3.16]: https://github.com/gershnik/SimpleJNI/releases/3.16
 [3.17]: https://github.com/gershnik/SimpleJNI/releases/3.17
+[3.18]: https://github.com/gershnik/SimpleJNI/releases/3.18
