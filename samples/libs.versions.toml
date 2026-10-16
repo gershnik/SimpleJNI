@@ -1,5 +1,5 @@
 [versions]
-jniGen = '3.16'
+jniGen = '3.18'
 cmake = '4.1.2'
 compileSdk = '37'
 minSdk = '23'
